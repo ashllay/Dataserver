@@ -1,0 +1,495 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="DatabaseSet">
+      <UniqueIdentifier>{d008fad6-5972-4917-aead-aa0c23ad1a4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Define">
+      <UniqueIdentifier>{4fd5d085-9837-4487-b705-7f060fdac9f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{492087d8-fef4-4f95-8381-1f6d28e65135}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{fa0742b7-c308-475d-8730-5f754d2a5013}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="APP">
+      <UniqueIdentifier>{c23dd381-0692-41fc-8169-ff946264fc80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="APP\Main">
+      <UniqueIdentifier>{87b90925-a7f7-4013-a19d-f08b81f8c780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="APP\NewFilter1">
+      <UniqueIdentifier>{247cb460-1a57-4be0-a8c8-b938c53108ed}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ActiveMng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BadSyntaxChk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseDAO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DelayHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirPath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="giocp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LogToFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapServerManager_DS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerPrc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wsJoinServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WZIPCheck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WzItemSerial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WZQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\AccountCharDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\ArcaBattleDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\BlockChatUserDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\BombHuntDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\CastleDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\ChaosCastleFinalDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\CharDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\CharPreviewDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\CrywolfDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\DBConBase.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\DevilSquareFinalDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\EventMapEnterCount.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\EvolutionMonsterKillInfoDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\GremoryCaseDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\GSDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\HuntingRecordDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\IllusionTempleLeagueDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\ItemExtDbSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\LabyrinthDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\MasterLevelSystemDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\MineSystemDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\MuRummyDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\MuunSystemDbSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\OptionDbSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\PCBangRenewalDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\PentagramDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\PeriodItemExDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\PetDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\PlayTimeEventDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\PShopSystemDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\QuestExpDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\QuestMonKillDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\RestoreItemDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\RuudLogDbSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\SPServerDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\WarehouseDBSet.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="DbSet\ZenEvenDb.h">
+      <Filter>DatabaseSet</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildView.h">
+      <Filter>APP</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>APP</Filter>
+    </ClInclude>
+    <ClInclude Include="Dataserver.h">
+      <Filter>APP</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>APP\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="common\classdef.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\LogProc.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\MuNameCheck.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\MyWinsockBase.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\winutil.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\WzMemScript.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\WZScriptEncode.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\zzzitem.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Define_ExDB.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ItemDef.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LogProc.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MngProtocol.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PatchDefine.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\public.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ReadScript.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="common\ItemSocketOptionDefine.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\SetItemOption.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="include\define.h">
+      <Filter>Define</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ProDef.h">
+      <Filter>Define</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Sprodef.h">
+      <Filter>Define</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ActiveMng.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BadSyntaxChk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseDAO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CQuery.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DelayHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirPath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="giocp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LogToFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapServerManager_DS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDump.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="protocol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerPrc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wsJoinServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WZIPCheck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WzItemSerial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WZQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\AccountCharDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\ArcaBattleDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\BlockChatUserDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\BombHuntDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\CastleDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\ChaosCastleFinalDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\CharDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\CharPreviewDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\CrywolfDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\DBConBase.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\DevilSquareFinalDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\EventMapEnterCount.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\EvolutionMonsterKillInfoDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\GremoryCaseDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\GSDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\HuntingRecordDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\IllusionTempleLeagueDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\ItemExtDbSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\LabyrinthDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\MasterLevelSystemDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\MineSystemDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\MuRummyDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\MuunSystemDbSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\OptionDbSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\PCBangRenewalDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\PentagramDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\PeriodItemExDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\PetDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\PlayTimeEventDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\PShopSystemDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\QuestExpDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\QuestMonKillDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\RestoreItemDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\RuudLogDbSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\SPServerDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\WarehouseDBSet.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="DbSet\ZenEvenDb.cpp">
+      <Filter>DatabaseSet</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildView.cpp">
+      <Filter>APP</Filter>
+    </ClCompile>
+    <ClCompile Include="Dataserver.cpp">
+      <Filter>APP</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>APP</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>APP\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="common\classdef.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\logproc.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\MuNameCheck.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\MyWinsockBase.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\winutil.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\WzMemScript.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\WZScriptEncode.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\zzzitem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\SetItemOption.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Dataserver.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Dataserver.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\Dataserver.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,365 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{31FCC9EC-F161-4F2D-9709-27F984C95106}</ProjectGuid>
+    <RootNamespace>Dataserver</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <BrowseInformation>true</BrowseInformation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>true</MapExports>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>true</MapExports>
+      <AssemblyDebug>true</AssemblyDebug>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ActiveMng.h" />
+    <ClInclude Include="BadSyntaxChk.h" />
+    <ClInclude Include="BaseDAO.h" />
+    <ClInclude Include="ChildView.h" />
+    <ClInclude Include="common\classdef.h" />
+    <ClInclude Include="common\ItemSocketOptionDefine.h" />
+    <ClInclude Include="common\LogProc.h" />
+    <ClInclude Include="common\MuNameCheck.h" />
+    <ClInclude Include="common\MyWinsockBase.h" />
+    <ClInclude Include="common\SetItemOption.h" />
+    <ClInclude Include="common\winutil.h" />
+    <ClInclude Include="common\WzMemScript.h" />
+    <ClInclude Include="common\WZScriptEncode.h" />
+    <ClInclude Include="common\zzzitem.h" />
+    <ClInclude Include="CQuery.h" />
+    <ClInclude Include="Dataserver.h" />
+    <ClInclude Include="DbSet\AccountCharDBSet.h" />
+    <ClInclude Include="DbSet\ArcaBattleDBSet.h" />
+    <ClInclude Include="DbSet\BlockChatUserDBSet.h" />
+    <ClInclude Include="DbSet\BombHuntDBSet.h" />
+    <ClInclude Include="DbSet\CastleDBSet.h" />
+    <ClInclude Include="DbSet\ChaosCastleFinalDBSet.h" />
+    <ClInclude Include="DbSet\CharDBSet.h" />
+    <ClInclude Include="DbSet\CharPreviewDBSet.h" />
+    <ClInclude Include="DbSet\CrywolfDBSet.h" />
+    <ClInclude Include="DbSet\DBConBase.h" />
+    <ClInclude Include="DbSet\DevilSquareFinalDBSet.h" />
+    <ClInclude Include="DbSet\EventMapEnterCount.h" />
+    <ClInclude Include="DbSet\EvolutionMonsterKillInfoDBSet.h" />
+    <ClInclude Include="DbSet\GremoryCaseDBSet.h" />
+    <ClInclude Include="DbSet\GSDBSet.h" />
+    <ClInclude Include="DbSet\HuntingRecordDBSet.h" />
+    <ClInclude Include="DbSet\IllusionTempleLeagueDBSet.h" />
+    <ClInclude Include="DbSet\ItemExtDbSet.h" />
+    <ClInclude Include="DbSet\LabyrinthDBSet.h" />
+    <ClInclude Include="DbSet\MasterLevelSystemDBSet.h" />
+    <ClInclude Include="DbSet\MineSystemDBSet.h" />
+    <ClInclude Include="DbSet\MuRummyDBSet.h" />
+    <ClInclude Include="DbSet\MuunSystemDbSet.h" />
+    <ClInclude Include="DbSet\OptionDbSet.h" />
+    <ClInclude Include="DbSet\PCBangRenewalDBSet.h" />
+    <ClInclude Include="DbSet\PentagramDBSet.h" />
+    <ClInclude Include="DbSet\PeriodItemExDBSet.h" />
+    <ClInclude Include="DbSet\PetDBSet.h" />
+    <ClInclude Include="DbSet\PlayTimeEventDBSet.h" />
+    <ClInclude Include="DbSet\PShopSystemDBSet.h" />
+    <ClInclude Include="DbSet\QuestExpDBSet.h" />
+    <ClInclude Include="DbSet\QuestMonKillDBSet.h" />
+    <ClInclude Include="DbSet\RestoreItemDBSet.h" />
+    <ClInclude Include="DbSet\RuudLogDbSet.h" />
+    <ClInclude Include="DbSet\SPServerDBSet.h" />
+    <ClInclude Include="DbSet\WarehouseDBSet.h" />
+    <ClInclude Include="DbSet\ZenEvenDb.h" />
+    <ClInclude Include="DelayHandler.h" />
+    <ClInclude Include="DirPath.h" />
+    <ClInclude Include="giocp.h" />
+    <ClInclude Include="include\define.h" />
+    <ClInclude Include="include\Define_ExDB.h" />
+    <ClInclude Include="include\ItemDef.h" />
+    <ClInclude Include="include\LogProc.h" />
+    <ClInclude Include="include\MngProtocol.h" />
+    <ClInclude Include="include\PatchDefine.h" />
+    <ClInclude Include="include\ProDef.h" />
+    <ClInclude Include="include\public.h" />
+    <ClInclude Include="include\ReadScript.h" />
+    <ClInclude Include="include\Sprodef.h" />
+    <ClInclude Include="LogToFile.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MapServerManager_DS.h" />
+    <ClInclude Include="MiniDump.h" />
+    <ClInclude Include="protocol.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ServerPrc.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="wsJoinServer.h" />
+    <ClInclude Include="WZIPCheck.h" />
+    <ClInclude Include="WzItemSerial.h" />
+    <ClInclude Include="WZQueue.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ActiveMng.cpp" />
+    <ClCompile Include="BadSyntaxChk.cpp" />
+    <ClCompile Include="BaseDAO.cpp" />
+    <ClCompile Include="ChildView.cpp" />
+    <ClCompile Include="common\classdef.cpp" />
+    <ClCompile Include="common\logproc.cpp" />
+    <ClCompile Include="common\MuNameCheck.cpp" />
+    <ClCompile Include="common\MyWinsockBase.cpp" />
+    <ClCompile Include="common\SetItemOption.cpp" />
+    <ClCompile Include="common\winutil.cpp" />
+    <ClCompile Include="common\WzMemScript.cpp" />
+    <ClCompile Include="common\WZScriptEncode.cpp" />
+    <ClCompile Include="common\zzzitem.cpp" />
+    <ClCompile Include="CQuery.cpp" />
+    <ClCompile Include="Dataserver.cpp" />
+    <ClCompile Include="DbSet\AccountCharDBSet.cpp" />
+    <ClCompile Include="DbSet\ArcaBattleDBSet.cpp" />
+    <ClCompile Include="DbSet\BlockChatUserDBSet.cpp" />
+    <ClCompile Include="DbSet\BombHuntDBSet.cpp" />
+    <ClCompile Include="DbSet\CastleDBSet.cpp" />
+    <ClCompile Include="DbSet\ChaosCastleFinalDBSet.cpp" />
+    <ClCompile Include="DbSet\CharDBSet.cpp" />
+    <ClCompile Include="DbSet\CharPreviewDBSet.cpp" />
+    <ClCompile Include="DbSet\CrywolfDBSet.cpp" />
+    <ClCompile Include="DbSet\DBConBase.cpp" />
+    <ClCompile Include="DbSet\DevilSquareFinalDBSet.cpp" />
+    <ClCompile Include="DbSet\EventMapEnterCount.cpp" />
+    <ClCompile Include="DbSet\EvolutionMonsterKillInfoDBSet.cpp" />
+    <ClCompile Include="DbSet\GremoryCaseDBSet.cpp" />
+    <ClCompile Include="DbSet\GSDBSet.cpp" />
+    <ClCompile Include="DbSet\HuntingRecordDBSet.cpp" />
+    <ClCompile Include="DbSet\IllusionTempleLeagueDBSet.cpp" />
+    <ClCompile Include="DbSet\ItemExtDbSet.cpp" />
+    <ClCompile Include="DbSet\LabyrinthDBSet.cpp" />
+    <ClCompile Include="DbSet\MasterLevelSystemDBSet.cpp" />
+    <ClCompile Include="DbSet\MineSystemDBSet.cpp" />
+    <ClCompile Include="DbSet\MuRummyDBSet.cpp" />
+    <ClCompile Include="DbSet\MuunSystemDbSet.cpp" />
+    <ClCompile Include="DbSet\OptionDbSet.cpp" />
+    <ClCompile Include="DbSet\PCBangRenewalDBSet.cpp" />
+    <ClCompile Include="DbSet\PentagramDBSet.cpp" />
+    <ClCompile Include="DbSet\PeriodItemExDBSet.cpp" />
+    <ClCompile Include="DbSet\PetDBSet.cpp" />
+    <ClCompile Include="DbSet\PlayTimeEventDBSet.cpp" />
+    <ClCompile Include="DbSet\PShopSystemDBSet.cpp" />
+    <ClCompile Include="DbSet\QuestExpDBSet.cpp" />
+    <ClCompile Include="DbSet\QuestMonKillDBSet.cpp" />
+    <ClCompile Include="DbSet\RestoreItemDBSet.cpp" />
+    <ClCompile Include="DbSet\RuudLogDbSet.cpp" />
+    <ClCompile Include="DbSet\SPServerDBSet.cpp" />
+    <ClCompile Include="DbSet\WarehouseDBSet.cpp" />
+    <ClCompile Include="DbSet\ZenEvenDb.cpp" />
+    <ClCompile Include="DelayHandler.cpp" />
+    <ClCompile Include="DirPath.cpp" />
+    <ClCompile Include="giocp.cpp" />
+    <ClCompile Include="LogToFile.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MapServerManager_DS.cpp" />
+    <ClCompile Include="MiniDump.cpp" />
+    <ClCompile Include="protocol.cpp" />
+    <ClCompile Include="ServerPrc.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="wsJoinServer.cpp" />
+    <ClCompile Include="WZIPCheck.cpp" />
+    <ClCompile Include="WzItemSerial.cpp" />
+    <ClCompile Include="WZQueue.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Dataserver.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Dataserver.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\Dataserver.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
