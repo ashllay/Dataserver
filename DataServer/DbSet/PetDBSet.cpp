@@ -24,7 +24,7 @@ BOOL CPetDBSet::Connect()
 	return this->CDBConBase::Connect(szDbConnectID, szDbConnectPass);
 }
 
-BOOL CPetDBSet::LoadPetInfo(DWORD number, int& Level, int& Exp)
+BOOL CPetDBSet::LoadPetInfo(DWORD number, int& Level, __int64& Exp)
 {
 	CString qSQL;
 
@@ -43,7 +43,7 @@ BOOL CPetDBSet::LoadPetInfo(DWORD number, int& Level, int& Exp)
 	}
 
 	Level = this->m_DBQuery.GetInt("Pet_Level");
-	Exp = this->m_DBQuery.GetInt("Pet_Exp");
+	Exp = this->m_DBQuery.GetInt64("Pet_Exp");//changed to int64
 
 	this->m_DBQuery.Clear();
 
@@ -60,11 +60,11 @@ BOOL CPetDBSet::LoadPetInfo(DWORD number, int& Level, int& Exp)
 	return TRUE;
 }
 
-BOOL CPetDBSet::SavePetInfo(DWORD number, int Level, int Exp)
+BOOL CPetDBSet::SavePetInfo(DWORD number, int Level, __int64 Exp)
 {
 	CString qSQL;
 
-	qSQL.Format("UPDATE T_PetItem_Info SET Pet_Level=%d, Pet_Exp=%d WHERE ItemSerial=%u", Level, Exp, number);
+	qSQL.Format("UPDATE T_PetItem_Info SET Pet_Level=%d, Pet_Exp=%I64d WHERE ItemSerial=%u", Level, Exp, number);//changed to int64
 
 	if(this->m_DBQuery.Exec(qSQL) == FALSE)
 	{
@@ -118,7 +118,7 @@ BOOL CPetDBSet::UBFCopyPetInfo(unsigned int number, unsigned __int16 ServerCode)
 BOOL CPetDBSet::LoadPetInfoForUBF(unsigned int number, int *Level, __int64 *Exp, unsigned __int16 SeverCode)
 {
 	int result;
-	__int64 *v8;
+	__int64 *lExp;
 	__int16 sqlReturn;
 	CString qSql;
 	bool v7;
@@ -136,22 +136,20 @@ BOOL CPetDBSet::LoadPetInfoForUBF(unsigned int number, int *Level, __int64 *Exp,
 			this->m_DBQuery.Clear();
 			if (*Level < 0)
 				*Level = 1;
-			v8 = Exp;
+			lExp = Exp;
 			if (*(Exp + 1) <= 0)
 			{
 				if (*(Exp + 1) < 0)
 					*Exp = 0i64;
 				else
-					v7 = *v8 == 0;
+					v7 = *lExp == 0;
 			}
 			result = 1;
 		}
 		else
 		{
-			LogAddTD(
-				"Error-L3 [CPetDBSet][WZ_UnityBattleFieldPetInfoLoad_r] PetSerial:%d Return %d,%s,%d ",
-				number,
-				sqlReturn, __FILE__, __LINE__);
+			LogAddTD("Error-L3 [CPetDBSet][WZ_UnityBattleFieldPetInfoLoad_r] PetSerial:%d Return %d,%s,%d ",
+				number,sqlReturn, __FILE__, __LINE__);
 			this->m_DBQuery.Clear();
 			result = 0;
 		}

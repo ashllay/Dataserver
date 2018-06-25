@@ -198,7 +198,7 @@ void GD_ITL_GuildRankGet(_tagPMSG_REQ_GUILDRANK_GET *lpRecv, int aIndex);
 void GD_ITL_LeagueRankRenew(_tagPMSG_REQ_LEAGUERANK_RENEW *lpRecv);
 void GDReqMuunInvenItemLoad(SDHP_REQ_DBMUUN_INVEN_LOAD *lpMsg, __int16 aIndex);
 void GDReqMuunInvenItemSave(_tagSDHP_REQ_DBMUUN_INVEN_SAVE *lpMsg);
-void GDReqMuunPeriodInfoSelect(_tagSDHP_REQ_MUUN_PERIOD_INFO_SELECT *lpMsg, __int16 aIndex);
+void GDReqMuunPeriodInfoSelect(_tagSDHP_REQ_MUUN_PERIOD_INFO_SELECT *lpMsg, int aIndex);
 void GDReqGremoryCaseItemInsert(_tagSDHP_REQ_GREMORY_CASE_INSERT *lpMsg, __int16 aIndex);
 void GDReqGremoryCaseItemSelect(_tagSDHP_REQ_GREMORY_CASE_SELECT *lpMsg, __int16 aIndex);
 void GDReqGremoryCaseItemExpire(_tagSDHP_REQ_GC_UPDATE *lpMsg, __int16 aIndex);
@@ -1196,7 +1196,7 @@ void GetJoinInfo(LPSDHP_SERVERINFO lpMsg, short aIndex)
 }
 char GameID = '\0';
 
-#define EX700CHS
+#define DEV
 #ifdef EX700CHS
 //ex700chs
 void GJPCharacterListRequestCS(SDHP_GETCHARLIST *lpCLMsg, int aIndex)
@@ -1465,315 +1465,187 @@ void GJPCharacterListRequestCS(SDHP_GETCHARLIST *lpCLMsg, int aIndex)
 
 void GJPCharacterListRequestCS(SDHP_GETCHARLIST *lpCLMsg, int aIndex)
 {
-	SDHP_ANS_ACCOUNTINFO Result;
+	//DGAccountInfoSend(lpCLMsg->Index, lpCLMsg->Account);    
+	BYTE Buffer[520];
+	SDHP_CHARLISTCOUNT_SEND pMsg;
+	int size = sizeof(pMsg);
+	pMsg.header.set(0x01, size);
+	memcpy(pMsg.AccountId, lpCLMsg->Id, sizeof(pMsg.AccountId));
+	pMsg.GenerableClass = 0;
+	pMsg.Count = 0;
+	pMsg.Index = lpCLMsg->Number;
 
-	char Name[MAX_IDSTRING + 1];
-	char szRealName[MAX_IDSTRING + 1];
-	char szId[MAX_IDSTRING + 1];
-
-	MLP_ANS_MASTERLEVEL_INFO ReqInfo;
+	if (gACDbSet.GetAccountId(lpCLMsg->Id) == false &&
+		gACDbSet.CreateAccountCharacter(lpCLMsg->Id) == false)
+	{
+		memcpy(Buffer, &pMsg, sizeof(pMsg));
+		wsjServer.DataSend(aIndex, (char*)Buffer, size);
+		return;
+	}
+	BYTE btSlotCount = 0;
+	if (gACDbSet.GetCharacterSlotCount(lpCLMsg->Id, &btSlotCount) == TRUE)
+	{
+		pMsg.CharacterSlotCount = btSlotCount;
+	}
+	BYTE btAddExtendedWarehouseCount = 0;
+	if (gACDbSet.GetCharacterExtendedWarehouseCount(lpCLMsg->Id, &btAddExtendedWarehouseCount) == TRUE)
+	{
+		pMsg.ExtendedWarehouseCount = btAddExtendedWarehouseCount;
+	}
 	AccountCharacterInfo ACInfo;
 
-	int l;
-	int m;
-	int ServerCode;
-	char v7;
-
-	int type;
-	int k;
-	char __t[2016];
-	CItem v12;
-	int j;
-	BYTE buf[3784];
-
-	unsigned __int8 v16;
-	int v17;
-	BYTE Inventory[7];
-	char v24[2];
-	char v25[3791];
-	int _class;
-	int _level;
-
-	char v40;
-	char v41;
-	char v46[2];
-	char v47;
-	char v48[45];
-
-	int IsUBFServer;
-	char v53;
-
-	int i;
-
-	int v74;
-
-	memset(Result.AccountId, 0, MAX_IDSTRING + 1);
-	memcpy(Result.AccountId, lpCLMsg->Id, MAX_IDSTRING);
-
-	Result.h.set((LPBYTE)&Result, 0xA1, sizeof(SDHP_ANS_ACCOUNTINFO));
-
-	Result.Number = lpCLMsg->Number;
-
-	Result.bSummoner = gACDbSet.GetSummonerCardInfo(Result.AccountId);
-
-	Result.Result = 0;
-
-	wsjServer.DataSend(aIndex, (char*)&Result, sizeof(SDHP_ANS_ACCOUNTINFO));
-
-	BYTE result = 1;
-	int listcount = 0;
-
-	int n;
-	SDHP_CHARLISTCOUNT pCount;
-	SDHP_CHARLIST pCharList;
-	char SendBuf[512];
-
-	IsUBFServer = lpCLMsg->IsUnityBattleFiledServer;
-	int len = 0;
-	int Count = 0;
-	v74 = 0;
-
-	CString strCharId[5];
-
-	memset(&pCharList, 0, sizeof(SDHP_CHARLIST));
-	memset(pCount.AccountId, 0, sizeof(pCount.AccountId));
-	memset(szId, 0, MAX_IDSTRING + 1);
-
-	memcpy(szId, lpCLMsg->Id, MAX_IDSTRING);
-	memcpy(pCount.AccountId, lpCLMsg->Id, MAX_IDSTRING);
-
-	memset(SendBuf, 0, 512);
-	pCount.GenerableClass = 0;
-
-	len += 28;
-
-	if (result == 1)
+	memset(&ACInfo, 0, sizeof(ACInfo));
+	if (gACDbSet.GetAccountInfo(lpCLMsg->Id, &ACInfo) == false)
 	{
-		if (gACDbSet.GetAccountId(szId) == 1)
-		{
-			result = 1;
-		}
-		else
-		{
-			result = 0;
-			if (gACDbSet.CreateAccountCharacter(szId) == 1)
-				result = 1;
-		}
+		memcpy(Buffer, &pMsg, sizeof(pMsg));
+		wsjServer.DataSend(aIndex, (char*)Buffer, size);
+		return;
 	}
-
-
-	if (result == 1)
+	char Names[MAXUSERCHARACTER][11];
+	memcpy(Names[0], ACInfo.GameID1, sizeof(ACInfo.GameID1));
+	memcpy(Names[1], ACInfo.GameID2, sizeof(ACInfo.GameID2));
+	memcpy(Names[2], ACInfo.GameID3, sizeof(ACInfo.GameID3));
+	memcpy(Names[3], ACInfo.GameID4, sizeof(ACInfo.GameID4));
+	memcpy(Names[4], ACInfo.GameID5, sizeof(ACInfo.GameID5));
+	pMsg.MoveCnt = ACInfo.MoveCnt;    SDHP_CHARLIST info;
+	for (int i = 0; i < MAXUSERCHARACTER; ++i)
 	{
-		BYTE btSlotCount = 0;
-		if (gACDbSet.GetCharacterSlotCount(szId, &btSlotCount) == 1)
-			pCount.CharacterSlotCount = btSlotCount;
-		BYTE btAddExtendedWarehouseCount = 0;
-		if (gACDbSet.GetCharacterExtendedWarehouseCount(szId, &btAddExtendedWarehouseCount) == 1)
-			pCount.ExtendedWarehouseCount = btAddExtendedWarehouseCount;
-		memset((char *)&ACInfo, 0, sizeof(AccountCharacterInfo));
-		if (gACDbSet.GetAccountInfo(szId, &ACInfo))
+		int Len = strlen(Names[i]);
+		if (Len <= 0 || Len > 10)
 		{
-			result = 1;
+			continue;
+		}
+		BYTE _ctlcode = 0;
+		BYTE _dbverstion = 0;
+		BYTE _pkLevel = 0;
+		BYTE _btGuildStatus = -1;
+		int _level = 0;
+		int _class = 0;
+		BYTE Inventory[MAX_DBINVENTORY];// [3800];
+		memset(Inventory, 0xFF, sizeof(Inventory));
 
-			strCharId[0] = ACInfo.GameID1;
-			strCharId[1] = ACInfo.GameID2;
-			strCharId[2] = ACInfo.GameID3;
-			strCharId[3] = ACInfo.GameID4;
-			strCharId[4] = ACInfo.GameID5;
-
-			pCount.MoveCnt = ACInfo.MoveCnt;
-			listcount = 0;
-
-			for (i = 0; i < 5; ++i)
+		if (gCharPreDBSet.GetChar(Names[i], lpCLMsg->Id, &_level, &_class, Inventory, &_ctlcode, &_dbverstion, &_pkLevel, &_btGuildStatus) == false)
+		{
+			continue;
+		}
+		info.Index = i;
+		info.Level = _level;
+		info.Class = _class;
+		info.CtlCode = _ctlcode;
+		info.DbVersion = _dbverstion;        // Cambiar  a una funcion la migracion del SpeedServer     
+		if (_pkLevel & 0x80)
+		{
+			LogAdd("Speed server migration [Account:%s][Name:%s][level:%d]", lpCLMsg->Id, Names[i], _level);
+			_pkLevel &= 0x7F;
+			WORD MasterLevel = 0;
+			MLP_ANS_MASTERLEVEL_INFO MasterInfo;
+			if (_level >= 400 && MasterLevelSystemDBSet.DSDB_QueryMasterLevelSystemLoad(Names[i], &MasterInfo) == false)
 			{
-				if (strCharId[i].GetLength() > 0
-					&& strCharId[i].GetLength() <= MAX_IDSTRING
-					//strCharId[n].GetLength() > 0 && strCharId[n].GetLength() <= MAX_IDSTRING
-					)
+				MasterLevel = MasterInfo.nMLevel;
+			}
+			BYTE ClassType = 4 * DCInfo.GetCharacterClassByDBClass(_class);
+			if (ClassType == 0xFF)
+			{
+				continue;
+			}
+			BYTE InventoryData[(MAX_ITEM - 1)*MAX_EQUIPMENT];
+			memset(InventoryData, -1, sizeof(InventoryData));
+			if ((MasterLevel + _level) >= 600)
+			{
+				ItemByteConvert16(InventoryData, DCInfo.JumpingEquipment[ClassType + 3], INVENTORY_EXT4_SIZE);
+			}
+			else if ((MasterLevel + _level) >= 500)
+			{
+				ItemByteConvert16(InventoryData, DCInfo.JumpingEquipment[ClassType + 1], INVENTORY_EXT4_SIZE);
+			}
+			else if (_level >= 400)
+			{
+				ItemByteConvert16(InventoryData, DCInfo.JumpingEquipment[ClassType], INVENTORY_EXT4_SIZE);
+			}
+			else if (_level >= 380)
+			{
+				ItemByteConvert16(InventoryData, DCInfo.JumpingEquipment[ClassType + 2], INVENTORY_EXT4_SIZE);
+			}
+			else
+			{
+				CItem ItemInfo[(MAX_EQUIPMENT + 1)];
+				for (int k = 0; k < (MAX_EQUIPMENT + 1); ++k)
 				{
-					memset(Name, 0, 0xBu);
-					strcpy(Name, strCharId[i].GetBuffer(MAX_IDSTRING));
-					BOOL bGetPrevChar = FALSE;
-					BYTE _ctlcode = 0;
-					BYTE _dbverstion = 0;
-					char _pkLevel = 0;
-					BYTE _btGuildStatus = 0xFF;
-
-					bGetPrevChar = gCharPreDBSet.GetChar(
-						Name,
-						szId,
-						_level,
-						_class,
-						Inventory,
-						_ctlcode,
-						_dbverstion,
-						_pkLevel,
-						_btGuildStatus);
-					if (bGetPrevChar == 1)
-					{
-						pCharList.Index = i;
-						pCharList.Level = _level;
-						pCharList.Class = _class;
-						pCharList.CtlCode = _ctlcode;
-						pCharList.DbVersion = _dbverstion;
-						//if (_pkLevel & 0x80)
-						//{
-						//	//LogAddTD(&byte_591B4C, &Id, &Name, _level);
-						//	_pkLevel &= 0x7Fu;
-						//	v17 = 0;
-						//	v16 = -1;
-						//	if (_level >= 400
-						//		&& !MasterLevelSystemDBSet.DSDB_QueryMasterLevelSystemLoad(Name, &ReqInfo))
-						//	{
-						//		v17 = ReqInfo.nMLevel;
-						//	}
-						//	//v16 = 4 * classdef::GetCharacterClassByDBClass(&DCInfo, _class);
-						//	v16 = DCInfo.GetCharacterClassByDBClass(_class);
-						//	if (v16 != 255)
-						//	{
-						//		for (j = 0; j < 236; ++j)
-						//			memset(&buf[16 * j], 255, 0x10u);
-						//		if (v17 + _level < 600)
-						//		{
-						//			if (v17 + _level < 500)
-						//			{
-						//				if (_level < 400)
-						//				{
-						//					if (_level < 380)
-						//					{
-						//						/*`vector constructor iterator'(__t, 0xA8u, 13, (void *(__thiscall *)(void *))CItem::CItem);
-						//							for (k = 0; k < 13; ++k)
-						//								CItem::Clear((CItem *)&__t[168 * k]);
-						//						type = ItemGetNumberMake(14, 286);
-						//						CItem::Convert(&v12, type, 0, 0, 0, 0, 0, 3);
-						//						ItemByteConvert16(buf, (CItem *)__t, 13);*/
-						//					}
-						//					else
-						//					{
-						//						ItemByteConvert16(buf, DCInfo.JumpingEquipment[v16 + 2], 204);
-						//					}
-						//				}
-						//				else
-						//				{
-						//					ItemByteConvert16(buf, DCInfo.JumpingEquipment[v16], 204);
-						//				}
-						//			}
-						//			else
-						//			{
-						//				ItemByteConvert16(buf, DCInfo.JumpingEquipment[v16 + 1], 204);
-						//			}
-						//		}
-						//		else
-						//		{
-						//			ItemByteConvert16(buf, DCInfo.JumpingEquipment[v16 + 3], 204);
-						//		}
-						//		gCharDbSet.RewardJumpingItem(Name, buf);
-						//	}
-						//}
-						pCharList.PK_Level = _pkLevel;
-						pCharList.btGuildStatus = _btGuildStatus;
-						v7 = 0;
-						ServerCode = 0;
-						if (IsUBFServer == 1)
-							v7 = gCharPreDBSet.GetRealNameAndServerCode(Name, szRealName, &ServerCode, 1);
-						if (IsUBFServer != 1 || v7 != 1)
-						{
-							memcpy(&v41, &GameID, 0xAu);
-							pCharList.ServerCodeOfHomeWorld = 0;
-						}
-						else
-						{
-							memcpy(&v41, szRealName, 0xAu);
-							pCharList.ServerCodeOfHomeWorld = ServerCode;
-						}
-						memcpy(&v40, Name, 0xAu);
-						if (!(_ctlcode & 0x80) && _level >= 150)
-						{
-							if (_level < 400)
-							{
-								if (_level < 250)
-								{
-									if (_level < 220)
-									{
-										if (_level < 200)
-										{
-											if (pCount.GenerableClass < 2)
-												pCount.GenerableClass = 1;
-										}
-										else if (pCount.GenerableClass < 3)
-										{
-											pCount.GenerableClass = 2;
-										}
-									}
-									else if (pCount.GenerableClass < 4)
-									{
-										pCount.GenerableClass = 3;
-									}
-								}
-								else if (pCount.GenerableClass < 5)
-								{
-									pCount.GenerableClass = 4;
-								}
-							}
-							else
-							{
-								pCount.GenerableClass = 5;
-							}
-						}
-						if (_dbverstion)
-						{
-							if (_dbverstion != 1 && _dbverstion != 2)
-							{
-								for (l = 0; l < 12; ++l)
-								{
-									memcpy(&v46[4 * l], &Inventory[16 * l], 2u);
-									*(&v47 + 4 * l) = v24[16 * l];
-									v48[4 * l] = v25[16 * l];
-								}
-							}
-							else
-							{
-								for (m = 0; m < 12; ++m)
-								{
-									memcpy(&v46[3 * m], &Inventory[10 * m], 2u);
-									*(&v47 + 3 * m) = v24[10 * m];
-								}
-							}
-						}
-						else
-						{
-							for (n = 0; n < 12; ++n)
-								memcpy(&v46[2 * n], &Inventory[7 * n], 2u);
-						}
-						memcpy(&SendBuf[len], &pCharList, sizeof(SDHP_CHARLIST));
-						len += sizeof(SDHP_CHARLIST);
-						++Count;
-					}
+					ItemInfo[k].Clear();
 				}
+				WORD type = ItemGetNumberMake(14, 286);
+				ItemInfo[12].Convert(type, 0, 0, 0, 0, 0, 3);
+				ItemByteConvert16(InventoryData, ItemInfo, (MAX_EQUIPMENT + 1));
+			}
+			gCharDbSet.RewardJumpingItem(Names[i], InventoryData);
+		}
+		// -----------        
+		info.PK_Level = _pkLevel;
+		info.btGuildStatus = _btGuildStatus;
+		memcpy(info.UnityBFOfRealName, "", sizeof(info.UnityBFOfRealName));
+		info.ServerCodeOfHomeWorld = 0;
+		gCharPreDBSet.GetRealNameAndServerCode(Names[i], info.UnityBFOfRealName, &info.ServerCodeOfHomeWorld, lpCLMsg->IsUnityBattleFiledServer);
+
+		memcpy(info.Name, Names[i], sizeof(info.Name));
+
+		if ((_ctlcode & 0x80) == 0 && _level >= 150)
+		{
+			if (_level < 200 && pMsg.GenerableClass < 2)
+			{
+				pMsg.GenerableClass = 1;
+			}
+			else if (_level >= 200 && pMsg.GenerableClass < 3)
+			{
+				pMsg.GenerableClass = 2;
+			}
+			else if (_level >= 220 && pMsg.GenerableClass < 4)
+			{
+				pMsg.GenerableClass = 3;
+			}
+			else if (_level >= 250 && pMsg.GenerableClass < 5)
+			{
+				pMsg.GenerableClass = 4;
+			}
+			else if (_level >= 400)
+			{
+				pMsg.GenerableClass = 5;
 			}
 		}
-		else
+		for (int n = 0; n < MAX_EQUIPMENT; ++n)
 		{
-			result = 0;
+			switch (_dbverstion)
+			{
+			case 0x00:
+				memcpy(&info.dbInventory[2 * n], &Inventory[7 * n], sizeof(WORD));
+				continue;
+			case 0x01:
+			case 0x02:
+				memcpy(&info.dbInventory[3 * n], &Inventory[10 * n], sizeof(WORD));
+				info.dbInventory[3 * n + 2] = Inventory[10 * n + 7];
+				continue;
+			case 0x03:
+				memcpy(&info.dbInventory[4 * n], &Inventory[16 * n], sizeof(WORD));
+				info.dbInventory[4 * n + 2] = Inventory[16 * n + 7];
+				info.dbInventory[4 * n + 3] = Inventory[16 * n + 9];
+				continue;
+			}
 		}
+		memcpy(&Buffer[size], &info, sizeof(info));
+		size += sizeof(info);
+		pMsg.Count++;
 	}
-	pCount.h.c = PMHC_WORD;
-	pCount.h.headcode = 0x01;
-	pCount.Number = lpCLMsg->Number;
-	pCount.Count = Count;
-	pCount.h.sizeH = SET_NUMBERH(len);
-	pCount.h.sizeL = SET_NUMBERL(len);
-	memcpy(SendBuf, &pCount, sizeof(SDHP_CHARLISTCOUNT));
-
-	wsjServer.DataSend(aIndex, (char*)SendBuf, len);
-	//pCount.h.c = PMHC_WORD;
-	//pCount.h.headcode = 1;
-	//pCount.Number = lpCLMsg->Number;
-	//pCount.Count = Count;
-	//pCount.h.sizeH = SET_NUMBERH(len);
-	//pCount.h.sizeL = SET_NUMBERL(len);
-	//memcpy(SendBuf, &pCount, sizeof(SDHP_CHARLISTCOUNT));
-	//wsjServer.DataSend(aIndex, SendBuf, len);
+	pMsg.header.sizeH/*[0]*/ = HIBYTE(size);
+	pMsg.header.sizeL/*[1]*/ = LOBYTE(size);
+	memcpy(Buffer, &pMsg, sizeof(pMsg));
+	wsjServer.DataSend(aIndex, (char*)Buffer, size);
+	//	pCount.h.c = PMHC_WORD;
+	//	pCount.h.headcode = 1;
+	//	pCount.Number = lpCLMsg->Number;
+	//	pCount.Count = Count;
+	//	pCount.h.sizeH = HIBYTE(lOfs);
+	//	pCount.h.sizeL = LOBYTE(lOfs);
+	//	memcpy(SendBuf, &pCount, sizeof(SDHP_CHARLISTCOUNT));
+	//	wsjServer.DataSend(aIndex, (char*)SendBuf, lOfs);
 }
 #endif
 
@@ -3392,7 +3264,7 @@ void DGGetPetItemInfo(BYTE *lpRecv, int aIndex)
 	lpItem = (Request_PetItem_Info*)(lpRecv + MsgOfs);
 
 	int level = 0;
-	int exp = 0;
+	__int64 exp = 0i64;
 
 	for (int n = 0; n < lpHeader->nCount; n++)
 	{
@@ -4852,8 +4724,8 @@ void GDReqQuestExpInfoLoad(PMSG_REQ_QUESTEXP_INFO *lpMsg, int aIndex)
 
 	pMsg.iUserIndex = lpMsg->iUserIndex;
 
-	bool iRet = 0;
-	iRet = g_QuestExpDBSet.DSDB_QueryQuestInfoLoad(lpMsg->szCharName, QuestInfo, &pMsg);
+	//bool iRet = 0;
+	int iRet = g_QuestExpDBSet.DSDB_QueryQuestInfoLoad(lpMsg->szCharName, QuestInfo, &pMsg);
 
 	if (iRet != 0)
 	{
@@ -5510,32 +5382,55 @@ void GDReqMuunInvenSubEquipOpen(SDHP_REQ_DBMUUN_INVEN_SUB_EQUIP_OPEN *lpMsg, sho
 	pMsg.aIndex = lpMsg->aIndex;
 	wsjServer.DataSend(aIndex, (char *)&pMsg.h, sizeof(pMsg));
 }
-
-void GDReqMuunPeriodInfoSelect(_tagSDHP_REQ_MUUN_PERIOD_INFO_SELECT *lpMsg, __int16 aIndex)//ok
-{
-	int size;
-	BYTE dst; 
-	dst = 0;
+void GDReqMuunPeriodInfoSelect(_tagSDHP_REQ_MUUN_PERIOD_INFO_SELECT *lpMsg, int aIndex)
+{ 
+	_stMuunPeriodInfoList MuunListInfo[MAX_MUUN_INVENTORY_SLOT];
+	BYTE btListCnt = 0; 
+	bool Result = g_CMuunSystemDBSet.SelectMuunPeriodInfo(lpMsg->Name, MuunListInfo, &btListCnt);
+	if 
+		(Result == false) 
+	{ 
+		return;
+	}    
 	_tagSDHP_ANS_MUUN_PERIOD_INFO_SELECT pMsg;
-	BYTE btListCnt;
-	_stMuunPeriodInfoList MuunPeriodItemList[102];
-	btListCnt = 0;
-	int bResult = g_CMuunSystemDBSet.SelectMuunPeriodInfo(lpMsg->Name, MuunPeriodItemList, &btListCnt);
-
-	if (bResult)
-	{
-		memcpy((char *)&dst, &MuunPeriodItemList, 12 * btListCnt);
-		size = 12 * btListCnt + 10;
-		pMsg.btResult = bResult;
-		pMsg.aIndex = lpMsg->aIndex;
-		pMsg.btCnt = btListCnt;
-		//pMsg.h.set((LPBYTE)&pMsg.h.c, 0x4E, 0x20, size);
-		pMsg.h.set((LPBYTE)&pMsg,0x4E, 0x20, size);
-		memcpy(&dst, &pMsg.h.c, 0xAu);
-		wsjServer.DataSend(aIndex, (char *)&dst, size);
-		//LogAddTD("[GDReqMuunPeriodInfoSelect][%s] %d %u %d %d", lpMsg->Name, MuunPeriodItemList->wItemType, MuunPeriodItemList->dwSerial, MuunPeriodItemList->lItemExpireDate, size);
-	}
+	BYTE send[4104];  
+	int size = sizeof(pMsg);  
+	memcpy(&send[size], MuunListInfo, (sizeof(_stMuunPeriodInfoList) * btListCnt));  
+	size += (sizeof(_stMuunPeriodInfoList) * btListCnt) + sizeof(_tagSDHP_ANS_MUUN_PERIOD_INFO_SELECT);
+	pMsg.btResult = Result;   
+	pMsg.aIndex = lpMsg->aIndex; 
+	pMsg.btCnt = btListCnt;  
+	pMsg.h.set(0x4E, 0x20, size);  
+	memcpy(send, &pMsg, sizeof(pMsg)); 
+	wsjServer.DataSend(aIndex, (char*)send, size);
 }
+
+
+//void GDReqMuunPeriodInfoSelect(_tagSDHP_REQ_MUUN_PERIOD_INFO_SELECT *lpMsg, __int16 aIndex)//ok
+//{
+//	int size;
+//	BYTE dst; 
+//	dst = 0;
+//	_tagSDHP_ANS_MUUN_PERIOD_INFO_SELECT pMsg;
+//	BYTE btListCnt;
+//	_stMuunPeriodInfoList MuunPeriodItemList[102];
+//	btListCnt = 0;
+//	int bResult = g_CMuunSystemDBSet.SelectMuunPeriodInfo(lpMsg->Name, MuunPeriodItemList, &btListCnt);
+//
+//	if (bResult)
+//	{
+//		memcpy((char *)&dst, &MuunPeriodItemList, 12 * btListCnt);
+//		size = 12 * btListCnt + 10;
+//		pMsg.btResult = bResult;
+//		pMsg.aIndex = lpMsg->aIndex;
+//		pMsg.btCnt = btListCnt;
+//		//pMsg.h.set((LPBYTE)&pMsg.h.c, 0x4E, 0x20, size);
+//		pMsg.h.set((LPBYTE)&pMsg,0x4E, 0x20, size);
+//		memcpy(&dst, &pMsg.h.c, 0xAu);
+//		wsjServer.DataSend(aIndex, (char *)&dst, size);
+//		//LogAddTD("[GDReqMuunPeriodInfoSelect][%s] %d %u %d %d", lpMsg->Name, MuunPeriodItemList->wItemType, MuunPeriodItemList->dwSerial, MuunPeriodItemList->lItemExpireDate, size);
+//	}
+//}
 
 void GDReqMuunPeriodInfoInsert(_tagSDHP_REQ_MUUN_PERIOD_INFO_INSERT *lpMsg)//ok
 {
@@ -5573,7 +5468,6 @@ void GDReqMuunConditonInfoSave(_tagSDHP_REQ_MUUN_CONDITION_INFO_SAVE *lpMsg)
 void GDReqMuunConditonInfoLoad(_tagSDHP_REQ_MUUN_CONDITION_INFO_LOAD *lpMsg, short aIndex)//ok
 {
 	_tagSDHP_ANS_MUUN_CONDITION_INFO_LOAD pMsg;
-	char btListCnt; 
 	_stMuunConditionInfoList MuunConditionInfoList[2];
 
 	int Result = g_CMuunSystemDBSet.LoadMuunConditionInfo(lpMsg->Name, MuunConditionInfoList);
@@ -5842,25 +5736,27 @@ void GDReqInsertJewelUpgradeInfo(_tagPMSG_REQ_JEWEL_UPGRADE_INFO_INSERT_DS *lpMs
 
 void GDReqPeriodBuffInsert(BYTE *lpRecv)
 {
-	int iReturnCode;
-	PMSG_REQ_PERIODBUFF_INSERT *lpMsg;
+	//int iReturnCode; // [esp+D0h] [ebp-14h]
+	PMSG_REQ_PERIODBUFF_INSERT *lpMsg; // [esp+DCh] [ebp-8h]
 
-	//lpMsg = (PMSG_REQ_PERIODBUFF_INSERT *)lpRecv; 
-
-	iReturnCode = g_PeriodBuffDBSet.Insert(//need to check
-		//pMsgSend.wMapSvrNum = lpMsg->wMapSvrNum;
+	lpMsg = (PMSG_REQ_PERIODBUFF_INSERT *)lpRecv;
+	/*lpRecv->szCharacterName, 
+		lpRecv->wBuffIndex, 
+		lpRecv->btEffectType1, 
+		lpRecv->btEffectType2, 
+		lpRecv->dwDuration, 
+		lpRecv->lExpireDate*/
+	//char *szCharacterName, unsigned __int16 wBuffIndex, char btEffectType1, char btEffectType2, unsigned int dwDuration, int lExpireDate
+	int iReturnCode = g_PeriodBuffDBSet.Insert(
 		lpMsg->szCharacterName,
 		lpMsg->wBuffIndex,
 		lpMsg->btEffectType1,
 		lpMsg->btEffectType2,
 		lpMsg->dwDuration,
 		lpMsg->lExpireDate);
-	//lpRecv + 6, *(lpRecv + 9), lpRecv[20], lpRecv[21], *(lpRecv + 6), *(lpRecv + 7));
-	//lpRecv->szCharacterName, lpRecv->wBuffIndex, lpRecv->btEffectType1, lpRecv->btEffectType2, lpRecv->dwDuration, lpRecv->lExpireDate);
 	if (iReturnCode < 0)
-		LogAddTD("[PeriodBuff][Error] [Insert] Name[%s] BuffIndex[%d] ReturnCode[%d] ", lpMsg->szCharacterName, lpMsg->wBuffIndex, iReturnCode);
+		LogAddTD("[PeriodBuff][Error] [Insert] Name[%s] BuffIndex[%d] ReturnCode[%d] ",lpMsg->szCharacterName,lpMsg->wBuffIndex,iReturnCode);
 }
-
 //----- (00459150) --------------------------------------------------------
 void GDReqPeriodBuffDelete(BYTE *lpRecv)
 {

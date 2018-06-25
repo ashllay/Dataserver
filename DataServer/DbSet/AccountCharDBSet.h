@@ -25,6 +25,7 @@ typedef struct
 	BYTE MoveCnt;
 }AccountCharacterInfo, *LPAccountCharacterInfo;
 
+
 class CAccountCharDBSet  
 {
 public:

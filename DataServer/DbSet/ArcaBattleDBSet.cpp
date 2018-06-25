@@ -20,23 +20,12 @@ BOOL CArcaBattleDBSet::Connect()
 
 int CArcaBattleDBSet::DBSelectArcaBattleGuildJoin(char *szName, int *iResult)
 {
-	char *v3; // eax
-	int result; // eax
-	int v5; // [esp+14h] [ebp-134h]
-	int v6; // [esp+20h] [ebp-128h]
-	int v7; // [esp+2Ch] [ebp-11Ch]
-	__int16 sqlReturn; // [esp+104h] [ebp-44h]
-	CString QueryStr; // [esp+110h] [ebp-38h]
-	int iReturnCode; // [esp+11Ch] [ebp-2Ch]
-	int iItemCount; // [esp+128h] [ebp-20h]
-					// [esp+134h] [ebp-14h]
-	int v13; // [esp+144h] [ebp-4h]
+	int result;
+	__int16 sqlReturn;
+	CString QueryStr;
+	int iReturnCode = 0;
+	int iItemCount = 0;
 
-
-	iItemCount = 0;
-	iReturnCode = 0;
-
-	v13 = 0;
 	QueryStr.Format(
 		"WZ_ArcaBattleGuildSelect '%s'",
 		szName);
@@ -52,14 +41,11 @@ int CArcaBattleDBSet::DBSelectArcaBattleGuildJoin(char *szName, int *iResult)
 				this->m_DBQuery.Clear();
 				LogAddTD(
 					"error-L3 : [ArcaBattle] GuildInsert #3 %s %d", __FILE__, __LINE__);
-				v7 = 0;
-				v13 = -1;
-				result = v7;
+				result = 0;
 			}
 			else
 			{
 				this->m_DBQuery.Clear();
-				v13 = -1;
 				result = 1;
 			}
 		}
@@ -69,9 +55,7 @@ int CArcaBattleDBSet::DBSelectArcaBattleGuildJoin(char *szName, int *iResult)
 			LogAddTD(
 				"error-L3 : [ArcaBattle] GuildSelect #2 %d %s %d",
 				sqlReturn, __FILE__, __LINE__);
-			v6 = 0;
-			v13 = -1;
-			result = v6;
+			result = 0;
 		}
 	}
 	else
@@ -79,9 +63,7 @@ int CArcaBattleDBSet::DBSelectArcaBattleGuildJoin(char *szName, int *iResult)
 		this->m_DBQuery.Clear();
 		LogAddTD(
 			"error-L3 : [ArcaBattle] GuildSelect #1 %s %d", __FILE__, __LINE__);
-		v5 = 0;
-		v13 = -1;
-		result = v5;
+		result = 0;
 	}
 	return result;
 }
@@ -788,18 +770,10 @@ int CArcaBattleDBSet::DBInsertArcaBattleRegMark(char *szGuildName, unsigned int 
 
 int CArcaBattleDBSet::DBSelectArcaBattleTopRank(_stArcaBattleMarkTopRank *pArcaBattleMarkTopRank, char *btGuildCnt)
 {
-	char *v3; // eax
-	int result; // eax
-	int v5; // [esp+14h] [ebp-11Ch]
-	int iCnt; // [esp+F8h] [ebp-38h]
-	__int16 sqlReturn; // [esp+104h] [ebp-2Ch]
-	CString QueryStr; // [esp+110h] [ebp-20h]
-					  // [esp+11Ch] [ebp-14h]
-	int v10; // [esp+12Ch] [ebp-4h]
+	int result;
+	__int16 sqlReturn;
+	CString QueryStr;
 
-
-
-	v10 = 0;
 	QueryStr.Format("WZ_ArcaBattleTopRankSelect");
 	
 	if (this->m_DBQuery.Exec(QueryStr))
@@ -808,12 +782,11 @@ int CArcaBattleDBSet::DBSelectArcaBattleTopRank(_stArcaBattleMarkTopRank *pArcaB
 		if (sqlReturn == 100)
 		{
 			this->m_DBQuery.Clear();
-			v10 = -1;
 			result = 0;
 		}
 		else
 		{
-			iCnt = 0;
+			int iCnt = 0;
 			while (sqlReturn != 100)
 			{
 				if (sqlReturn == -1)
@@ -827,18 +800,14 @@ int CArcaBattleDBSet::DBSelectArcaBattleTopRank(_stArcaBattleMarkTopRank *pArcaB
 			}
 			*btGuildCnt = iCnt;
 			this->m_DBQuery.Clear();
-			v10 = -1;
 			result = 1;
 		}
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
-		LogAddTD(
-			"error-L3 : [ArcaBattle] DBSelectArcaBattleTopRank #1 %s %d", __FILE__, __LINE__);
-		v5 = 0;
-		v10 = -1;
-		result = v5;
+		LogAddTD("error-L3 : [ArcaBattle] DBSelectArcaBattleTopRank #1 %s %d", __FILE__, __LINE__);
+		result = 0;
 	}
 	return result;
 }
@@ -906,23 +875,12 @@ int CArcaBattleDBSet::DBSelectArcaBattleMyGuildRank(unsigned int dwGuildNumber, 
 //----- (0042BCE0) --------------------------------------------------------
 int CArcaBattleDBSet::DBDeleteArcaBattleMarkReg(unsigned int dwGuildNumber)
 {
-	char *v2; // eax
-	int result; // eax
-	int v4; // [esp+14h] [ebp-11Ch]
-	int v5; // [esp+20h] [ebp-110h]
-	int v6; // [esp+2Ch] [ebp-104h]
-	int iResult; // [esp+F8h] [ebp-38h]
-	__int16 sqlReturn; // [esp+104h] [ebp-2Ch]
-	CString QueryStr; // [esp+110h] [ebp-20h]
-					  // [esp+11Ch] [ebp-14h]
-	int v11; // [esp+12Ch] [ebp-4h]
+	int result;
+	int iResult;
+	__int16 sqlReturn;
+	CString QueryStr;
 
-
-
-	v11 = 0;
-	QueryStr.Format(
-		"WZ_ArcaBattleMarkRegDel %d",
-		dwGuildNumber);
+	QueryStr.Format("WZ_ArcaBattleMarkRegDel %d",dwGuildNumber);
 	
 	if (this->m_DBQuery.Exec(QueryStr))
 	{
@@ -931,39 +889,29 @@ int CArcaBattleDBSet::DBDeleteArcaBattleMarkReg(unsigned int dwGuildNumber)
 		{
 			iResult = this->m_DBQuery.GetInt(1);
 			if (iResult == -1)
-				LogAddTD(
-					"error-L3 : [ArcaBattle] DBDeleteArcaBattleMarkReg #3 %d %s %d",
+				LogAddTD("error-L3 : [ArcaBattle] DBDeleteArcaBattleMarkReg #3 %d %s %d",
 					sqlReturn, __FILE__, __LINE__);
 			this->m_DBQuery.Clear();
-			v6 = 1;
-			v11 = -1;
-			result = v6;
+			result = 1;
 		}
 		else
 		{
 			this->m_DBQuery.Clear();
-			LogAddTD(
-				"error-L3 : [ArcaBattle] DBDeleteArcaBattleMarkReg #2 %d %s %d",
+			LogAddTD("error-L3 : [ArcaBattle] DBDeleteArcaBattleMarkReg #2 %d %s %d",
 				sqlReturn, __FILE__, __LINE__);
-			v5 = 0;
-			v11 = -1;
-			result = v5;
+			result = 0;
 		}
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
-		LogAddTD(
-			"error-L3 : [ArcaBattle] DBDeleteArcaBattleMarkReg #1 %s %d", __FILE__, __LINE__);
-		v4 = 0;
-		v11 = -1;
-		result = v4;
+		LogAddTD("error-L3 : [ArcaBattle] DBDeleteArcaBattleMarkReg #1 %s %d", __FILE__, __LINE__);
+		result = 0;
 	}
 	return result;
 }
-// 5CD800: using guessed type int `CArcaBattleDBSet::DBDeleteArcaBattleMarkReg'::`2'::__LINE__Var;
 
-//----- (0042BF00) --------------------------------------------------------
+
 void CArcaBattleDBSet::DBDeleteAllArcaBattleGuildReg()
 {
 	CString QueryStr;
@@ -983,14 +931,11 @@ void CArcaBattleDBSet::DBDeleteAllArcaBattleGuildReg()
 		v4 = -1;
 	}
 }
-// 5CD804: using guessed type int `CArcaBattleDBSet::DBDeleteAllArcaBattleGuildReg'::`2'::__LINE__Var;
 
-//----- (0042C030) --------------------------------------------------------
+
 void CArcaBattleDBSet::DBDeleteArcaBattleGuildReg()
 {
 	CString QueryStr;
-	int v6; 
-	v6 = 0;
 
 	QueryStr.Format("delete T_ARCA_BATTLE_MEMBER_JOIN_INFO");
 	
@@ -1008,65 +953,51 @@ void CArcaBattleDBSet::DBDeleteArcaBattleGuildReg()
 			if (this->m_DBQuery.Exec(QueryStr))
 			{
 				this->m_DBQuery.Clear();
-				v6 = -1;
 			}
 			else
 			{
 				this->m_DBQuery.Clear();
-				LogAddTD(
-					"error-L3 : [ArcaBattle] DBDeleteArcaBattleGuildReg #3 %s %d", __FILE__, __LINE__);
-				v6 = -1;
+				LogAddTD("error-L3 : [ArcaBattle] DBDeleteArcaBattleGuildReg #3 %s %d", __FILE__, __LINE__);
 			}
 		}
 		else
 		{
 			this->m_DBQuery.Clear();
-			LogAddTD(
-				"error-L3 : [ArcaBattle] DBDeleteArcaBattleGuildReg #2 %s %d", __FILE__, __LINE__);
-			v6 = -1;
+			LogAddTD("error-L3 : [ArcaBattle] DBDeleteArcaBattleGuildReg #2 %s %d", __FILE__, __LINE__);
 		}
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
-		LogAddTD(
-			"error-L3 : [ArcaBattle] DBDeleteArcaBattleGuildReg #1 %s %d", __FILE__, __LINE__);
-		v6 = -1;
+		LogAddTD("error-L3 : [ArcaBattle] DBDeleteArcaBattleGuildReg #1 %s %d", __FILE__, __LINE__);
 	}
 }
-// 5CD808: using guessed type int `CArcaBattleDBSet::DBDeleteArcaBattleGuildReg'::`2'::__LINE__Var;
 
-//----- (0042C260) --------------------------------------------------------
+
 void CArcaBattleDBSet::DBUpdateArcaBattleGuildReg(BYTE *lpRecv, int aIndex)
 {
 	CString QueryStr;
 	_tagPMSG_REQ_AB_MARK_REG_UPDATE_DS *lpMsg;
-	int v7;
 	lpMsg = (_tagPMSG_REQ_AB_MARK_REG_UPDATE_DS *)lpRecv;
 
-	v7 = 0;
+
 	QueryStr.Format("UPDATE T_ARCA_BATTLE_GUILDMARK_REG SET MarkCnt = %d WHERE G_Number = %d",lpMsg->dwMarkCnt,lpMsg->dwGuildNum);
 	
 	if (this->m_DBQuery.Exec(QueryStr))
 	{
 		this->m_DBQuery.Clear();
-		v7 = -1;
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
-		LogAddTD(
-			"error-L3 : [ArcaBattle] DBDeleteArcaBattleGuildReg #1 %s %d", __FILE__, __LINE__);
-		v7 = -1;
+		LogAddTD("error-L3 : [ArcaBattle] DBDeleteArcaBattleGuildReg #1 %s %d", __FILE__, __LINE__);
 	}
 }
-// 5CD80C: using guessed type int `CArcaBattleDBSet::DBUpdateArcaBattleGuildReg'::`2'::__LINE__Var;
 
-//----- (0042C3B0) --------------------------------------------------------
+
 void CArcaBattleDBSet::DBSelectArcaBattleAllGuildMark(_stABAllGuildMark *pABAllGuildMark, int *iGuildCnt)
 {
 	SQLRETURN i; // [esp+D4h] [ebp-FE4h]
-	char __t;
 	CString QueryStr;
 	_stABAllGuildMark _stABAllGuildMark[250];
 
@@ -1096,7 +1027,7 @@ void CArcaBattleDBSet::DBSelectArcaBattleAllGuildMark(_stABAllGuildMark *pABAllG
 
 int CArcaBattleDBSet::DBSelectABAllJoinUser(_stABJoinUserInfoDS *pABJoinUserInfo, char *btUserCnt)
 {
-	int result; // eax
+	int result;
 	SQLRETURN sqlRet;
 	CString szQuery;
 	int iCnt = 0;

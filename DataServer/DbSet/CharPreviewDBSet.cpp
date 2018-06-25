@@ -30,7 +30,7 @@ BOOL CCharPreviewDBSet::Conenect()
 
 	return TRUE;
 }
-int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int& _level, int& _class, BYTE *Inventory, BYTE& _ctlcode, BYTE& _dbverstion, char &_pkLevel, BYTE& _btGuildStatus)
+int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int *_level, int *_class, BYTE *Inventory, BYTE *_ctlcode, BYTE *_dbverstion, BYTE *_pkLevel, BYTE *_btGuildStatus)
 {
 	int nRet;
 	int dbverstion;
@@ -53,9 +53,9 @@ int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int& _level, int& _c
 		return 0;
 	}
 	this->m_DBQuery.GetStr("Name", Name);
-	_level = this->m_DBQuery.GetInt("cLevel");
-	_class = this->m_DBQuery.GetInt("Class");
-	_pkLevel = this->m_DBQuery.GetInt("PkLevel");
+	*_level = this->m_DBQuery.GetInt("cLevel");
+	*_class = this->m_DBQuery.GetInt("Class");
+	*_pkLevel = this->m_DBQuery.GetInt("PkLevel");
 	//ctlcode = this->m_DBQuery.GetInt("CtlCode");
 	//if (ctlcode < 0)
 	//	LOBYTE(ctlcode) = 0;
@@ -93,7 +93,7 @@ int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int& _level, int& _c
 	this->m_DBQuery.Clear();
 	qSql.Format("SELECT G_Status FROM GuildMember WHERE Name='%s'", Name);
 
-	_btGuildStatus = 0xFF;
+	*_btGuildStatus = 0xFF;
 
 	if (m_DBQuery.Exec(qSql) == TRUE)
 	{
@@ -102,7 +102,7 @@ int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int& _level, int& _c
 		}
 		else
 		{
-			_btGuildStatus = m_DBQuery.GetInt("G_Status");
+			*_btGuildStatus = m_DBQuery.GetInt("G_Status");
 		}
 	}
 
@@ -197,7 +197,7 @@ int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int& _level, int& _c
 //	return TRUE;
 //}
 
-BOOL CCharPreviewDBSet::GetRealNameAndServerCode(char *szUBFName, char *szRealName, int *ServerCode, int IsUBFServer)
+BOOL CCharPreviewDBSet::GetRealNameAndServerCode(char *szUBFName, char *szRealName, WORD *ServerCode, int IsUBFServer)
 {
 	int result;
 	__int16 sqlReturn;

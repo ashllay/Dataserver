@@ -90,7 +90,7 @@ BOOL CMuunSystemDBSet::MuunInvenSubEquipOpen(char *AccountId, char *Name)
 }
 
 
-BOOL CMuunSystemDBSet::SelectMuunPeriodInfo(char *szName, _stMuunPeriodInfoList *MuunPeriodInfoList, BYTE *btListCnt)
+bool CMuunSystemDBSet::SelectMuunPeriodInfo(char *szName, _stMuunPeriodInfoList *MuunPeriodInfoList, BYTE *btListCnt)
 {
 	int result;
 	__int16 sqlRetrun;

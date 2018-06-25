@@ -267,17 +267,25 @@ typedef struct
 	PBMSG_HEAD	h;
 	//int			UserNumber;	// 유저 절대 번호 
 	char		Id[MAX_IDSTRING];
-	short		Number;	// 게임 서버 유저번호
+	WORD		Number;	// 게임 서버 유저번호
 	int			IsUnityBattleFiledServer;//s12
 } SDHP_GETCHARLIST, *LPSDHP_GETCHARLIST;
+//struct SDHP_GETCHARLIST_RECV 
+//{
+//	PBMSG_HEAD header;    // C1:01    
+//	char Account[10];  
+//	WORD Index;  
+//	int IsUnityBattleFiledServer;
+//};
+
 
 //----------------------------------------------------------------------------
 // 캐릭터 리스트 카운트  (2바이트 크기를 사용)
 //----------------------------------------------------------------------------
 typedef struct
 {
-	PWMSG_HEAD h;
-	short Number;
+	PWMSG_HEAD header;    // C1:01   
+	WORD Index;
 	BYTE Count;
 	int DbNumber;
 	BYTE GenerableClass;
@@ -297,6 +305,19 @@ typedef struct
 	//	BYTE		ExtendedWarehouseCount;
 } SDHP_CHARLISTCOUNT, *LPSDHP_CHARLISTCOUNT;
 
+struct SDHP_CHARLISTCOUNT_SEND 
+{
+	PWMSG_HEAD header;    // C1:01  
+	WORD Index;  
+	BYTE Count;  
+	int DbNumber;  
+	BYTE GenerableClass;  
+	char AccountId[11]; 
+	BYTE MoveCnt;  
+	BYTE CharacterSlotCount;  
+	BYTE ExtendedWarehouseCount;
+};
+
 //----------------------------------------------------------------------------
 // [0x02] 계정 인증 요청시 캐릭터 정보(카운터 만큼 반복됨)
 // [0xF3][0x00]
@@ -313,7 +334,7 @@ typedef struct
 	BYTE dbInventory[48];
 	BYTE DbVersion;
 	BYTE btGuildStatus;
-	char PK_Level;
+	BYTE PK_Level;
 	//BYTE Index;
 	//char Name[MAX_IDSTRING];
 	//char UnityBFOfRealName[MAX_IDSTRING];
@@ -1386,7 +1407,7 @@ typedef struct
 	int     nSerial;		// 아이템 시리얼
 #endif // MODIFY_ITEM_SERIAL_EXPAND_20080227
 	BYTE	Level;			// 아이템 레벨
-	int		Exp;			// 아이템 경험치
+	__int64		Exp;			// 아이템 경험치
 }Recv_PetItem_Info, *LPRecv_PetItem_Info;
 
 typedef struct
@@ -4297,7 +4318,7 @@ struct _tagSDHP_REQ_MUUN_PERIOD_INFO_SELECT
 {
 	PBMSG_HEAD2 h;
 	char Name[11];
-	short aIndex;
+	WORD aIndex;
 };
 /* 1072 */
 struct _tagSDHP_REQ_MUUN_PERIOD_INFO_INSERT
@@ -4401,19 +4422,7 @@ struct _tagSDHP_ANS_MUUN_CONDITION_INFO_LOAD
 	_stMuunConditionInfoList MuunConditionInfoList[2];
 };
 
-/* 665 */
-struct _stMuunPeriodInfoList
-{
-	_stMuunPeriodInfoList()
-	{
-		this->wItemType = 0;
-		this->dwSerial = 0;
-		this->lItemExpireDate = 0;
-	}
-	unsigned __int16 wItemType;
-	unsigned int dwSerial;
-	int lItemExpireDate;
-};
+
 /* 953 */
 struct SDHP_REQ_SET_CHARACTER_SLOT_COUNT
 {

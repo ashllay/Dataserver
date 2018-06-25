@@ -3776,6 +3776,7 @@ enum
 #define MAX_INVENTORYMAP			8*8
 #define MAX_INVENTORY				(MAX_EQUIPMENT + MAX_INVENTORYMAP)		// (8x8)+12 인벤토리 최대 개수
 #define MAX_TRADEITEM				32				// (8x4) 
+#define INVENTORY_EXT4_SIZE			204
 
 #ifdef PERSONAL_SHOP_20040113		
 #define MAX_PSHOPITEM				8*4		// (8x4) 개인상점창

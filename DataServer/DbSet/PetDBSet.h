@@ -19,8 +19,8 @@ public:
 	virtual ~CPetDBSet();
 
 	BOOL Connect();
-	BOOL LoadPetInfo(DWORD number, int& Level, int& Exp);
-	BOOL SavePetInfo(DWORD number, int Level, int Exp);
+	BOOL LoadPetInfo(DWORD number, int& Level, __int64& Exp);
+	BOOL SavePetInfo(DWORD number, int Level, __int64 Exp);
 	BOOL CreatePetItemInfo(DWORD serial, int Level, __int64 Exp);
 	BOOL UBFCopyPetInfo(unsigned int number, unsigned __int16 ServerCode); // idb
 	BOOL LoadPetInfoForUBF(unsigned int number, int *Level, __int64 *Exp, unsigned __int16 SeverCode); // idb

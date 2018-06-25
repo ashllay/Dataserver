@@ -207,29 +207,20 @@ void ChaosCastleFinalDBSet::GetPermission(char *Name, int nCCFType, int *nReturn
 //----- (004320B0) --------------------------------------------------------
 int ChaosCastleFinalDBSet::Save_ChaosCastle_KillPoint(char *szName, int nPoint, int CastleIndex, int *SubResult, int *CurrntPoint, int *TotalPoint)
 {
-	int result; // eax
-	int v8; // eax
-	unsigned int v9; // eax
-	int v11; // [esp+14h] [ebp-128h]
-	int v12; // [esp+20h] [ebp-11Ch]
-	__int16 sqlReturn; // [esp+F8h] [ebp-44h]
-	CString qSql; // [esp+104h] [ebp-38h]
-	char szCharName[11]; // [esp+110h] [ebp-2Ch]
-	int v17; // [esp+138h] [ebp-4h]
-
+	int result;
+	__int16 sqlReturn; 
+	CString qSql;
+	char szCharName[11];
 
 	if (this->m_DBQuery.IsConnected())
 	{
 		szCharName[10] = 0;
 		memcpy(szCharName, szName, 0xAu);
-		//strlen(szCharName);
+
 		if (strlen(szCharName) && (strlen(szCharName) <= 0xA))
 		{
-			v17 = 0;
-			qSql.Format("EXEC WZ_ChaosCastle_SaveKillPoint '%s', %d ,%d ",
-				szName,
-				nPoint,
-				CastleIndex);
+			qSql.Format("EXEC WZ_ChaosCastle_SaveKillPoint '%s', %d ,%d ",szName,nPoint,CastleIndex);
+
 			if (this->m_DBQuery.Exec(qSql))
 			{
 				sqlReturn = this->m_DBQuery.Fetch();
@@ -239,42 +230,28 @@ int ChaosCastleFinalDBSet::Save_ChaosCastle_KillPoint(char *szName, int nPoint, 
 					*CurrntPoint = this->m_DBQuery.GetInt("CurrentPoint");
 					*TotalPoint = this->m_DBQuery.GetInt("TotalPoint");
 					this->m_DBQuery.Clear();
-					v17 = -1;
 					result = 1;
 				}
 				else
 				{
-					LogAddTD(
-						"Error-L3 [ChaosCastleFinalDBSet][Save_ChaosCastle_KillPoint] [%s] nPoint:%d CastleIndex: %d Return %d,%s,%d ",
-						szName,
-						nPoint,
-						CastleIndex,
-						sqlReturn, __FILE__, __LINE__);
+					LogAddTD("Error-L3 [ChaosCastleFinalDBSet][Save_ChaosCastle_KillPoint] [%s] nPoint:%d CastleIndex: %d Return %d,%s,%d ",
+						szName,nPoint,CastleIndex,sqlReturn, __FILE__, __LINE__);
 					this->m_DBQuery.Clear();
-					v12 = 0;
-					v17 = -1;
-					result = v12;
+
+					result = 0;
 				}
 			}
 			else
 			{
-				LogAddTD(
-					"Error-L3 [ChaosCastleFinalDBSet][Save_ChaosCastle_KillPoint] [%s] KillPoint:%d CastleIndex :%d ",
-					szCharName,
-					nPoint,
-					CastleIndex);
+				LogAddTD("Error-L3 [ChaosCastleFinalDBSet][Save_ChaosCastle_KillPoint] [%s] KillPoint:%d CastleIndex :%d ",
+					szCharName,nPoint,CastleIndex);
 				this->m_DBQuery.Clear();
-				v11 = 0;
-				v17 = -1;
-				result = v11;
+				result = 0;
 			}
 		}
 		else
 		{
-			LogAddC(
-				2,
-				"%s] ؎֥ ߡׯ %s %d",
-				szCharName, __FILE__, __LINE__);
+			LogAddC(2,"%s] ؎֥ ߡׯ %s %d",szCharName, __FILE__, __LINE__);
 			result = 0;
 		}
 	}
@@ -294,66 +271,41 @@ int ChaosCastleFinalDBSet::Save_ChaosCastle_KillPoint(char *szName, int nPoint, 
 int ChaosCastleFinalDBSet::GetUBFAccountUserInfo(char *szAccountID, char *szName, int nServerCode, int IsUnityBattleFieldServer, PMSG_ANS_UBF_ACCOUNT_USERINFO *pMsg)
 {
 	int result; // eax
-	int v7; // eax
-	unsigned int v8; // eax
-	int v9; // eax
-	unsigned int v10; // eax
-	int v12; // [esp+14h] [ebp-148h]
-	int v13; // [esp+20h] [ebp-13Ch]
-	int v14; // [esp+2Ch] [ebp-130h]
-	__int16 sqlReturn; // [esp+104h] [ebp-58h]
-	CString qSql; // [esp+110h] [ebp-4Ch]
-	char szCharName[11]; // [esp+11Ch] [ebp-40h]
-	char szId[11]; // [esp+130h] [ebp-2Ch]
-	int v20; // [esp+158h] [ebp-4h]
+	__int16 sqlReturn;
+	CString qSql;
+	char szCharName[11]; 
+	char szId[11];
 
 
 	if (this->m_DBQuery.IsConnected())
 	{
 		szId[10] = 0;
 		memcpy(szId, szAccountID, 0xAu);
-		//strlen(szId);
+
 		if (strlen(szId) && (strlen(szId) <= 0xA))
 		{
 			szCharName[10] = 0;
 			memcpy(szCharName, szName, 0xAu);
-			//strlen(szCharName);
 			if (strlen(szCharName) && (strlen(szCharName) <= 0xA))
 			{
-				v20 = 0;
 				qSql.Format("EXEC WZ_UnityBattleFieldAccountUserInfoSelect_r '%s', '%s', %d, %d",
-					szAccountID,
-					szName,
-					nServerCode,
-					IsUnityBattleFieldServer);
+					szAccountID,szName,nServerCode,IsUnityBattleFieldServer);
 				if (this->m_DBQuery.Exec(qSql))
 				{
 					sqlReturn = this->m_DBQuery.Fetch();
 					if (sqlReturn == 100)
 					{
-						LogAddTD(
-							"[CCF][WZ_UnityBattleFieldAccountUserInfoSelect_r] No Result Not Error [%s][%s]ServerCode:%d Return %d,%s,%d ",
-							szId,
-							szName,
-							nServerCode,
-							sqlReturn, __FILE__, __LINE__);
+						LogAddTD("[CCF][WZ_UnityBattleFieldAccountUserInfoSelect_r] No Result Not Error [%s][%s]ServerCode:%d Return %d,%s,%d ",
+							szId,szName,nServerCode,sqlReturn, __FILE__, __LINE__);
 						this->m_DBQuery.Clear();
-						v13 = 0;
-						v20 = -1;
-						result = v13;
+						result = 0;
 					}
 					else if (sqlReturn == -1)
 					{
-						LogAddTD(
-							"Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserInfoSelect_r] [%s][%s]ServerCode:%d Return %d,%s,%d ",
-							szId,
-							szName,
-							nServerCode,
-							sqlReturn, __FILE__, __LINE__);
+						LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserInfoSelect_r] [%s][%s]ServerCode:%d Return %d,%s,%d ",
+							szId,szName,nServerCode,sqlReturn, __FILE__, __LINE__);
 						this->m_DBQuery.Clear();
-						v14 = 0;
-						v20 = -1;
-						result = v14;
+						result = 0;
 					}
 					else
 					{
@@ -361,39 +313,26 @@ int ChaosCastleFinalDBSet::GetUBFAccountUserInfo(char *szAccountID, char *szName
 						pMsg->btRegisterMonth = this->m_DBQuery.GetInt("RegisterMonth");
 						pMsg->btRegisterDay = this->m_DBQuery.GetInt("RegisterDay");
 						this->m_DBQuery.Clear();
-						v20 = -1;
 						result = 1;
 					}
 				}
 				else
 				{
-					LogAddTD(
-						"Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserInfoSelect_r] [%s][%s] ServerCode:%d, ServerType:%d ",
-						szId,
-						szCharName,
-						nServerCode,
-						IsUnityBattleFieldServer);
+					LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserInfoSelect_r] [%s][%s] ServerCode:%d, ServerType:%d ",
+						szId,szCharName,nServerCode,IsUnityBattleFieldServer);
 					this->m_DBQuery.Clear();
-					v12 = 0;
-					v20 = -1;
-					result = v12;
+					result = 0;
 				}
 			}
 			else
 			{
-				LogAddC(
-					2,
-					 "%s] ؎֥ ߡׯ %s %d",
-					szCharName, __FILE__, __LINE__);
+				LogAddC(2,"%s] ؎֥ ߡׯ %s %d",szCharName, __FILE__, __LINE__);
 				result = 0;
 			}
 		}
 		else
 		{
-			LogAddC(
-				2,
-				 "%s] ؎֥ ߡׯ %s %d",
-				szId, __FILE__, __LINE__);
+			LogAddC(2,"%s] ؎֥ ߡׯ %s %d",szId, __FILE__, __LINE__);
 			result = 0;
 		}
 	}
@@ -407,33 +346,23 @@ int ChaosCastleFinalDBSet::GetUBFAccountUserInfo(char *szAccountID, char *szName
 	}
 	return result;
 }
-// 5CD8C8: using guessed type int `ChaosCastleFinalDBSet::GetUBFAccountUserInfo'::`2'::__LINE__Var;
 
-//----- (004327A0) --------------------------------------------------------
+
 int ChaosCastleFinalDBSet::RegisterUBFAccountUser(char *szAccountID, char *szName, char *szBattleName, int nServerCode, int nRegisterState, int nRegisterMonth, int nRegisterDay, char *nResult, unsigned __int16 *nLeftSec)
 {
-	int result; // eax
-	int v11; // eax
-	unsigned int v12; // eax
-	int v13; // eax
-	unsigned int v14; // eax
-	int v15; // eax
-	unsigned int v16; // eax
-	int v18; // [esp+14h] [ebp-150h]
-	int v19; // [esp+20h] [ebp-144h]
-	__int16 sqlReturn; // [esp+F8h] [ebp-6Ch]
-	CString qSql; // [esp+104h] [ebp-60h]
+	int result;
+	__int16 sqlReturn;
+	CString qSql;
 	char szUBFName[11];
 	char szCharName[11];
 	char szId[11];
-	int v26;
 
 
 	if (this->m_DBQuery.IsConnected())
 	{
 		szId[10] = 0;
 		memcpy(szId, szAccountID, 0xAu);
-		//strlen(szId);
+
 		if (strlen(szId) && (strlen(szId) <= 0xA))
 		{
 			szCharName[10] = 0;
@@ -446,14 +375,9 @@ int ChaosCastleFinalDBSet::RegisterUBFAccountUser(char *szAccountID, char *szNam
 				strlen(szUBFName);
 				if (strlen(szUBFName) && (strlen(szUBFName) <= 0xA))
 				{
-					v26 = 0;
+
 					qSql.Format("EXEC WZ_UnityBattleFieldAccountUserAdd_r '%s', '%s', %d, %d, %d, %d",
-						szId,
-						szCharName,
-						nServerCode,
-						nRegisterState,
-						nRegisterMonth,
-						nRegisterDay);
+						szId,szCharName,nServerCode,nRegisterState,nRegisterMonth,nRegisterDay);
 					if (this->m_DBQuery.Exec(qSql))
 					{
 						sqlReturn = this->m_DBQuery.Fetch();
@@ -462,20 +386,14 @@ int ChaosCastleFinalDBSet::RegisterUBFAccountUser(char *szAccountID, char *szNam
 							*nResult = this->m_DBQuery.GetInt("Result");
 							*nLeftSec = this->m_DBQuery.GetInt("Left_Second");
 							this->m_DBQuery.Clear();
-							v26 = -1;
 							result = 1;
 						}
 						else
 						{
-							LogAddTD(
-								"Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserAdd_r] [%s][%s] sqlReturn:%d,%s,%d ",
-								szId,
-								szCharName,
-								sqlReturn, __FILE__, __LINE__);
+							LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserAdd_r] [%s][%s] sqlReturn:%d,%s,%d ",
+								szId,szCharName,sqlReturn, __FILE__, __LINE__);
 							this->m_DBQuery.Clear();
-							v19 = 0;
-							v26 = -1;
-							result = v19;
+							result = 0;
 						}
 					}
 					else
@@ -483,35 +401,24 @@ int ChaosCastleFinalDBSet::RegisterUBFAccountUser(char *szAccountID, char *szNam
 						LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserAdd_r] '%s', '%s', %d, %d, %d, %d ",
 							szId,szCharName,nServerCode,nRegisterState,nRegisterMonth,nRegisterDay);
 						this->m_DBQuery.Clear();
-						v18 = 0;
-						v26 = -1;
-						result = v18;
+						result = 0;
 					}
 				}
 				else
 				{
-					LogAddC(
-						2,
-						 "%s] ؎֥ ߡׯ %s %d",
-						szUBFName, __FILE__, __LINE__);
+					LogAddC(2,"%s] ؎֥ ߡׯ %s %d",szUBFName, __FILE__, __LINE__);
 					result = 0;
 				}
 			}
 			else
 			{
-				LogAddC(
-					2,
-					 "%s] ؎֥ ߡׯ %s %d",
-					szCharName, __FILE__, __LINE__);
+				LogAddC(2, "%s] ؎֥ ߡׯ %s %d",szCharName, __FILE__, __LINE__);
 				result = 0;
 			}
 		}
 		else
 		{
-			LogAddC(
-				2,
-				 "%s] ؎֥ ߡׯ %s %d",
-				szId, __FILE__, __LINE__);
+			LogAddC(2,"%s] ؎֥ ߡׯ %s %d",szId, __FILE__, __LINE__);
 			result = 0;
 		}
 	}
@@ -524,42 +431,29 @@ int ChaosCastleFinalDBSet::RegisterUBFAccountUser(char *szAccountID, char *szNam
 	}
 	return result;
 }
-// 5CD8CC: using guessed type int `ChaosCastleFinalDBSet::RegisterUBFAccountUser'::`2'::__LINE__Var;
 
-//----- (00432B90) --------------------------------------------------------
+
 int ChaosCastleFinalDBSet::CopyUBFAccountUser(char *szAccountID, char *szName, __int16 GameServerCode, char *subResult)
 {
-	int result; // eax
-	int v6; // eax
-	unsigned int v7; // eax
-	int v8; // eax
-	unsigned int v9; // eax
-	int v11; // [esp+14h] [ebp-13Ch]
-	int v12; // [esp+20h] [ebp-130h]
-	__int16 sqlReturn; // [esp+F8h] [ebp-58h]
-	CString qSql; // [esp+104h] [ebp-4Ch]
-	char szCharName[11]; // [esp+110h] [ebp-40h]
-	char szId[11]; // [esp+124h] [ebp-2Ch]
-	int v18; // [esp+14Ch] [ebp-4h]
-
+	int result;
+	__int16 sqlReturn;
+	CString qSql; 
+	char szCharName[11];
+	char szId[11];
 
 	if (this->m_DBQuery.IsConnected())
 	{
 		szId[10] = 0;
 		memcpy(szId, szAccountID, 0xAu);
-		//strlen(szId);
 		if (strlen(szId) && (strlen(szId) <= 0xA))
 		{
 			szCharName[10] = 0;
 			memcpy(szCharName, szName, 0xAu);
-			//strlen(szCharName);
 			if (strlen(szCharName) && (strlen(szCharName) <= 0xA))
 			{
-				v18 = 0;
+
 				qSql.Format("EXEC WZ_UnityBattleFieldAccountUserDataCopy_r '%s', '%s',%d",
-					szId,
-					szCharName,
-					GameServerCode);
+					szId,szCharName,GameServerCode);
 				if (this->m_DBQuery.Exec(qSql))
 				{
 					sqlReturn = this->m_DBQuery.Fetch();
@@ -567,49 +461,33 @@ int ChaosCastleFinalDBSet::CopyUBFAccountUser(char *szAccountID, char *szName, _
 					{
 						*subResult = this->m_DBQuery.GetInt(1);
 						this->m_DBQuery.Clear();
-						v18 = -1;
 						result = 1;
 					}
 					else
 					{
 						this->m_DBQuery.Clear();
-						LogAddTD(
-							"Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserDataCopy] [%s][%s] sqlReturn:%d,%s,%d ",
-							szId,
-							szCharName,
-							sqlReturn, __FILE__, __LINE__);
-						v12 = 0;
-						v18 = -1;
-						result = v12;
+						LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserDataCopy] [%s][%s] sqlReturn:%d,%s,%d ",
+							szId,szCharName,sqlReturn, __FILE__, __LINE__);
+						result = 0;
 					}
 				}
 				else
 				{
-					LogAddTD(
-						"Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserDataCopy_r] '%s', '%s'",
-						szId,
-						szCharName);
+					LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldAccountUserDataCopy_r] '%s', '%s'",
+						szId,szCharName);
 					this->m_DBQuery.Clear();
-					v11 = 0;
-					v18 = -1;
-					result = v11;
+					result = 0;
 				}
 			}
 			else
 			{
-				LogAddC(
-					2,
-					 "%s] ؎֥ ߡׯ %s %d",
-					szCharName, __FILE__, __LINE__);
+				LogAddC(2,"%s] ؎֥ ߡׯ %s %d",szCharName, __FILE__, __LINE__);
 				result = 0;
 			}
 		}
 		else
 		{
-			LogAddC(
-				2,
-				 "%s] ؎֥ ߡׯ %s %d",
-				szId, __FILE__, __LINE__);
+			LogAddC(2, "%s] ؎֥ ߡׯ %s %d",szId, __FILE__, __LINE__);
 			result = 0;
 		}
 	}
@@ -621,9 +499,8 @@ int ChaosCastleFinalDBSet::CopyUBFAccountUser(char *szAccountID, char *szName, _
 	}
 	return result;
 }
-// 5CD8D0: using guessed type int `ChaosCastleFinalDBSet::CopyUBFAccountUser'::`2'::__LINE__Var;
 
-//----- (00432EC0) --------------------------------------------------------
+
 int ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode(char *szAccountID, char *szName, __int16 GameServerCode, char *subResult)
 {
 	int result; // eax
@@ -644,19 +521,17 @@ int ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode(char *szAccountID, ch
 	{
 		szId[10] = 0;
 		memcpy(szId, szAccountID, 0xAu);
-		//strlen(szId);
+
 		if (strlen(szId) && (strlen(szId) <= 0xA))
 		{
 			szCharName[10] = 0;
 			memcpy(szCharName, szName, 0xAu);
-			//strlen(szCharName);
+
 			if (strlen(szCharName) && (strlen(szCharName) <= 0xA))
 			{
 				v18 = 0;
 				qSql.Format("EXEC WZ_UnityBattleFieldAccountUserDataCopy_Promotion '%s', '%s',%d",
-					szId,
-					szCharName,
-					GameServerCode);
+					szId,szCharName,GameServerCode);
 				if (this->m_DBQuery.Exec(qSql))
 				{
 					sqlReturn = this->m_DBQuery.Fetch();
@@ -670,40 +545,28 @@ int ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode(char *szAccountID, ch
 					else
 					{
 						this->m_DBQuery.Clear();
-						LogAddTD(
-							"Error-L3 [CCFDBSet][WZ_UnityBattleFieldAccountUserDataCopy_Promotion] [%s][%s] sqlReturn:%d,%s,%d ",
-							szId,
-							szCharName,
-							sqlReturn, __FILE__, __LINE__);
-						v12 = 0;
-						v18 = -1;
-						result = v12;
+						LogAddTD("Error-L3 [CCFDBSet][WZ_UnityBattleFieldAccountUserDataCopy_Promotion] [%s][%s] sqlReturn:%d,%s,%d ",
+							szId,szCharName,sqlReturn, __FILE__, __LINE__);
+						result = 0;
 					}
 				}
 				else
 				{
 					LogAddTD("Error-L3 [CCFDBSet][WZ_UnityBattleFieldAccountUserDataCopy_Promotion] '%s', '%s'", szId, szCharName);
 					this->m_DBQuery.Clear();
-					v11 = 0;
-					v18 = -1;
-					result = v11;
+
+					result = 0;
 				}
 			}
 			else
 			{
-				LogAddC(
-					2,
-					 "%s] ؎֥ ߡׯ %s %d",
-					szCharName, __FILE__, __LINE__);
+				LogAddC(2,"%s] ؎֥ ߡׯ %s %d",szCharName, __FILE__, __LINE__);
 				result = 0;
 			}
 		}
 		else
 		{
-			LogAddC(
-				2,
-				 "%s] ؎֥ ߡׯ %s %d",
-				szId, __FILE__, __LINE__);
+			LogAddC(2,"%s] ؎֥ ߡׯ %s %d",szId, __FILE__, __LINE__);
 			result = 0;
 		}
 	}
@@ -715,9 +578,8 @@ int ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode(char *szAccountID, ch
 	}
 	return result;
 }
-// 5CD8D4: using guessed type int `ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode'::`2'::__LINE__Var;
 
-//----- (004331F0) --------------------------------------------------------
+
 int ChaosCastleFinalDBSet::GetWinAllRewardInfoOfUBF(char *szCharName, int nServerCode, char btServerKind, char btContentsType, PMSG_ANS_UBF_GET_REWARD *pMsg)
 {
 	int v6; // eax
