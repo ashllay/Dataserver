@@ -433,7 +433,7 @@ int ChaosCastleFinalDBSet::RegisterUBFAccountUser(char *szAccountID, char *szNam
 }
 
 
-int ChaosCastleFinalDBSet::CopyUBFAccountUser(char *szAccountID, char *szName, __int16 GameServerCode, char *subResult)
+bool ChaosCastleFinalDBSet::CopyUBFAccountUser(char *szAccountID, char *szName, __int16 GameServerCode, BYTE *subResult)
 {
 	int result;
 	__int16 sqlReturn;
@@ -501,7 +501,7 @@ int ChaosCastleFinalDBSet::CopyUBFAccountUser(char *szAccountID, char *szName, _
 }
 
 
-int ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode(char *szAccountID, char *szName, __int16 GameServerCode, char *subResult)
+bool ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode(char *szAccountID, char *szName, __int16 GameServerCode, BYTE *subResult)
 {
 	int result; // eax
 	int v6; // eax

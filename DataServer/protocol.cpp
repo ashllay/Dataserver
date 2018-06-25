@@ -1196,7 +1196,7 @@ void GetJoinInfo(LPSDHP_SERVERINFO lpMsg, short aIndex)
 }
 char GameID = '\0';
 
-#define DEV
+#define EX700CHS
 #ifdef EX700CHS
 //ex700chs
 void GJPCharacterListRequestCS(SDHP_GETCHARLIST *lpCLMsg, int aIndex)
@@ -1205,14 +1205,14 @@ void GJPCharacterListRequestCS(SDHP_GETCHARLIST *lpCLMsg, int aIndex)
 
 	AccountCharacterInfo ACInfo;
 	CString strCharId[5];
-	BYTE SendBuf[512];
+	BYTE SendBuf[520];
 	SDHP_CHARLIST pCharList;
 	SDHP_CHARLISTCOUNT pCount;
 	char szId[11];
 	char characterName[11];
 	SDHP_ANS_ACCOUNTINFO Result;
 	CharacterInfo_Struct tCharInfo;
-	MLP_ANS_MASTERLEVEL_INFO ReqInfo;
+	
 
 	memset(Result.AccountId, 0, 0xBu);
 	memcpy(Result.AccountId, lpCLMsg->Id, 0xAu);
@@ -1273,7 +1273,6 @@ void GJPCharacterListRequestCS(SDHP_GETCHARLIST *lpCLMsg, int aIndex)
 			listcount = 0;
 			for (int n = 0; n < 5; ++n)
 			{
-				//if (strCharId[n].GetLength() > 0 && strCharId[n].GetLength() <= MAX_IDSTRING)
 				if (strCharId[n].GetLength() > 0)
 				{
 					if (strCharId[n].GetLength() <= MAX_IDSTRING)
@@ -1287,18 +1286,9 @@ void GJPCharacterListRequestCS(SDHP_GETCHARLIST *lpCLMsg, int aIndex)
 						BOOL bGetPrevChar = FALSE;
 						BYTE _ctlcode = 0;
 						BYTE _dbverstion = 0;
-						char _pkLevel = 0;
+						BYTE _pkLevel = 0;
 						BYTE _btGuildStatus = 0xFF;
-						bGetPrevChar = gCharPreDBSet.GetChar(
-							characterName,
-							szId,
-							_level,
-							_class,
-							Inventory,
-							_ctlcode,
-							_dbverstion,
-							_pkLevel,
-							_btGuildStatus);
+						bGetPrevChar = gCharPreDBSet.GetChar(characterName,lpCLMsg->Id, &_level, &_class, Inventory, &_ctlcode, &_dbverstion, &_pkLevel, &_btGuildStatus);
 						if (bGetPrevChar == 1)
 						{
 							pCharList.Index = n;
@@ -1309,134 +1299,116 @@ void GJPCharacterListRequestCS(SDHP_GETCHARLIST *lpCLMsg, int aIndex)
 							
 							if (_pkLevel & 0x80)
 							{
+								LogAdd("Speed server migration [Account:%s][Name:%s][level:%d]", lpCLMsg->Id, characterName, _level);
 								_pkLevel &= 0x7Fu;
-								int v17 = 0;
-								int v16 = 0xFF;
-								if (_level >= 400
-									&& !MasterLevelSystemDBSet.DSDB_QueryMasterLevelSystemLoad(characterName, &ReqInfo))
+								int MasterLevel = 0;
+								int ClassType = 0xFF;
+								MLP_ANS_MASTERLEVEL_INFO ReqInfo;
+								if (_level >= 400 && !MasterLevelSystemDBSet.DSDB_QueryMasterLevelSystemLoad(characterName, &ReqInfo))
 								{
-									v17 = ReqInfo.nMLevel;
+									MasterLevel = ReqInfo.nMLevel;
 								}
 								//classdef pClassDef;
-								v16 = DCInfo.GetCharacterClassByDBClass(_class);
-								if (v16 != 255)
+								ClassType = DCInfo.GetCharacterClassByDBClass(_class);
+								if (ClassType != 255)
 								{
-									BYTE buf[3784];
+									BYTE InventoryData[(MAX_ITEM - 1)*MAX_EQUIPMENT];
 									for (int j = 0; j < 236; ++j)
-										memset(&buf[16 * j], 255, 0x10u);
-									if (v17 + _level < 600)
+										memset(&InventoryData[16 * j], 255, 0x10u);
+									if ((MasterLevel + _level) >= 600)
 									{
-										if (v17 + _level < 500)
-										{
-											if (_level < 400)
-											{
-												if (_level < 380)
-												{
-													/*	`vector constructor iterator'(__t, 0xA8u, 13, CItem::CItem);
-													for (k = 0; k < 13; ++k)
-													CItem::Clear(&__t[168 * k]);
-													type = ItemGetNumberMake(14, 286);
-													CItem::Convert(&v12, type, 0, 0, 0, 0, 0, 3);
-													ItemByteConvert16(buf, __t, 13);*/
-												}
-												else
-												{
-													ItemByteConvert16(buf, DCInfo.JumpingEquipment[v16 + 2], 204);
-													//ItemByteConvert16(buf, DCInfo.DefClass[defclass].Equipment, 12);
-												}
-											}
-											else
-											{
-												ItemByteConvert16(buf, DCInfo.JumpingEquipment[v16], 204);
-											}
-										}
-										else
-										{
-											ItemByteConvert16(buf, DCInfo.JumpingEquipment[v16 + 1], 204);
-										}
+										ItemByteConvert16(InventoryData, DCInfo.JumpingEquipment[ClassType + 3], INVENTORY_EXT4_SIZE);
+									}
+									else if ((MasterLevel + _level) >= 500)
+									{
+										ItemByteConvert16(InventoryData, DCInfo.JumpingEquipment[ClassType + 1], INVENTORY_EXT4_SIZE);
+									}
+									else if (_level >= 400)
+									{
+										ItemByteConvert16(InventoryData, DCInfo.JumpingEquipment[ClassType], INVENTORY_EXT4_SIZE);
+									}
+									else if (_level >= 380)
+									{
+										ItemByteConvert16(InventoryData, DCInfo.JumpingEquipment[ClassType + 2], INVENTORY_EXT4_SIZE);
 									}
 									else
 									{
-										ItemByteConvert16(buf, DCInfo.JumpingEquipment[v16 + 3], 204);
+										CItem ItemInfo[(MAX_EQUIPMENT + 1)];
+										for (int k = 0; k < (MAX_EQUIPMENT + 1); ++k)
+										{
+											ItemInfo[k].Clear();
+										}
+										WORD type = ItemGetNumberMake(14, 286);
+										ItemInfo[12].Convert(type, 0, 0, 0, 0, 0, 3);
+										ItemByteConvert16(InventoryData, ItemInfo, (MAX_EQUIPMENT + 1));
 									}
-									gCharDbSet.RewardJumpingItem(characterName, buf);
+									gCharDbSet.RewardJumpingItem(characterName, InventoryData);
 								}
 							}
 							pCharList.PK_Level = _pkLevel;
 							pCharList.btGuildStatus = _btGuildStatus;
-							int v7 = 0;
-							/*ServerCode = 0;
-							if (IsUBFServer == 1)
-							v7 = gCharPreDBSet.GetRealNameAndServerCode(characterName, &szRealName, &ServerCode, 1);
-							if (IsUBFServer != 1 || v7 != 1)
-							{
-							memcpy(&v41, &GameID, 0xAu);*/
+
+							pCharList.PK_Level = _pkLevel;
+							pCharList.btGuildStatus = _btGuildStatus;
+							memcpy(pCharList.UnityBFOfRealName, "", sizeof(pCharList.UnityBFOfRealName));
 							pCharList.ServerCodeOfHomeWorld = 0;
-							/*}
+							char v7;
+							char v41;
+							short servec;
+							if (IsUBFServer == 1)
+								v7 = gCharPreDBSet.GetRealNameAndServerCode(characterName, pCharList.UnityBFOfRealName, &pCharList.ServerCodeOfHomeWorld, lpCLMsg->IsUnityBattleFiledServer);
+							/*if (IsUBFServer != 1 || v7 != 1)
+							{
+								memcpy(&v41, &GameID, 0xAu);
+								servec = 0;
+							}
 							else
 							{
-							memcpy(&v41, &szRealName, 0xAu);
-							pCharList.ServerCodeOfHomeWorld = ServerCode;
-							}
-							memcpy(pCharList.Name, characterName, 0xAu);*/
+								memcpy(&v41, &szRealName, 0xAu);
+								servec = ServerCode;
+							}*/
 							memcpy(pCharList.Name, characterName, MAX_IDSTRING);
-							if (!(_ctlcode & 0x80) && _level >= 150)
+							if ((_ctlcode & 0x80) == 0 && _level >= 150)
 							{
-								if (_level < 400)
+								if (_level < 200 && pCount.GenerableClass < 2)
 								{
-									if (_level < 250)
-									{
-										if (_level < 220)
-										{
-											if (_level < 200)
-											{
-												if (pCount.GenerableClass < 2)
-													pCount.GenerableClass = 1;
-											}
-											else if (pCount.GenerableClass < 3)
-											{
-												pCount.GenerableClass = 2;
-											}
-										}
-										else if (pCount.GenerableClass < 4)
-										{
-											pCount.GenerableClass = 3;
-										}
-									}
-									else if (pCount.GenerableClass < 5)
-									{
-										pCount.GenerableClass = 4;
-									}
+									pCount.GenerableClass = 1;
 								}
-								else
+								else if (_level >= 200 && pCount.GenerableClass < 3)
+								{
+									pCount.GenerableClass = 2;
+								}
+								else if (_level >= 220 && pCount.GenerableClass < 4)
+								{
+									pCount.GenerableClass = 3;
+								}
+								else if (_level >= 250 && pCount.GenerableClass < 5)
+								{
+									pCount.GenerableClass = 4;
+								}
+								else if (_level >= 400)
 								{
 									pCount.GenerableClass = 5;
 								}
 							}
-							if (_dbverstion)
+							for (int n = 0; n < MAX_EQUIPMENT; ++n)
 							{
-								if (_dbverstion != 1 && _dbverstion != 2)
+								switch (_dbverstion)
 								{
-									for (int j = 0; j < MAX_EQUIPMENT; ++j)
-									{
-										memcpy(&pCharList.dbInventory[4 * j], &Inventory[16 * j], 2u);
-										pCharList.dbInventory[4 * j + 2] = Inventory[16 * j + 7];
-										pCharList.dbInventory[4 * j + 3] = Inventory[16 * j + 9];
-									}
+								case 0x00:
+									memcpy(&pCharList.dbInventory[2 * n], &Inventory[7 * n], sizeof(WORD));
+									continue;
+								case 0x01:
+								case 0x02:
+									memcpy(&pCharList.dbInventory[3 * n], &Inventory[10 * n], sizeof(WORD));
+									pCharList.dbInventory[3 * n + 2] = Inventory[10 * n + 7];
+									continue;
+								case 0x03:
+									memcpy(&pCharList.dbInventory[4 * n], &Inventory[16 * n], sizeof(WORD));
+									pCharList.dbInventory[4 * n + 2] = Inventory[16 * n + 7];
+									pCharList.dbInventory[4 * n + 3] = Inventory[16 * n + 9];
+									continue;
 								}
-								else
-								{
-									for (int k = 0; k < MAX_EQUIPMENT; ++k)
-									{
-										memcpy(&pCharList.dbInventory[3 * k], &Inventory[10 * k], 2u);
-										pCharList.dbInventory[3 * k + 2] = Inventory[10 * k + 7];
-									}
-								}
-							}
-							else
-							{
-								for (int i = 0; i < MAX_EQUIPMENT; ++i)
-									memcpy(&pCharList.dbInventory[2 * i], &Inventory[7 * i], 2u);
 							}
 							memcpy(&SendBuf[lOfs], &pCharList, sizeof(SDHP_CHARLIST));
 							lOfs += sizeof(SDHP_CHARLIST);
@@ -1451,12 +1423,12 @@ void GJPCharacterListRequestCS(SDHP_GETCHARLIST *lpCLMsg, int aIndex)
 			result = 0;
 		}
 	}
-	pCount.h.c = PMHC_WORD;
-	pCount.h.headcode = 1;
-	pCount.Number = lpCLMsg->Number;
+	pCount.header.c = PMHC_WORD;
+	pCount.header.headcode = 1;
+	pCount.Index = lpCLMsg->Number;
 	pCount.Count = Count;
-	pCount.h.sizeH = SET_NUMBERH(lOfs);
-	pCount.h.sizeL = SET_NUMBERL(lOfs);
+	pCount.header.sizeH = SET_NUMBERH(lOfs);
+	pCount.header.sizeL = SET_NUMBERL(lOfs);
 	memcpy(SendBuf, &pCount, sizeof(SDHP_CHARLISTCOUNT));
 	wsjServer.DataSend(aIndex, (char*)SendBuf, lOfs);
 }
@@ -1467,7 +1439,7 @@ void GJPCharacterListRequestCS(SDHP_GETCHARLIST *lpCLMsg, int aIndex)
 {
 	//DGAccountInfoSend(lpCLMsg->Index, lpCLMsg->Account);    
 	BYTE Buffer[520];
-	SDHP_CHARLISTCOUNT_SEND pMsg;
+	SDHP_CHARLISTCOUNT pMsg;
 	int size = sizeof(pMsg);
 	pMsg.header.set(0x01, size);
 	memcpy(pMsg.AccountId, lpCLMsg->Id, sizeof(pMsg.AccountId));
@@ -7667,7 +7639,7 @@ void GDReqUBFAccountUserRegister(PMSG_UBF_REGISTER_ACCOUNT_USER *lpRecv, int aIn
 void GDReqUBFAccountUserCopy(PMSG_UBF_ACCOUNT_USER_COPY *lpRecv, int aIndex)
 {
 	PMSG_UBF_ACCOUNT_USER_COPY_RESULT pMsg; // [esp+D0h] [ebp-54h]
-	char subResult; // [esp+E7h] [ebp-3Dh]
+	BYTE subResult; // [esp+E7h] [ebp-3Dh]
 	int btRet; // [esp+F0h] [ebp-34h]
 	char szCharName[11]; // [esp+FCh] [ebp-28h]
 	char szId[11]; // [esp+110h] [ebp-14h]
@@ -7681,12 +7653,7 @@ void GDReqUBFAccountUserCopy(PMSG_UBF_ACCOUNT_USER_COPY *lpRecv, int aIndex)
 		btRet = 0;
 		subResult = 0;
 		if (lpRecv->btPromotionMode == 1)
-			btRet = g_CCFDbSet.CopyUBFAccountUserPromotionMode(
-
-				szId,
-				szCharName,
-				lpRecv->ServerCode,
-				&subResult);
+			btRet = g_CCFDbSet.CopyUBFAccountUserPromotionMode(szId,szCharName,lpRecv->ServerCode,&subResult);
 		else
 			btRet = g_CCFDbSet.CopyUBFAccountUser(szId, szCharName, lpRecv->ServerCode, &subResult);
 		memset(&pMsg.h, 0, 0xCu);
