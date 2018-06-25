@@ -20,8 +20,8 @@ public:
 	int Save_ChaosCastle_KillPoint(char *szName, int nPoint, int CastleIndex, int *SubResult, int *CurrntPoint, int *TotalPoint); // idb
 	int GetUBFAccountUserInfo(char *szAccountID, char *szName, int nServerCode, int IsUnityBattleFieldServer, PMSG_ANS_UBF_ACCOUNT_USERINFO *pMsg); // idb
 	int RegisterUBFAccountUser(char *szAccountID, char *szName, char *szBattleName, int nServerCode, int nRegisterState, int nRegisterMonth, int nRegisterDay, char *nResult, unsigned __int16 *nLeftSec); // idb
-	bool CopyUBFAccountUser(char *szAccountID, char *szName, __int16 GameServerCode, BYTE *subResult); // idb
-	bool CopyUBFAccountUserPromotionMode(char *szAccountID, char *szName, __int16 GameServerCode, BYTE *subResult); // idb
+	bool CopyUBFAccountUser(char *szAccountID, char *szName, __int16 GameServerCode, BYTE* subResult); // idb
+	bool CopyUBFAccountUserPromotionMode(char *szAccountID, char *szName, __int16 GameServerCode, BYTE* subResult); // idb
 	int GetWinAllRewardInfoOfUBF(char *szCharName, int nServerCode, char btServerKind, char btContentsType, PMSG_ANS_UBF_GET_REWARD *pMsg); // idb
 	int SetReceivedWinnerItemOfUBF(char *szCharName, int nServerCode, char btReceived, char *SubResult); // idb
 	int SetCancelToJionUnityBattlefiled(char *szAccountID, char *szName, __int16 GameServerCode, char *subResult); // idb

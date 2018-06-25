@@ -19,18 +19,14 @@ BOOL CBlockChatUserDBSet::Connect()
 
 
 //----- (0042CA60) --------------------------------------------------------
-int CBlockChatUserDBSet::DSDB_SelectBlockChatUser(char *Name, SDHP_ANS_BLOCK_CHAT_USER_INFO *lpSendMsg)
+bool CBlockChatUserDBSet::DSDB_SelectBlockChatUser(char *Name, SDHP_ANS_BLOCK_CHAT_USER_INFO *lpSendMsg)
 {
-	char *v3; // eax
-	int result; // eax
-	int v5; // [esp+14h] [ebp-11Ch]
-	__int16 sqlReturn; // [esp+ECh] [ebp-44h]
-	char btSlotNum; // [esp+FBh] [ebp-35h]
-	int nCnt; // [esp+104h] [ebp-2Ch]
+	int result;
+	__int16 sqlReturn;
+	char btSlotNum;
+	int nCnt;
 	CString QueryStr;
-	int v11; // [esp+12Ch] [ebp-4h]
 
-	v11 = 0;
 	nCnt = 0;
 	btSlotNum = 0;
 	QueryStr.Format("WZ_ChattingBlockUserLoad '%s'", Name);
@@ -50,44 +46,35 @@ int CBlockChatUserDBSet::DSDB_SelectBlockChatUser(char *Name, SDHP_ANS_BLOCK_CHA
 		}
 		lpSendMsg->btUserCnt = nCnt;
 		this->m_DBQuery.Clear();
-		v11 = -1;
 		result = 1;
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
 		LogAddTD("error-L3 : [BlockChatUser] DSDB_SelectBlockChatUser #1 %s %d",__FILE__,__LINE__);
-		v5 = 0;
-		v11 = -1;
-		result = v5;
+		result = 0;
 	}
 	return result;
 }
 
-//----- (0042CC80) --------------------------------------------------------
+
+
 int CBlockChatUserDBSet::DSDB_AddBlockChatUser(SDHP_REQ_ADD_BLOCK_CHAT_USER_INFO *lpRecv)
 {
-	char *v2; // eax
-	int result; // eax
-	int v4; // [esp+14h] [ebp-F8h]
-	CString qSql; // [esp+ECh] [ebp-20h]
-	int v7;
+	int result;
+	CString qSql;
 
-	v7 = 0;
 	qSql.Format("EXEC WZ_ChattingBlockUserInsert '%s', %d ,'%s'",lpRecv->szCharName,lpRecv->szBlockChar.btSlotNum,lpRecv->szBlockChar.szCharName);
 
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		this->m_DBQuery.Clear();
-		v7 = -1;
 		result = 1;
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
-		LogAddTD("error-L3 : [BlockChatUser] DSDB_AddBlockChatUser [%s] %s %d",
-			lpRecv->szCharName, __FILE__, __LINE__);
-		v7 = -1;
+		LogAddTD("error-L3 : [BlockChatUser] DSDB_AddBlockChatUser [%s] %s %d",lpRecv->szCharName, __FILE__, __LINE__);
 		result = 0;
 	}
 	return result;
@@ -97,19 +84,14 @@ int CBlockChatUserDBSet::DSDB_AddBlockChatUser(SDHP_REQ_ADD_BLOCK_CHAT_USER_INFO
 
 int CBlockChatUserDBSet::DSDB_DelBlockChatUser(SDHP_REQ_DEL_BLOCK_CHAT_USER_INFO *lpRecv)
 {
-	char *v2;
 	int result;
-	int v4;
 	CString qSql;
-	int v7;
 
 	qSql.Format("EXEC WZ_ChattingBlockUserDel '%s' ,'%s'",
-		lpRecv->szCharName,
-		lpRecv->szBlockChar.szCharName);
+		lpRecv->szCharName,lpRecv->szBlockChar.szCharName);
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		this->m_DBQuery.Clear();
-		v7 = -1;
 		result = 1;
 	}
 	else
@@ -117,7 +99,6 @@ int CBlockChatUserDBSet::DSDB_DelBlockChatUser(SDHP_REQ_DEL_BLOCK_CHAT_USER_INFO
 		this->m_DBQuery.Clear();
 		LogAddTD("error-L3 : [BlockChatUser] DSDB_DelBlockChatUser [%s] %s %d",
 			lpRecv->szCharName, __FILE__, __LINE__);
-		v7 = -1;
 		result = 0;
 	}
 	return result;

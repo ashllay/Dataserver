@@ -16,16 +16,11 @@ BOOL LabyrinthDBSet::Connect()
 	MsgBox("LabyrinthDBSet ODBC Connect Fail");
 	return 0;
 }
+
+
 int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUserIndex, char *Buffer, int *nBufferLen)
 {
 	int result; // eax
-	int v10; // [esp+14h] [ebp-290h]
-	int v11; // [esp+20h] [ebp-284h]
-	int v12; // [esp+2Ch] [ebp-278h]
-	int v13; // [esp+38h] [ebp-26Ch]
-	int v14; // [esp+44h] [ebp-260h]
-	int v15; // [esp+50h] [ebp-254h]
-	int v16; // [esp+5Ch] [ebp-248h]
 	MISSION_INFO stMissionInfo; // [esp+128h] [ebp-17Ch]
 	int nMissionCnt; // [esp+150h] [ebp-154h]
 	int nOfs; // [esp+15Ch] [ebp-148h]
@@ -38,7 +33,7 @@ int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUser
 	unsigned __int8 v26; // [esp+280h] [ebp-24h]
 	char v27; // [esp+281h] [ebp-23h]
 	const char *v8;
-	int v29; // [esp+2A0h] [ebp-4h]
+
 
 	//PWMSG_HEAD2::set(&pMsg.h.c, 119, 0, 248);
 	pMsg.nUserIndex = nUserIndex;
@@ -59,9 +54,7 @@ int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUser
 			pMsg.btResult = 2;
 			memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
 			*nBufferLen = 248;
-			v11 = pMsg.btResult;
-			v29 = -1;
-			result = v11;
+			result = pMsg.btResult;
 		}
 		else if (sqlRet == 100)
 		{
@@ -70,9 +63,7 @@ int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUser
 			pMsg.btResult = 1;
 			memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
 			*nBufferLen = 248;
-			v12 = pMsg.btResult;
-			v29 = -1;
-			result = v12;
+			result = pMsg.btResult;
 		}
 		else
 		{
@@ -86,28 +77,22 @@ int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUser
 			v26 = this->m_DBQuery.GetInt("ClearState");
 			this->m_DBQuery.Clear();
 			qSql.Format("EXEC WZ_Labyrinth_Path_Load '%s', '%s'",
-				szAccountID,
-				szName);
+				szAccountID,szName);
 			nRet = this->m_DBQuery.ReadBlob(v8, &pMsg.btCurrentZone + 2);
 			this->m_DBQuery.Clear();
-			qSql.Format(
-				"EXEC WZ_Labyrinth_Mission_Load '%s', '%s'",
-				szAccountID,
-				szName);
+			qSql.Format("EXEC WZ_Labyrinth_Mission_Load '%s', '%s'",
+				szAccountID,szName);
 			if (this->m_DBQuery.Exec(qSql))
 			{
 				sqlRet = this->m_DBQuery.Fetch();
 				if (sqlRet == -1)
 				{
 					this->m_DBQuery.Clear();
-					LogAddTD(
-						"error-L3 : [LABYRINTH] LoadLabyrinthInfo #4, Fail Fetch Mission. %s %d", __FILE__, __LINE__);
+					LogAddTD("error-L3 : [LABYRINTH] LoadLabyrinthInfo #4, Fail Fetch Mission. %s %d", __FILE__, __LINE__);
 					pMsg.btResult = 2;
 					memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
 					*nBufferLen = 248;
-					v14 = pMsg.btResult;
-					v29 = -1;
-					result = v14;
+					result = pMsg.btResult;
 				}
 				else if (sqlRet == 100)
 				{
@@ -117,9 +102,7 @@ int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUser
 					v27 = 0;
 					memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
 					*nBufferLen = 248;
-					v15 = pMsg.btResult;
-					v29 = -1;
-					result = v15;
+					result = pMsg.btResult;
 				}
 				else
 				{
@@ -149,36 +132,28 @@ int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUser
 					memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
 					*nBufferLen = nOfs;
 					this->m_DBQuery.Clear();
-					v16 = pMsg.btResult;
-					v29 = -1;
-					result = v16;
+					result = pMsg.btResult;
 				}
 			}
 			else
 			{
 				this->m_DBQuery.Clear();
-				LogAddTD(
-					"error-L3 : [LABYRINTH] LoadLabyrinthInfo #3, Fail Exec Mission. %s %d", __FILE__, __LINE__);
+				LogAddTD("error-L3 : [LABYRINTH] LoadLabyrinthInfo #3, Fail Exec Mission. %s %d", __FILE__, __LINE__);
 				pMsg.btResult = 2;
 				memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
 				*nBufferLen = 248;
-				v13 = pMsg.btResult;
-				v29 = -1;
-				result = v13;
+				result = pMsg.btResult;
 			}
 		}
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
-		LogAddTD(
-			"error-L3 : [LABYRINTH] LoadLabyrinthInfo #1, Fail Exec %s %d", __FILE__, __LINE__);
+		LogAddTD("error-L3 : [LABYRINTH] LoadLabyrinthInfo #1, Fail Exec %s %d", __FILE__, __LINE__);
 		pMsg.btResult = 2;
 		memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
 		*nBufferLen = 248;
-		v10 = pMsg.btResult;
-		v29 = -1;
-		result = v10;
+		result = pMsg.btResult;
 	}
 	return result;
 }

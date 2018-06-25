@@ -20,19 +20,12 @@ BOOL CHuntingRecordDBSet::Connect()
 
 int CHuntingRecordDBSet::LoadHuntingRecordInfo(char *szAccountID, char *Name, HUNTING_RECORD_INFO *pHuntingRecordInfo, SDHP_ANS_HUNTING_RECORD_COUNT *pMsg, int iMapIndex)
 {
-	int v6; // eax
-	unsigned int v7; // eax
 	int result; // eax
-	int v9; // eax
-	unsigned int v10; // eax
 	__int16 sqlRet;
 	char szTemp[2048];
 	CString szQuery;
-	int iCnt; 
 	char szName[11]; 
 	char szId[11];
-	int v38;
-
 
 	szId[10] = 0;
 	memcpy(szId, szAccountID, 0xAu);
@@ -44,8 +37,7 @@ int CHuntingRecordDBSet::LoadHuntingRecordInfo(char *szAccountID, char *Name, HU
 		//strlen(szName);
 		if (strlen(szName) && (strlen(szName) <= 0xA))
 		{
-			iCnt = 0;
-			v38 = 0;
+			int iCnt = 0;
 			szTemp[0] = 0;
 			memset(&szTemp[1], 0, 0x7FFu);
 			szQuery.Format("WZ_HuntingRecordLoad '%s', '%s', %d",szAccountID,Name,iMapIndex);
@@ -89,26 +81,19 @@ int CHuntingRecordDBSet::LoadHuntingRecordInfo(char *szAccountID, char *Name, HU
 		}
 		else
 		{
-			LogAddC(
-				2,
-				"%s] À+ÁÕ +íÀ» %s %d",
-				szName, __FILE__, __LINE__);
+			LogAddC(2,"%s] À+ÁÕ +íÀ» %s %d",szName, __FILE__, __LINE__);
 			result = 1;
 		}
 	}
 	else
 	{
-		LogAddC(
-			2,
-			"%s] À+ÁÕ +íÀ» %s %d",
-			szId, __FILE__, __LINE__);
+		LogAddC(2,"%s] À+ÁÕ +íÀ» %s %d",szId, __FILE__, __LINE__);
 		result = 1;
 	}
 	return result;
 }
-// 5CDC10: using guessed type int `CHuntingRecordDBSet::LoadHuntingRecordInfo'::`2'::__LINE__Var;
 
-//----- (0043DBF0) --------------------------------------------------------
+
 int CHuntingRecordDBSet::HuntingRecordInfoSave(SDHP_REQ_HUNTING_RECORD_INFO_SAVE *lpRecv)
 {
 	int v2; // eax

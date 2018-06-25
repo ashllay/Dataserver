@@ -816,7 +816,6 @@ int CArcaBattleDBSet::DBSelectArcaBattleTopRank(_stArcaBattleMarkTopRank *pArcaB
 //----- (0042BAA0) --------------------------------------------------------
 int CArcaBattleDBSet::DBSelectArcaBattleMyGuildRank(unsigned int dwGuildNumber, char *btMyGuildRank, unsigned int *dwMarkCnt)
 {
-	char *v4; // eax
 	int result; // eax
 	int v6; // [esp+14h] [ebp-11Ch]
 	int v7; // [esp+2Ch] [ebp-104h]

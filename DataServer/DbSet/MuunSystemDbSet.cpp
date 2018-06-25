@@ -92,7 +92,7 @@ BOOL CMuunSystemDBSet::MuunInvenSubEquipOpen(char *AccountId, char *Name)
 
 bool CMuunSystemDBSet::SelectMuunPeriodInfo(char *szName, _stMuunPeriodInfoList *MuunPeriodInfoList, BYTE *btListCnt)
 {
-	int result;
+	bool result;
 	__int16 sqlRetrun;
 	CString QueryStr; 
 
@@ -116,13 +116,13 @@ bool CMuunSystemDBSet::SelectMuunPeriodInfo(char *szName, _stMuunPeriodInfoList 
 		}
 		*btListCnt = iCnt;
 		this->m_DBQuery.Clear();
-		result = 1;
+		result = true;
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
 		LogAddTD("error-L3 : [MuunSystem] SelectMuunPeriodInfo #1 [%s] %s %d",szName, __FILE__, __LINE__);
-		result = 0;
+		result = false;
 	}
 	return result;
 }

@@ -4127,7 +4127,7 @@ struct  SDHP_ANS_LABYRINTH_INFO
 	char btCurrentZone;
 	int nLeftTime;
 	char btVisitedCnt;
-	char btVisitedList[200];
+	BYTE btVisitedList[200];
 	char btClearState;
 	char btMissionCount;
 };

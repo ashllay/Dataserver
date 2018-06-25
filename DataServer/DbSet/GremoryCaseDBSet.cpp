@@ -20,7 +20,7 @@ BOOL CGremoryCaseDBSet::Connect()
 	return 0;
 }
 
-int CGremoryCaseDBSet::GetItemSerial(unsigned int *sirial_number, int MakeSeiralCount)
+int CGremoryCaseDBSet::GetItemSerial(__int64 *sirial_number, int MakeSeiralCount)
 {
 	char *v3; // eax
 	int result; // eax
