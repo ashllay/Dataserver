@@ -1,42 +1,55 @@
+#ifndef __ARCABATTLEDBSET_H__
+#define __ARCABATTLEDBSET_H__
 #pragma once
-//#include "Include\ProDef.h"
+
 #include "..\Include\Sprodef.h"
-
 #include "DBConBase.h"
-
 
 class CArcaBattleDBSet : public CDBConBase
 {
 public:
-
 	CArcaBattleDBSet();
 	virtual ~CArcaBattleDBSet();
 
-	int Connect();
-	int DBSelectArcaBattleGuildJoin(char *szName, int *iResult); // idb
-	int DBInsertArcaBattleGuildJoin(char *szName, char *szGuildName, unsigned int dwGuild, int *iResult); // idb
-	int DBInsertArcaBattleGuildMemberJoin(char *szName, char *szGuildName, unsigned int dwGuild, int *iResult); // idb
-	int DBInsertArcaBattleWinGuild(_stABWinGuildInfoDS *pABWinGuildInfoDS, int iGuildCnt); // idb
-	int DBSelectArcaBattleWinGuild(_stABWinGuildInfoDS *pABGuildInfo, int *iGuildCnt); // idb
-	int DBIsArcaBattleEnter(char *szName, int *iResult); // idb
-	int DBSelectArcaBattleGuildGroupNum(char *szName, int *iGroupNum); // idb
-	int DBDeleteArcaBattleInfo(); // idb
-	int DBSelectArcaBattleJoinMemberUnder(_stGuildUnderMember *pGuildMemberCnt, char *btGuildCnt); // idb
-	int DBInsertArcaBattleProc(int iABProc); // idb
-	int DBSelectArcaBattleProc(int *iABProc); // idb
-	int DBSelectArcaBattleCancelGuild(_stCancelGuildNames *pstCancelGuildNames, int iMinGuildMemNum, char *btGuildCnt); // idb
-	int DBDeleteArcaBattleCancelGuild(_stCancelGuildNames *pstCancelGuildNames, int iGuildCnt); // idb
-	int DBSelectABRegisteredMemberCnt(unsigned int dwGuild, char *btRegMemCnt); // idb
-	int DBSelectArcaBattleIsTopRank(unsigned int dwGuildNumber); // idb
-	int DBSelectArcaBattleMarkCnt(unsigned int dwGuildNumber); // idb
-	int DBInsertArcaBattleRegMark(char *szGuildName, unsigned int dwGuildNum, char *szGuildMaster, unsigned int dwMarkCnt); // idb
-	int DBSelectArcaBattleTopRank(_stArcaBattleMarkTopRank *pArcaBattleMarkTopRank, char *btGuildCnt); // idb
-	int DBSelectArcaBattleMyGuildRank(unsigned int dwGuildNumber, char *btMyGuildRank, unsigned int *dwMarkCnt); // idb
-	int DBDeleteArcaBattleMarkReg(unsigned int dwGuildNumber); // idb
-	void DBDeleteAllArcaBattleGuildReg(); // idb
-	void DBDeleteArcaBattleGuildReg(); // idb
-	void DBUpdateArcaBattleGuildReg(BYTE *lpRecv, int aIndex); // idb
-	void DBSelectArcaBattleAllGuildMark(_stABAllGuildMark *pABAllGuildMark, int *iGuildCnt); // idb
-	int DBSelectABAllJoinUser(_stABJoinUserInfoDS *pABJoinUserInfo, char *btUserCnt); // idb
+	BOOL Connect();
 
+	BOOL DBSelectArcaBattleGuildJoin(char* szName, int& iResult);
+	BOOL DBInsertArcaBattleGuildJoin(char* szName, char* szGuildName, DWORD dwGuild, int& iResult);
+	BOOL DBInsertArcaBattleGuildMemberJoin(char* szName, char* szGuildName, DWORD dwGuild, int& iResult);
+	BOOL DBInsertArcaBattleWinGuild(_stABWinGuildInfoDS* pABWinGuildInfoDS, int iGuildCnt);
+	BOOL DBSelectArcaBattleWinGuild(_stABWinGuildInfoDS* pABGuildInfo, int& iGuildCnt);
+
+	BOOL DBIsArcaBattleEnter(char* szName, int& iResult);
+
+	BOOL DBSelectArcaBattleGuildGroupNum(char* szName, int& iGroupNum);
+
+	BOOL DBDeleteArcaBattleInfo();
+	BOOL DBSelectArcaBattleJoinMemberUnder(_stGuildUnderMember* pGuildMemberCnt, BYTE& btGuildCnt);
+
+	BOOL DBInsertArcaBattleProc(int iABProc);
+	BOOL DBSelectArcaBattleProc(int& iABProc);
+
+	BOOL DBSelectArcaBattleCancelGuild(_stCancelGuildNames* pstCancelGuildNames, int iMinGuildMemNum, BYTE& btGuildCnt);
+	BOOL DBDeleteArcaBattleCancelGuild(_stCancelGuildNames* pstCancelGuildNames, int iGuildCnt);
+
+	BOOL DBSelectABRegisteredMemberCnt(DWORD dwGuild, BYTE& btRegMemCnt);
+
+	BOOL DBSelectArcaBattleIsTopRank(DWORD dwGuildNumber);
+	BOOL DBSelectArcaBattleMarkCnt(DWORD dwGuildNumber);
+	BOOL DBInsertArcaBattleRegMark(char* szGuildName, DWORD dwGuildNum, char* szGuildMaster, DWORD dwMarkCnt);
+	BOOL DBSelectArcaBattleTopRank(_stArcaBattleMarkTopRank* pArcaBattleMarkTopRank, BYTE& btGuildCnt);
+	BOOL DBSelectArcaBattleMyGuildRank(DWORD dwGuildNumber, BYTE& btMyGuildRank, DWORD& dwMarkCnt);
+	BOOL DBDeleteArcaBattleMarkReg(DWORD dwGuildNumber);
+
+	void DBDeleteAllArcaBattleGuildReg();
+	void DBDeleteArcaBattleGuildReg();
+	void DBUpdateArcaBattleGuildReg(LPBYTE lpRecv, int aIndex);
+
+	void DBSelectArcaBattleAllGuildMark(_stABAllGuildMark* pABAllGuildMark, int& iGuildCnt);
+	BOOL DBSelectABAllJoinUser(_stABJoinUserInfoDS* pABJoinUserInfo, BYTE& btUserCnt);
+
+public:
+	CQuery m_Query;
 };
+
+#endif

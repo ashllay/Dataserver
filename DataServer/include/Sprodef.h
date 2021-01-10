@@ -1,10 +1,6 @@
 ﻿#ifndef __SPRODEF_H__
 #define __SPRODEF_H__
 
-#define VER_CHATWINDOW_OPTION
-
-//#define PROPERTY_ITEM_WORK		// 고유정보가 들어가 있는 아이템
-
 // Server Header Protocol BYTE(Size)
 typedef struct
 {
@@ -26,19 +22,12 @@ typedef struct
 	BYTE		Subcode;
 } SHPW_HEAD, *LPSHPW_HEAD;
 
-//----------------------------------------------------------------------------
-// 결과 공통
-//----------------------------------------------------------------------------
 typedef struct
 {
 	PBMSG_HEAD	h;
 	BYTE	Result;
 } SDHP_DEFAULT_RESULT, *LPSDHP_DEFAULT_RESULT;
 
-
-//----------------------------------------------------------------------------
-// 결과를 보낼때 사용 
-//----------------------------------------------------------------------------
 typedef struct
 {
 	PBMSG_HEAD	h;
@@ -696,79 +685,6 @@ BYTE		result;
 short		Number;
 } SDHP_ACCOUNTRESULT, *LPSDHP_ACCOUNTRESULT;
 */
-
-//----------------------------------------------------------------------------
-// [0x20] 특정아이디의 비번질문을 얻고자 요청한다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short	Number;
-	char	Id[MAX_IDSTRING];
-} SDHP_PASSQUESTION_QUERY, *LPSDHP_PASSQUESTION_QUERY;
-
-//----------------------------------------------------------------------------
-// [0x20] 특정아이디의 비번질문을 얻고자 요청한다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short	Number;
-	BYTE	Result;
-	char	Question[MAX_QUESTIONSTR];
-} SDHP_PASSQUESTION_QUERY_RESULT, *LPSDHP_PASSQUESTION_QUERY_RESULT;
-
-
-//----------------------------------------------------------------------------
-// [0x21] 비밀번호 문의
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short	Number;
-	char	Id[MAX_IDSTRING];
-	char	JoominN[MAX_JOOMINNUMBERSTR];
-	char	Answer[MAX_ANSWERSTR];
-	char    IpAddress[17];
-} SDHP_PASSQUERY, *LPSDHP_PASSQUERY;
-
-//----------------------------------------------------------------------------
-// [0x21] 비밀번호 문의 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short	Number;
-	BYTE	Result;
-	char	Password[MAX_IDSTRING];
-} SDHP_PASSQUERY_RESULT, *LPSDHP_PASSQUERY_RESULT;
-
-
-//----------------------------------------------------------------------------
-// [0x22] 비밀번호 변경신청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short	Number;
-	char	Id[MAX_IDSTRING];
-	char	PassOld[MAX_IDSTRING];
-	char	PassNew[MAX_IDSTRING];
-	char	JoominN[MAX_JOOMINNUMBERSTR];
-	char	IpAddress[17];
-} SDHP_PASSCHANGE, *LPSDHP_PASSCHANGE;
-
-
-//----------------------------------------------------------------------------
-// [0x22] 비밀번호 변경신청 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short	Number;
-	BYTE	Result;
-} SDHP_PASSCHANGE_RESULT, *LPSDHP_PASSCHANGE_RESULT;
-
 
 //----------------------------------------------------------------------------
 // [0x2D] 고유 아이템 정보를 요청한다.
@@ -1523,9 +1439,7 @@ typedef struct
 	BYTE		QkeyDefine;
 	BYTE		WkeyDefine;
 	BYTE		EkeyDefine;
-#ifdef VER_CHATWINDOW_OPTION
 	BYTE		ChatWindow;
-#endif
 
 #ifdef ADD_SEASON_3_NEW_UI_20071122
 	BYTE		RkeyDefine;
@@ -1623,9 +1537,7 @@ typedef struct
 	BYTE		WkeyDefine;
 	BYTE		EkeyDefine;
 
-#ifdef VER_CHATWINDOW_OPTION
 	BYTE		ChatWindow;
-#endif
 
 #ifdef ADD_SEASON_3_NEW_UI_20071122
 	BYTE		RkeyDefine;
@@ -1768,1008 +1680,7 @@ typedef struct
 } SDHP_CHANGE_NAME_RESULT, *LPSDHP_CHANGE_NAME_RESULT;
 #endif	// UPDATE_CHANGE_CHARACTERNAME_20080410
 
-//##__FRIEND_WORK__
-#ifdef __FRIEND_WORK__
 
-//----------------------------------------------------------------------------
-// GD[0x60] 친구 리스트를 요청한다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	BYTE		pServer;
-} FHP_FRIENDLIST_REQ, *LPFHP_FRIENDLIST_REQ;
-
-//----------------------------------------------------------------------------
-// DG[0x60] 친구 리스트를 요청에 대한 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	BYTE		Count;
-	BYTE		MailCount;
-} FHP_FRIENDLIST_COUNT, *LPFHP_FRIENDLIST_COUNT;
-
-//----------------------------------------------------------------------------
-// DG[0x60] 친구 리스트를 요청에 대한 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	char		Name[MAX_IDSTRING];
-	BYTE		Server;
-} FHP_FRIENDLIST, *LPFHP_FRIENDLIST;
-
-//----------------------------------------------------------------------------
-// GD[0x61] 대기중인 친구 리스트를 요청한다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-} FHP_WAITFRIENDLIST_REQ, *LPFHP_WAITFRIENDLIST_REQ;
-
-//----------------------------------------------------------------------------
-// DG[0x61] 대기중인 친구 리스트를 요청 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	char		FriendName[MAX_IDSTRING];
-} FHP_WAITFRIENDLIST_COUNT, *LPFHP_WAITFRIENDLIST_COUNT;
-
-//----------------------------------------------------------------------------
-// GD[0x62] 상태를 알린다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	BYTE		State;
-} FHP_FRIEND_STATE_C, *LPFHP_FRIEND_STATE_C;
-
-//----------------------------------------------------------------------------
-// DG[0x62] 상태를 알린다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	char		FriendName[MAX_IDSTRING];
-	BYTE		State;
-} FHP_FRIEND_STATE, *LPFHP_FRIEND_STATE;
-
-//----------------------------------------------------------------------------
-// GD[0x63] 친구 추가 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	char		FriendName[MAX_IDSTRING];
-} FHP_FRIEND_ADD_REQ, *LPFHP_FRIEND_ADD_REQ;
-
-
-//----------------------------------------------------------------------------
-// DG[0x63] 친구 추가 요청 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	BYTE		Result;
-	char		Name[MAX_IDSTRING];
-	char		FriendName[MAX_IDSTRING];
-	BYTE		Server;
-} FHP_FRIEND_ADD_RESULT, *LPFHP_FRIEND_ADD_RESULT;
-
-
-//----------------------------------------------------------------------------
-// GD[0x64] 대기중인 친구 추가 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	BYTE		Result;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	char		FriendName[MAX_IDSTRING];
-} FHP_WAITFRIEND_ADD_REQ, *LPFHP_WAITFRIEND_ADD_REQ;
-
-//----------------------------------------------------------------------------
-// DG[0x64] 대기중인 친구 추가 요청 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	BYTE		Result;
-	char		Name[MAX_IDSTRING];
-	char		FriendName[MAX_IDSTRING];
-	BYTE		pServer;
-} FHP_WAITFRIEND_ADD_RESULT, *LPFHP_WAITFRIEND_ADD_RESULT;
-
-
-//----------------------------------------------------------------------------
-// GD[0x65] 친구를 삭제한다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	char		FriendName[MAX_IDSTRING];
-} FHP_FRIEND_DEL_REQ, *LPFHP_FRIEND_DEL_REQ;
-
-//----------------------------------------------------------------------------
-// DG[0x65] 친구를 삭제 결과를 알린다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	BYTE		Result;
-	char		Name[MAX_IDSTRING];
-	char		FriendName[MAX_IDSTRING];
-} FHP_FRIEND_DEL_RESULT, *LPFHP_FRIEND_DEL_RESULT;
-
-
-
-//----------------------------------------------------------------------------
-// GD[0x66] 대화방 개설을 요청한다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	char		fName[MAX_IDSTRING];	// 대화 상대
-
-} FHP_FRIEND_CHATROOM_CREATE_REQ, *LPFHP_FRIEND_CHATROOM_CREATE_REQ;
-
-//----------------------------------------------------------------------------
-// GD[0x66] 대화방 개설을 요청결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	BYTE		Result;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	char		FriendName[MAX_IDSTRING];
-	char		ServerIp[15];
-	WORD		RoomNumber;
-	DWORD		Ticket;
-	BYTE		Type;
-} FHP_FRIEND_CHATROOM_CREATE_RESULT, *LPFHP_FRIEND_CHATROOM_CREATE_RESULT;
-
-//----------------------------------------------------------------------------
-// GD[0x70] 다른유저에게 쪽지를 보낸다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	short		Number;
-	DWORD		WindowGuid;
-	char		Name[MAX_IDSTRING];
-	char		ToName[MAX_IDSTRING];
-	char		Subject[MAX_MEMO_SUBJECT];
-	BYTE		Dir;
-	BYTE		Action;
-	short		MemoSize;
-
-#ifdef ITEM_INDEX_EXTEND_20050706
-	BYTE		Photo[MAX_PREVIEWCHARSET + 9];
-#else
-#ifdef DARKLORD_WORK
-	BYTE		Photo[MAX_PREVIEWCHARSET + 4];
-#else
-	BYTE		Photo[MAX_PREVIEWCHARSET + 3];
-#endif
-#endif
-
-	char		Memo[MAX_MEMO];
-} FHP_FRIEND_MEMO_SEND, *LPFHP_FRIEND_MEMO_SEND;
-
-//----------------------------------------------------------------------------
-// GD[0x70] 다른 유저에게 쪽지를 보낸 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	BYTE		Result;
-	DWORD		WindowGuid;
-} FHP_FRIEND_MEMO_SEND_RESULT, *LPFHP_FRIEND_MEMO_SEND_RESULT;
-
-//----------------------------------------------------------------------------
-// GD[0x71] 쪽지 리스트 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		Number;
-	char		Name[MAX_IDSTRING];
-} FHP_FRIEND_MEMO_LIST_REQ, *LPFHP_FRIEND_MEMO_LIST_REQ;
-
-
-//----------------------------------------------------------------------------
-// DG[0x71] 쪽지 리스트를 보낸다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	WORD		Number;
-	WORD		MemoIndex;
-	char		SendName[MAX_IDSTRING];
-	char		RecvName[MAX_IDSTRING];
-	char		Date[MAX_DATE];
-	char		Subject[MAX_MEMO_SUBJECT];
-	BYTE		read;
-} FHP_FRIEND_MEMO_LIST, *LPFHP_FRIEND_MEMO_LIST;
-
-
-//----------------------------------------------------------------------------
-// GD[0x72] 쪽지 내용을 보내달라고 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	WORD		MemoIndex;
-	char		Name[MAX_IDSTRING];
-} FHP_FRIEND_MEMO_RECV_REQ, *LPFHP_FRIEND_MEMO_RECV_REQ;
-
-//----------------------------------------------------------------------------
-// DG[0x72] 쪽지 내용을 보낸다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	WORD		MemoIndex;
-	short		MemoSize;
-
-#ifdef ITEM_INDEX_EXTEND_20050706
-	BYTE		Photo[MAX_PREVIEWCHARSET + 9];
-#else
-#ifdef DARKLORD_WORK	
-	BYTE		Photo[MAX_PREVIEWCHARSET + 4];
-#else
-	BYTE		Photo[MAX_PREVIEWCHARSET + 3];
-#endif
-#endif
-
-	BYTE		Dir;
-	BYTE		Action;
-	char		Memo[MAX_MEMO];
-} FHP_FRIEND_MEMO_RECV, *LPFHP_FRIEND_MEMO_RECV;
-
-//----------------------------------------------------------------------------
-// GD[0x73] 쪽지 삭제 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	WORD		MemoIndex;
-	char		Name[MAX_IDSTRING];
-} FHP_FRIEND_MEMO_DEL_REQ, *LPFHP_FRIEND_MEMO_DEL_REQ;
-
-//----------------------------------------------------------------------------
-// DG[0x73] 쪽지 삭제 요청 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	BYTE		Result;
-	WORD		MemoIndex;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-} FHP_FRIEND_MEMO_DEL_RESULT, *LPFHP_FRIEND_MEMO_DEL_RESULT;
-
-//----------------------------------------------------------------------------
-// GD[0x74] 친구 초대 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	char		FriendName[MAX_IDSTRING];
-	WORD		RoomNumber;
-	DWORD		WindowGuid;
-} FHP_FRIEND_INVITATION_REQ, *LPFHP_FRIEND_INVITATION_REQ;
-
-//----------------------------------------------------------------------------
-// DG[0x74] 친구 초대 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	BYTE		Result;
-	short		Number;
-	char		Name[MAX_IDSTRING];
-	DWORD		WindowGuid;
-} FHP_FRIEND_INVITATION_RET, *LPFHP_FRIEND_INVITATION_RET;
-
-
-#ifdef MAP_SERVER_WORK_20041030		// 서버 맵분할 관련 패킷 - 게임서버 <-> 인증서버
-
-//----------------------------------------------------------------------------
-// GJ [0x7A] 인증서버에게 특정 사용자가 맵서버를 이동해야 함을 알림 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iIndex;							// 게임서버 사용자 인덱스
-	CHAR		szAccountID[MAX_IDSTRING + 1];	// 인증받을 ID
-	CHAR		szCharName[MAX_IDSTRING + 1];		// 인증받을 케릭명
-	WORD		wCurMapSvrCode;					// 현재의 맵서버 코드 (이전 서버코드가 될것임)
-	WORD		wDstMapSvrCode;					// 이동할 맵서버 코드 (목적 서버코드가 될것임)
-	WORD		wMapNumber;						// 이동할 맵번호
-	BYTE		btX;							// 이동활 좌표 X
-	BYTE		btY;							// 이동활 좌표 Y
-#ifdef MAP_SERVER_ADDINFO_20050509
-#ifdef PCBANG_ADVANTAGE							// 한국전용 (FOR_KOREA)
-	BYTE		bPcBangUser;					// PC방 사용자인지 여부
-#endif	
-#endif
-#ifdef MAP_SERVER_ADDINFO_ADULT_20050610		// 태국전용 (FOR_THAILAND)
-	BYTE		bIsAdult;						// 성인인지 여부
-#endif	
-#ifdef CHN_PLAYTIME_LIMIT_SYSTEM_20050818
-	INT			iAddPlayTime;					// 중국 피로드 - 게임시간 (5시간 지나면 게임혜택 0%)
-#endif
-#ifdef VTM_PLAYTIME_LIMIT_SYSTEM_20060626
-	INT			iAddPlayTime;					// 베트남 피로도 - 게임시간 (5시간 지나면 게임혜택 0%)
-#endif
-} PMSG_REQ_MAPSVRMOVE, *LPPMSG_REQ_MAPSVRMOVE;
-
-
-//----------------------------------------------------------------------------
-// JG [0x7A] 인증서버가 특정 사용자의 맵서버 이동에 대한 결과를 알림 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iIndex;							// 게임서버 사용자 인덱스
-	CHAR		szAccountID[MAX_IDSTRING + 1];	// 인증받은 ID
-	CHAR		szCharName[MAX_IDSTRING + 1];		// 인증받은 케릭명
-	WORD		wCurMapSvrCode;					// 현재의 맵서버 코드 (이전 서버코드가 될것임)
-	WORD		wDstMapSvrCode;					// 이동할 맵서버 코드 (목적 서버코드가 될것임)
-	WORD		wMapNumber;						// 이동할 맵번호
-	BYTE		btX;							// 이동활 좌표 X
-	BYTE		btY;							// 이동활 좌표 Y
-	INT			iResult;						// 이동요청 결과 (0:성공/1:계정틀림/2:게임서버인덱스없음/3:대상서버풀/4:이미이동요청중)
-												// 0 : 실패
-												// 1 : 성공
-	INT			iJoinAuthCode1;					// 인증 AUTH 코드 - 1
-	INT			iJoinAuthCode2;					// 인증 AUTH 코드 - 2
-	INT			iJoinAuthCode3;					// 인증 AUTH 코드 - 3
-	INT			iJoinAuthCode4;					// 인증 AUTH 코드 - 4
-#ifdef MAP_SERVER_ADDINFO_20050509
-#ifdef PCBANG_ADVANTAGE
-	BYTE		bPcBangUser;					// PC방 사용자인지 여부
-#endif
-#endif	
-#ifdef MAP_SERVER_ADDINFO_ADULT_20050610		// 태국전용 (FOR_THAILAND)
-	BYTE		bIsAdult;						// 성인인지 여부
-#endif	
-#ifdef CHN_PLAYTIME_LIMIT_SYSTEM_20050818
-	INT			iAddPlayTime;					// 중국 피로드 - 게임시간 (5시간 지나면 게임혜택 0%)
-#endif
-#ifdef VTM_PLAYTIME_LIMIT_SYSTEM_20060626
-	INT			iAddPlayTime;					// 베트남 피로도 - 게임시간 (5시간 지나면 게임혜택 0%)
-#endif
-} PMSG_ANS_MAPSVRMOVE, *LPPMSG_ANS_MAPSVRMOVE;
-
-
-//----------------------------------------------------------------------------
-// GJ [0x7B] 인증서버에게 특정 사용자가 맵서버 이동 후 인증을 요청함을 알림 (0xC1)		-> 인증서버는 해당 사용자의 게임서버 코드도 갱신
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iIndex;							// 게임서버 사용자 인덱스
-	CHAR		szAccountID[MAX_IDSTRING + 1];	// 인증받을 ID
-	CHAR		szCharName[MAX_IDSTRING + 1];		// 인증받을 케릭명
-	WORD		wDstMapSvrCode;					// 사용자가 이동한 게임서버 코드 (현재 접속한 게임서버에서 넣어줌)
-	INT			iJoinAuthCode1;					// 인증 AUTH 코드 - 1
-	INT			iJoinAuthCode2;					// 인증 AUTH 코드 - 2
-	INT			iJoinAuthCode3;					// 인증 AUTH 코드 - 3
-	INT			iJoinAuthCode4;					// 인증 AUTH 코드 - 4
-} PMSG_REQ_MAPSVRAUTH, *LPPMSG_REQ_MAPSVRAUTH;
-
-
-//----------------------------------------------------------------------------
-// JG [0x7B] 인증서버에게 특정 사용자가 맵서버 이동 후 인증요청에 대한 결과 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iIndex;							// 게임서버 사용자 인덱스
-	CHAR		szAccountID[MAX_IDSTRING + 1];	// 인증받을 ID			(인증서버에서 다시 보냄)
-	CHAR		szCharName[MAX_IDSTRING + 1];		// 인증받을 케릭명		(인증서버에서 다시 보냄)
-	WORD		wPrevMapSvrCode;				// 이전 게임서버 코드
-	WORD		wMapNumber;						// 이동할 맵번호
-	BYTE		btX;							// 이동활 좌표 X
-	BYTE		btY;							// 이동활 좌표 Y
-	INT			iResult;						// 이동요청 결과 (0:성공/1:계정틀림/2:인증코드틀림/3:서버코드틀림/4:서버이동중아님)
-
-												// 아래는 기존의 인증결과 정보 들
-	INT			iUserNumber;
-	INT			iDBNumber;
-#ifdef UPDATE_USERPASSWORD_LENGTH_20090424
-	CHAR		cJoominNumber[13];//[MAX_JOOMINNUMBER_LENGTH];				// 주민번호 뒷자리
-#else
-	CHAR		cJoominNumber[13];				// 주민번호 뒷자리
-#endif	// UPDATE_USERPASSWORD_LENGTH_20090424
-
-	BYTE		btBlockCode;					// 블록코드는 별도로 받음
-#ifdef FOR_THAILAND
-	CHAR		AuthAdult;						// 성인 인증 코드
-#endif
-#ifdef ADD_PROTOCOL_PCBANG_GUID
-	INT			iPcBangGuid;
-#endif
-#ifdef MAP_SERVER_ADDINFO_20050509
-#ifdef PCBANG_ADVANTAGE
-	BYTE		bPcBangUser;					// PC방 사용자인지 여부
-#endif	
-#endif	
-#ifdef MAP_SERVER_ADDINFO_ADULT_20050610		// 태국전용 (FOR_THAILAND)
-	BYTE		bIsAdult;						// 성인인지 여부
-#endif	
-#ifdef CHN_PLAYTIME_LIMIT_SYSTEM_20050818
-#ifdef MODIFY_CHN_PLAYTIME_LIMIT_SYSTEM_01_20070509
-	int			iVerifiedType;					// 중국 피로도 성인 인증 타입 ( 0 : 성인, 1 : 미성년자, 2 : 오류 )
-#endif // MODIFY_CHN_PLAYTIME_LIMIT_SYSTEM_01_20070509
-	INT			iAddPlayTime;					// 중국 피로드 - 게임시간 (5시간 지나면 게임혜택 0%)
-#endif
-#ifdef VTM_PLAYTIME_LIMIT_SYSTEM_20060626
-	INT			iAddPlayTime;					// 베트남 피로도 - 게임시간 (5시간 지나면 게임혜택 0%)
-#endif
-} PMSG_ANS_MAPSVRAUTH, *LPPMSG_ANS_MAPSVRAUTH;
-
-#ifdef ADD_HACKING_TOOL_BLOCK_20090311
-//----------------------------------------------------------------------------
-// GJ [0x8A] 인증서버에 해킹 프로그램의 사용 여부 확인의 브로드 캐스팅을 요청한다. (0xC1) 
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	char		chHackToolFilename[64];
-} PMSG_HACKTOOL_USE_STATISTICS_REQ, *LPPMSG_HACKTOOL_USE_STATISTICS_REQ;
-
-//----------------------------------------------------------------------------
-// JG [0x8A] 전체 게임서버에 해킹 프로그램의 사용 여부 확인을 요청한다. (0xC1) 
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	char		chHackToolFilename[64];
-} PMSG_HACKTOOL_USE_STATISTICS, *LPPMSG_HACKTOOL_USE_STATISTICS;
-
-//----------------------------------------------------------------------------
-// GJ [0x8B] 인증서버에 해킹 프로그램의 사용자의 맵이동 제한을 요청한다. (0xC1) 
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	BYTE		btModifyType;				// 설정 타입 ( 1 : 추가, 2 : 수정, 3 : 삭제 )
-	DWORD		dwReservationTime;			// 블록 시작 시간
-	DWORD		dwBlockTerm;				// 블록 기간 (단위 : 초)
-	WORD		wBlockRate;					// 블록 확률
-	char		chHackToolFilename[64];
-} PMSG_RESERVE_HACKTOOL_MAP_MOVE_REQ, *LPPMSG_RESERVE_HACKTOOL_MAP_MOVE_REQ;
-
-//----------------------------------------------------------------------------
-// GC [0x8B] 전체 게임서버에 해킹 프로그램의 사용자의 맵이동 제한을 요청한다. (0xC1) 
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	BYTE		btModifyType;				// 설정 타입 ( 1 : 추가, 2 : 수정, 3 : 삭제 )
-	DWORD		dwReservationTime;			// 블록 시작 시간
-	DWORD		dwBlockTerm;				// 블록 기간 (단위 : 초)
-	WORD		wBlockRate;					// 블록 확률
-	char		chHackToolFilename[64];
-} PMSG_RESERVE_HACKTOOL_MAP_MOVE, *LPPMSG_RESERVE_HACKTOOL_MAP_MOVE;
-
-//----------------------------------------------------------------------------
-// GJ [0x8C] 전체 게임서버에 해킹 프로그램의 통계를 인증서버로 전달한다. (0xC1) 
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	WORD		wCurrentUserCount;
-	WORD		wHackToolUserCount;
-	char		chHackToolFilename[64];
-} PMSG_HACKTOOL_USE_STATISTICS_ANS, *LPPMSG_HACKTOOL_USE_STATISTICS_ANS;
-
-//----------------------------------------------------------------------------
-// GJ [0x8C] 전체 게임서버에 해킹 프로그램의 통계를 인증서버로 전달한다. (0xC1) 
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	char		chMessage[256];
-}PMSG_HACKTOOL_USE_STATISTICS_TOTAL, *LPPMSG_HACKTOOL_USE_STATISTICS_TOTAL;
-#endif // ADD_HACKING_TOOL_BLOCK_20090311
-
-//----------------------------------------------------------------------------
-// JG [0x7C] 특정 게임서버의 현재 최대 사용자 수를 주기적으로 보냄 (0xC1) 
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iSvrCode;						// 사용자가 이동한 게임서버 코드 (게임서버에서 넣어줌)
-	INT			iMaxUserCount;					// 현재 서버의 최대 사용자 수
-	INT			iCurUserCount;					// 현재 서버의 접속 사용자 수
-} PMSG_NOTIFY_MAXUSER, *LPPMSG_NOTIFY_MAXUSER;
-
-#endif
-
-#ifdef UPDATE_RESEND_GETCHARlIST_DISABLE_20090605
-//----------------------------------------------------------------------------
-// GJ [0x8F] 블럭시킬 아이피를 등록한다. (0xC1) 
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	char		BlockIp[17];
-} PMSG_BLOCK_IP, *LPPMSG_BLOCK_IP;
-#endif	// UPDATE_RESEND_GETCHARlIST_DISABLE_20090605
-
-//----------------------------------------------------------------------------
-// 채팅 서버와의 프로토콜 교환
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
-// DG[0xA0] 채팅 서버에 방 개설을 요청한다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	char		Name[MAX_IDSTRING];	// 방 개설을 요청한 사람
-	char		FriendName[MAX_IDSTRING];	// 최초 대화 상대
-	short		UserNumber;
-	short		ServerNumber;
-	short		FriendNumber;
-	short		FriendServerNumber;
-} FHP_CHAT_ROOMCREATE, *LPFHP_CHAT_ROOMCREATE;
-
-//----------------------------------------------------------------------------
-// DG[0xA0] 채팅 서버에 방 개설을 요청 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	BYTE		Result;
-	WORD		RoomNumber;
-	char		Name[MAX_IDSTRING];	// 방 개설을 요청한 사람
-	char		FriendName[MAX_IDSTRING];	// 대화 상대
-	short		UserNumber;
-	short		ServerNumber;
-	DWORD		Ticket;
-	DWORD		FriendTicket;
-	BYTE		Type;
-} FHP_CHAT_ROOMCREATE_RESULT, *LPFHP_CHAT_ROOMCREATE_RESULT;
-
-//----------------------------------------------------------------------------
-// DG[0xA1] 채팅 서버에 친구를 초대한다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		RoomNumber;
-	char		Name[MAX_IDSTRING];	// 방 개설을 요청한 사람
-	short		UserNumber;
-	short		ServerNumber;
-	BYTE		Type;
-} FHP_CHAT_JOINUSER_REQ, *LPFHP_CHAT_JOINUSER_REQ;
-
-//----------------------------------------------------------------------------
-// DG[0xA1] 채팅 서버에 친구를 초대한 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	BYTE		Result;
-	WORD		RoomNumber;
-	char		Name[MAX_IDSTRING];	// 방 개설을 요청한 사람
-	short		UserNumber;
-	short		ServerNumber;
-	DWORD		Ticket;
-	DWORD		FriendTicket;
-} FHP_CHAT_JOINUSER_RESULT, *LPFHP_CHAT_JOINUSER_RESULT;
-
-//----------------------------------------------------------------------------
-// CD[0xA2] 상대에게 말을 걸어 초대한다.
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		RoomNumber;
-	char		Name[MAX_IDSTRING];	// 말을 건 사용자
-	DWORD		Ticket;
-	char		Msg[100];
-} FHP_CHAT_ROOMINVITATION, *LPFHP_CHAT_ROOMINVITATION;
-
-
-#endif
-//##__FRIEND_WORK__
-
-
-
-//----------------------------------------------------------------------------
-// 길드 & 연합 서버그룹(마야 등) 채팅 프로토콜
-//
-// Lastest : 20050706
-//
-//----------------------------------------------------------------------------
-
-#ifdef ADD_SERVERGROUP_CHATTING_FOR_GUILD_UNION_01_20050706
-
-//----------------------------------------------------------------------------
-// GEXD[0x50] 서버그룹 길드 채팅
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iGuildNum;
-	char		szCharacterName[MAX_IDSTRING];
-	char		szChattingMsg[MAX_CHAT];
-
-} EXSDHP_SERVERGROUP_GUILD_CHATTING_SEND, *LPEXSDHP_SERVERGROUP_GUILD_CHATTING_SEND;
-
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iGuildNum;
-	char		szCharacterName[MAX_IDSTRING];
-	char		szChattingMsg[MAX_CHAT];
-
-} EXSDHP_SERVERGROUP_GUILD_CHATTING_RECV, *LPEXSDHP_SERVERGROUP_GUILD_CHATTING_RECV;
-
-
-//----------------------------------------------------------------------------
-// GEXD[0x51] 서버그룹 연합 채팅
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iUnionNum;
-	char		szCharacterName[MAX_IDSTRING];
-	char		szChattingMsg[MAX_CHAT];
-
-} EXSDHP_SERVERGROUP_UNION_CHATTING_SEND, *LPEXSDHP_SERVERGROUP_UNION_CHATTING_SEND;
-
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iUnionNum;
-	char		szCharacterName[MAX_IDSTRING];
-	char		szChattingMsg[MAX_CHAT];
-
-} EXSDHP_SERVERGROUP_UNION_CHATTING_RECV, *LPEXSDHP_SERVERGROUP_UNION_CHATTING_RECV;
-
-#endif
-
-
-
-
-//----------------------------------------------------------------------------
-// 새로운 길드 시스템 프로토콜
-//
-// Lastest : 20040913, 20040922, 20041006
-//
-//----------------------------------------------------------------------------
-
-#ifdef ADD_NEW_GUILD_01_20040913
-
-//----------------------------------------------------------------------------
-// GEXD[0xE1] 직책을 임명 / 변경 / 해제 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		wUserIndex;							// 임명하는 유저(길마, 부길마) 인덱스
-	BYTE		btType;								// 임명(0x01) / 변경(0x02) / 해제(0x03)
-
-	BYTE		btGuildStatus;						// 임명하는 직책.
-	char		szGuildName[MAX_GUILDNAMESTRING + 1];	// 길드 이름.
-	char		szTargetName[MAX_IDSTRING + 1];		// 대상 유저 이름.
-
-} EXSDHP_GUILD_ASSIGN_STATUS_REQ, *LPEXSDHP_GUILD_ASSIGN_STATUS_REQ;
-
-
-//----------------------------------------------------------------------------
-// EXDG[0xE1] 직책을 임명 / 변경 / 해제 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	BYTE		btFlag;								// 요청서버인지 판단.
-	WORD		wUserIndex;							// 임명하는 유저(길마, 부길마) 인덱스
-	BYTE		btType;								// 임명(0x01) / 변경(0x02) / 해제(0x03)
-	BYTE		btResult;							// 결과
-
-	BYTE		btGuildStatus;						// 임명된 직책.
-	char		szGuildName[MAX_GUILDNAMESTRING + 1];	// 길드 이름.
-	char		szTargetName[MAX_IDSTRING + 1];		// 대상 유저 이름.
-
-} EXSDHP_GUILD_ASSIGN_STATUS_RESULT, *LPEXSDHP_GUILD_ASSIGN_STATUS_RESULT;
-
-#endif
-// ## ADD_NEW_GUILD_01_20040913
-
-
-#ifdef ADD_NEW_GUILD_02_20040922
-
-//----------------------------------------------------------------------------
-// GEXD[0xE2] 길드 타입을 설정하는 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		wUserIndex;							// 길드타입을 설정하는 유저 인덱스
-	BYTE		btGuildType;						// 설정할 길드타입 일반길드(0x01) / 용병길드(0x02) / 클랜(0x03)
-
-	char		szGuildName[MAX_GUILDNAMESTRING + 1];	// 길드 이름.
-
-} EXSDHP_GUILD_ASSIGN_TYPE_REQ, *LPEXSDHP_GUILD_ASSIGN_TYPE_REQ;
-
-
-//----------------------------------------------------------------------------
-// EXDG[0xE2] 길드 타입을 설정하는 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	BYTE		btFlag;								// 요청서버인지 판단.
-	WORD		wUserIndex;							// 임명하는 유저(길마, 부길마) 인덱스
-	BYTE		btGuildType;						// 설정할 길드타입 일반길드(0x01) / 용병길드(0x02) / 클랜(0x03)
-	BYTE		btResult;							// 결과
-
-	char		szGuildName[MAX_GUILDNAMESTRING + 1];	// 길드 이름.
-
-} EXSDHP_GUILD_ASSIGN_TYPE_RESULT, *LPEXSDHP_GUILD_ASSIGN_TYPE_RESULT;
-
-#endif
-
-
-#ifdef ADD_NEW_UNION_01_20041006
-typedef struct {}__UNION_SPROTOCOL_H___;
-//----------------------------------------------------------------------------
-// GEXD[0xE5] Union, Rival 관계 맺기
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		wRequestUserIndex;
-	WORD		wTargetUserIndex;
-
-	BYTE		btRelationShipType;
-
-	INT			iRequestGuildNum;
-	INT			iTargetGuildNum;
-
-} EXSDHP_RELATIONSHIP_JOIN_REQ, *LPEXSDHP_RELATIONSHIP_JOIN_REQ;
-
-//----------------------------------------------------------------------------
-// EXDG[0xE5] Union, Rival 관계 맺기 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	BYTE		btFlag;								// 요청서버인지 판단.
-	WORD		wRequestUserIndex;
-	WORD		wTargetUserIndex;
-
-	BYTE		btResult;							// 결과
-
-	BYTE		btRelationShipType;
-
-	INT			iRequestGuildNum;
-	INT			iTargetGuildNum;
-
-	CHAR		szRequestGuildName[MAX_GUILDNAMESTRING + 1];
-	CHAR		szTargetGuildName[MAX_GUILDNAMESTRING + 1];
-
-} EXSDHP_RELATIONSHIP_JOIN_RESULT, *LPEXSDHP_RELATIONSHIP_JOIN_RESULT;
-
-//----------------------------------------------------------------------------
-// GEXD[0xE6] Union, Rival 관계 끊기
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	WORD		wRequestUserIndex;
-	WORD		wTargetUserIndex;					// 임명하는 유저(길마, 부길마) 인덱스	
-
-	BYTE		btRelationShipType;
-
-	INT			iRequestGuildNum;
-	INT			iTargetGuildNum;
-
-} EXSDHP_RELATIONSHIP_BREAKOFF_REQ, *LPEXSDHP_RELATIONSHIP_BREAKOFF_REQ;
-
-//----------------------------------------------------------------------------
-// EXDG[0xE6] Union, Rival 관계 끊기 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	BYTE		btFlag;								// 요청서버인지 판단.
-
-	WORD		wRequestUserIndex;
-	WORD		wTargetUserIndex;
-
-	BYTE		btResult;							// 결과
-
-	BYTE		btRelationShipType;
-
-	INT			iRequestGuildNum;
-	INT			iTargetGuildNum;
-
-} EXSDHP_RELATIONSHIP_BREAKOFF_RESULT, *LPEXSDHP_RELATIONSHIP_BREAKOFF_RESULT;
-
-
-//----------------------------------------------------------------------------
-// ★ EXDG[0xE7] 특정 Union 의 RelationShip 리스트 전송 ( BroadCastring 됨 )
-//----------------------------------------------------------------------------
-
-// 모든 길드는 유니온이다.
-// '공식적인 유니온'은 '유니온 2개 이상의 결합 유니온' 이다.
-// -> 공식유니온 = 유니온 + 유니온 + 유니온 + ...
-typedef struct
-{
-	PWMSG_HEAD	h;
-
-	BYTE		btFlag;								// 요청서버인지 판단.
-
-	BYTE		btRelationShipType;
-	BYTE		btRelationShipMemberCount;
-
-#ifdef ADD_UNION_GET_UNIONMARK_01_20041222
-	BYTE		pUnionMasterGuildMark[MAX_GUILDMARKSIZE];
-#endif
-
-	CHAR		szUnionMasterGuildName[MAX_GUILDNAMESTRING + 1];
-	INT			iUnionMasterGuildNumber;
-	INT			iRelationShipMember[MAX_RELATIONSHIP_COUNT];
-} EXSDHP_UNION_RELATIONSHIP_LIST, *LPEXSDHP_UNION_RELATIONSHIP_LIST;
-
-//----------------------------------------------------------------------------
-// ★ EXDG[0xE8] 길드의 RelationShip 변경을 Notification 한다. ( BroadCastring 됨 )
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-
-	BYTE		btFlag;								// 요청서버인지 판단.
-	BYTE		btUpdateFlag;						// 갱신된 목록에 대한 상세 정보
-
-													// [0x10] 유니온 해체 됐다.
-
-
-	BYTE		btGuildListCount;						// Guild 카운트.
-	INT			iGuildList[MAX_RELATIONSHIP_COUNT];		// Update 될 길드 리스트.
-
-} EXSDHP_NOTIFICATION_RELATIONSHIP, *LPEXSDHP_NOTIFICATION_RELATIONSHIP;
-
-//----------------------------------------------------------------------------
-// ★ EXDG[0xE9] 연합 리스트를 보내준다. ( P2P 됨 )
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	WORD		wRequestUserIndex;
-	INT			iUnionMasterGuildNumber;
-
-} EXSDHP_UNION_LIST_REQ, *LPEXSDHP_UNION_LIST_REQ;
-
-typedef struct
-{
-	PWMSG_HEAD	h;
-	BYTE		btCount;
-	BYTE		btResult;
-
-	WORD		wRequestUserIndex;
-	INT			iTimeStamp;							// 캐싱을 위한 최근 갱신 시간을 보내준다.
-
-	BYTE		btRivalMemberNum;
-	BYTE		btUnionMemberNum;
-
-} EXSDHP_UNION_LIST_COUNT, *LPEXSDHP_UNION_LIST_COUNT;
-
-typedef struct
-{
-	BYTE		btMemberNum;
-	BYTE		Mark[MAX_GUILDMARKSIZE];
-	char		szGuildName[MAX_GUILDNAMESTRING];
-
-} EXSDHP_UNION_LIST, *LPEXSDHP_UNION_LIST;
-
-
-#endif
-
-#ifdef ADD_ABILITY_OF_UNIONMASTER_TO_KICK_OUT_UNIONMEMBER_01_20050418
-
-//----------------------------------------------------------------------------
-// GEXD[0xEB][0x01] Union Member 강제 탈퇴 요청
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-
-	WORD		wRequestUserIndex;
-
-	BYTE		btRelationShipType;
-
-	char		szUnionMasterGuildName[MAX_GUILDNAMESTRING];
-	char		szUnionMemberGuildName[MAX_GUILDNAMESTRING];
-
-} EXSDHP_KICKOUT_UNIONMEMBER_REQ, *LPEXSDHP_KICKOUT_UNIONMEMBER_REQ;
-
-//----------------------------------------------------------------------------
-// EXDG[0xEB][0x01] Union Member 강제 탈퇴 결과
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	BYTE		btFlag;								// 요청서버인지 판단.
-
-	WORD		wRequestUserIndex;
-	BYTE		btRelationShipType;
-
-	BYTE		btResult;							// 결과
-
-	char		szUnionMasterGuildName[MAX_GUILDNAMESTRING + 1];
-	char		szUnionMemberGuildName[MAX_GUILDNAMESTRING + 1];
-
-} EXSDHP_KICKOUT_UNIONMEMBER_RESULT, *LPEXSDHP_KICKOUT_UNIONMEMBER_RESULT;
-
-#endif 
-
-
-#ifdef ADD_MANAGER_SENDMAIL
-//----------------------------------------------------------------------------
-// CG [0x63] 인증서버 -> 게임서버 쪽지 보내기
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-
-	char		Name[MAX_IDSTRING];
-	char		TargetName[MAX_IDSTRING];
-	char		Subject[MAX_MEMO_SUBJECT];
-	short		MemoSize;
-	char		Memo[MAX_MEMO];
-} PMSG_JG_MEMO_SEND, *LPPMSG_JG_MEMO_SEND;
-#endif
 
 
 #ifdef MU_CASTLESIEGE_DS_PROTOCOL_20041105		// 공성전 관련 추가된 프로토콜 (GS <-> DS)
@@ -3990,48 +2901,51 @@ struct _tagSDHP_REQ_EVENT_MONSTER_KILL_INFO_SAVE
 	__int64 DamageScore;
 };
 
-/* 706 */
-struct _ST_BLOCK_CHATTING_USER
+typedef struct _ST_BLOCK_CHATTING_USER
 {
+	_ST_BLOCK_CHATTING_USER()
+	{
+		bIsUsed = false;
+		btSlotNum = 0;
+		memset(szCharName, 0, sizeof(szCharName));
+	}
+
 	bool bIsUsed;
-	char btSlotNum;
-	char szCharName[11];
+	BYTE btSlotNum;
+	char szCharName[MAX_IDSTRING + 1];
 };
 
-/* 707 */
-struct SDHP_ANS_BLOCK_CHAT_USER_INFO
+typedef struct SDHP_REQ_BLOCK_CHAT_USER_INFO
 {
-	PWMSG_HEAD2 h;
-	int nUserIndex;
-	char szCharName[11];
-	char btUserCnt;
-	_ST_BLOCK_CHATTING_USER BlockCharList[20];
-};
-
-/* 708 */
-struct SDHP_REQ_ADD_BLOCK_CHAT_USER_INFO
-{
-	PBMSG_HEAD2 h;
-	int nUserIndex;
-	char szCharName[11];
-	_ST_BLOCK_CHATTING_USER szBlockChar;
-};
-
-/* 709 */
-struct SDHP_REQ_DEL_BLOCK_CHAT_USER_INFO
-{
-	PBMSG_HEAD2 h;
-	int nUserIndex;
-	char szCharName[11];
-	_ST_BLOCK_CHATTING_USER szBlockChar;
-};
-/* 1127 */
-struct  SDHP_REQ_BLOCK_CHAT_USER_INFO
-{
-	PBMSG_HEAD h;
+	PBMSG_HEAD h; // C1:6E:00 GS->DS
 	int iUserIndex;
-	char szCharName[11];
-};
+	char szCharName[MAX_IDSTRING + 1];
+} *LPSDHP_REQ_BLOCK_CHAT_USER_INFO;
+
+typedef struct SDHP_ANS_BLOCK_CHAT_USER_INFO
+{
+	PWMSG_HEAD2 h; // C2:6E:00 DS->GS
+	int nUserIndex;
+	char szCharName[MAX_IDSTRING + 1];
+	BYTE btUserCnt;
+	_ST_BLOCK_CHATTING_USER BlockCharList[20];
+} *LPSDHP_ANS_BLOCK_CHAT_USER_INFO;
+
+typedef struct SDHP_REQ_ADD_BLOCK_CHAT_USER_INFO
+{
+	PBMSG_HEAD2 h; // C1:6E:01 GS->DS
+	int nUserIndex;
+	char szCharName[MAX_IDSTRING + 1];
+	_ST_BLOCK_CHATTING_USER szBlockChar;
+} *LPSDHP_REQ_ADD_BLOCK_CHAT_USER_INFO;
+
+typedef struct SDHP_REQ_DEL_BLOCK_CHAT_USER_INFO
+{
+	PBMSG_HEAD2 h; // C1:6E:02 GS->DS
+	int nUserIndex;
+	char szCharName[MAX_IDSTRING + 1];
+	_ST_BLOCK_CHATTING_USER szBlockChar;
+} *LPSDHP_REQ_DEL_BLOCK_CHAT_USER_INFO;
 
 struct _SDHP_REQ_RESTORE_ITEM_LIST_SAVE
 {
@@ -5128,7 +4042,7 @@ struct _tagPMSG_REQ_JEWEL_UPGRADE_INFO_INSERT_DS
 struct SDHP_REQ_SAVE_ITL_GUILDPOINT
 {
 	PBMSG_HEAD2 h;
-	char GuildName[9];
+	char GuildName[MAX_GUILDNAMESTRING + 1];
 	int nType;
 	char byWin;
 	char byLose;
@@ -5140,7 +4054,7 @@ struct SDHP_REQ_SAVE_ITL_GUILDPOINT
 struct SDHP_REQ_SAVE_ITL_GUILDCOUNT
 {
 	PBMSG_HEAD2 h;
-	char GuildName[9];
+	char GuildName[MAX_GUILDNAMESTRING + 1];
 	char byCount;
 };
 
@@ -5149,7 +4063,7 @@ struct SDHP_REQ_SAVE_ITL_USERPOINT
 {
 	PBMSG_HEAD2 h;
 	char UserName[11];
-	char GName[9];
+	char GName[MAX_GUILDNAMESTRING + 1];
 	int nOccupiedCount;
 	int nKillP;
 	int nInvalidationCount;
@@ -5162,7 +4076,7 @@ struct SDHP_REQ_SAVE_ITL_USERPOINT
 struct _tagPMSG_REQ_ITL_GUILDCOUNTREQ
 {
 	PBMSG_HEAD2 h;
-	char GuildName[9];
+	char GuildName[MAX_GUILDNAMESTRING + 1];
 	int nUserIndex;
 	unsigned __int16 wMapSverNum;
 };
@@ -5241,7 +4155,7 @@ struct _tagPMSG_ANS_ITL_REWARDLIST
 struct _tagPMSG_REQ_ITL_USERCOUNTREQ
 {
 	PBMSG_HEAD2 h;
-	char UserName[9];
+	char UserName[MAX_GUILDNAMESTRING + 1];
 	int nUserIndex;
 };
 
@@ -5373,12 +4287,12 @@ struct _tagSDHP_REQ_GREMORY_CASE_SELECT
 /* 816 */
 struct _stCancelGuildNames
 {
-	char szGuildNames[9];
+	char szGuildNames[MAX_GUILDNAMESTRING + 1];
 };
 /* 814 */
 struct _stABWinGuildInfoDS
 {
-	char szGuildName[9];
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 	DWORD dwGuild;
 	WORD wOccupyObelisk;
 	WORD wObeliskGroup;
@@ -5397,7 +4311,7 @@ struct _tagPMSG_REQ_ARCA_BATTLE_GUILD_JOIN_DS
 {
 	PBMSG_HEAD2 h;
 	char szGuildMaster[11];
-	char szGuildName[9];
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 	unsigned int dwGuild;
 	unsigned __int16 wNumber;
 };
@@ -5415,7 +4329,7 @@ struct _tagPMSG_REQ_ARCA_BATTLE_GUILD_MEMBER_JOIN_DS
 {
 	PBMSG_HEAD2 h;
 	char szCharName[11];
-	char szGuildName[9];
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 	unsigned int dwGuild;
 	unsigned __int16 wNumber;
 };
@@ -5524,7 +4438,7 @@ struct _tagPMSG_REQ_AB_JOIN_MEMBER_UNDER_DS
 struct _stGuildUnderMember
 {
 	char btGuildMemberCnt;
-	char szGuildNames[9];
+	char szGuildNames[MAX_GUILDNAMESTRING + 1];
 };
 
 /* 985 */
@@ -5579,7 +4493,7 @@ struct _tagPMSG_REQ_REMOVE_GUILD_BUFF_DS
 {
 	PBMSG_HEAD2 h;
 	unsigned __int16 wMapSvrNum;
-	char szGuildName[9];
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 };
 
 /* 1024 */
@@ -5831,7 +4745,7 @@ struct PMSG_REQ_SAVE_DSF_USERPOINT
 {
 	PBMSG_HEAD2 h;
 	char UserName[11];
-	char GName[9];
+	char GName[MAX_GUILDNAMESTRING + 1];
 	int nPoint;
 	int Type;
 	int nEnterCount;
@@ -5957,7 +4871,7 @@ struct _stDSFRewardList
 {
 	char byRank;
 	char szCharName[11];
-	char szGuildName[9];
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 	char byEnterCount;
 	char byPoint;
 	char byGotReward;
@@ -6165,36 +5079,36 @@ struct _stDSFGoFinalPartyInfo
 	char btEnterDay;
 };
 
-/* 817 */
-struct _stArcaBattleMarkTopRank
+typedef struct _stArcaBattleMarkTopRank
 {
-	_stArcaBattleMarkTopRank::_stArcaBattleMarkTopRank()
+	_stArcaBattleMarkTopRank()
 	{
-		this->btRank = 0;
-		this->dwMarkCnt = 0;
-		memset(this->szGuildNames, 0, 9u);
+		btRank = 0;
+		dwMarkCnt = 0;
+		memset(szGuildNames, 0, sizeof(szGuildNames));
 	}
-	char btRank;
-	char szGuildNames[9];
+
+	BYTE btRank;
+	char szGuildNames[MAX_GUILDNAMESTRING + 1];
 	BYTE dwMarkCnt;
 };
 
-/* 818 */
-struct _stABAllGuildMark
+typedef struct _stABAllGuildMark
 {
 	_stABAllGuildMark()
 	{
-		this->dwMarkCnt = 0;
-		memset(this->szGuildName, 0, 9);
+		dwMarkCnt = 0;
+		memset(szGuildName, 0, sizeof(szGuildName));
 	}
-	char szGuildName[9];
+
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 	DWORD dwMarkCnt;
 };
 
 /* 819 */
 struct _stABJoinUserInfoDS
 {
-	char szGuildName[9];
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 	unsigned int dwGuild;
 	char szUserName[11];
 };
@@ -6204,7 +5118,7 @@ struct _stABJoinUserInfoDS
 struct _tagPMSG_ANS_REMOVE_GUILD_BUFF_DS
 {
 	PBMSG_HEAD2 h;
-	char szGuildName[9];
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 };
 
 /* 1006 */
@@ -6229,7 +5143,7 @@ struct _tagPMSG_REQ_ARCA_BATTLE_MARK_REG_DS
 	PBMSG_HEAD2 h;
 	unsigned __int16 wNumber;
 	char szGuildMaster[11];
-	char szGuildName[9];
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 	unsigned int dwMarkCnt;
 	unsigned int dwGuildNum;
 };
@@ -6261,13 +5175,12 @@ struct _tagPMSG_REQ_ARCA_BATTLE_IS_TOP_RANK
 	unsigned int dwGuildNum;
 };
 
-/* 1011 */
-struct _tagPMSG_REQ_AB_MARK_REG_UPDATE_DS
+typedef struct _tagPMSG_REQ_AB_MARK_REG_UPDATE_DS
 {
-	PBMSG_HEAD2 h;
-	unsigned int dwGuildNum;
-	unsigned int dwMarkCnt;
-};
+	PBMSG_HEAD2 h; // C1:F8:57 GS->DS
+	DWORD dwGuildNum;
+	DWORD dwMarkCnt;
+} *LPPMSG_REQ_AB_MARK_REG_UPDATE_DS;
 
 /* 997 */
 struct _tagPMSG_ANS_AE_PLAY_DS
@@ -6330,7 +5243,7 @@ struct _stITLRewardList
 {
 	char byRank;
 	char szCharName[11];
-	char szGuildName[9];
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 	char byEnterCount;
 	char byPoint;
 	char byGotReward;
@@ -6339,7 +5252,7 @@ struct _stITLRewardList
 /* 834 */
 struct _stITLRankingInfo
 {
-	char szGuildName[9];
+	char szGuildName[MAX_GUILDNAMESTRING + 1];
 	char byRank;
 	char byITLType;
 	char byWin;

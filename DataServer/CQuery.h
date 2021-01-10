@@ -4,9 +4,17 @@
 class CQuery
 {
 public:
-	// 최대 컬럼수, BLOB 입출력 단위, NULL 필드값
-	enum { MAXCOL=100, BLOBBATCH=10000, CQUERYNULL=-100, CQUERYEOF=-101, 
-		CQUERYNOCOL=-102, CQUERYERROR=-103 };
+
+	enum
+	{
+		MAXCOL = 100,
+		BLOBBATCH = 10000,
+		CQUERYNULL = -100,
+		CQUERYEOF = -101,
+		CQUERYNOCOL = -102,
+		CQUERYERROR = -103
+	};
+
 private:
 	SQLHENV hEnv;							// 환경 핸들
 	SQLHDBC hDbc;							// 연결 핸들
@@ -20,6 +28,7 @@ private:
 
 	int FindCol(char *name);				// 컬럼의 이름으로부터 번호를 찾아준다.
 	BOOL ReConnect();
+
 public:
 	SQLINTEGER AffectCount;					// 영향받은 레코드 개수
 	SQLHSTMT hStmt;							// 명령 핸들. 직접 사용할 수도 있으므로 public으로 정의

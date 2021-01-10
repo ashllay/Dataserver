@@ -11,115 +11,92 @@ CBombHuntDBSet::~CBombHuntDBSet()
 
 BOOL CBombHuntDBSet::Connect()
 {
-	if (m_DBQuery.Connect(3, szDbConnectDsn, szDbConnectID, szDbConnectPass))
-		return 1;
-	MsgBox("CBombHuntDBSet ODBC Connect Fail");
-	return 0;
+	if (m_Query.Connect(3, szDbConnectDsn, szDbConnectID, szDbConnectPass) == FALSE)
+	{
+		MsgBox("CBombHuntDBSet ODBC Connect Fail");
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
-int CBombHuntDBSet::DBSelectBombHunt(char *szAccountID, char *szName, unsigned __int16 *wOutScore, char *btOutGameState, char *szOutTileState)
+BOOL CBombHuntDBSet::DBSelectBombHunt(char* szAccountID, char* szName, WORD& wOutScore, BYTE& btOutGameState, char* szOutTileState)
 {
-	int result;
-	CString QueryStr;
-
 	int iItemCount = 0;
 	int iReturnCode = 0;
 
-
+	CString QueryStr;
 	QueryStr.Format("EXEC WZ_BombHuntSetSelect '%s', '%s'", szAccountID, szName);
 
-	if (this->m_DBQuery.Exec(QueryStr))
+	if (m_Query.Exec(QueryStr) == FALSE)
 	{
-		if (this->m_DBQuery.Fetch() == 100)
-		{
-			this->m_DBQuery.Clear();
-			result = 0;
-		}
-		else
-		{
-			*wOutScore = this->m_DBQuery.GetInt("Score");
-			*btOutGameState = this->m_DBQuery.GetInt("GameState");
-			this->m_DBQuery.GetStr("TileState", szOutTileState);
-			this->m_DBQuery.Clear();
-			result = 1;
-		}
-	}
-	else
-	{
-		this->m_DBQuery.Clear();
+		m_Query.Clear();
 		LogAddTD("error-L3 : [BombHuntDBSet] DBSelectBombHuntInfo #1 [%s][%s] %s %d", szAccountID, szName, __FILE__, __LINE__);
-		result = 0;
+		return FALSE;
 	}
-	return result;
+
+	SQLRETURN sqlReturn = m_Query.Fetch();
+
+	if (sqlReturn == SQL_NO_DATA)
+	{
+		m_Query.Clear();
+		return FALSE;
+	}
+
+	wOutScore = m_Query.GetInt("Score");
+	btOutGameState = m_Query.GetInt("GameState");
+	m_Query.GetStr("TileState", szOutTileState);
+	m_Query.Clear();
+	return TRUE;
 }
 
-int CBombHuntDBSet::DBInsertBombHunt(char *szAccountID, char *szName, unsigned __int16 wScore, unsigned __int16 wGameState, char *szTileState)
+BOOL CBombHuntDBSet::DBInsertBombHunt(char *szAccountID, char *szName, WORD wScore, WORD wGameState, char *szTileState)
 {
-	int result;
-	CString QueryStr;
 	int iItemCount = 0;
 	int iReturnCode = 0;
 
+	CString QueryStr;
 	QueryStr.Format("EXEC WZ_BombHuntSetSave '%s', '%s', %d, %d, '%s'", szAccountID, szName, wGameState, wScore, szTileState);
 
-	if (this->m_DBQuery.Exec(QueryStr))
+	if (m_Query.Exec(QueryStr) == FALSE)
 	{
-		this->m_DBQuery.Clear();
-		result = 1;
-	}
-	else
-	{
-		this->m_DBQuery.Clear();
+		m_Query.Clear();
 		LogAddTD("error-L3 : [BombHunt] DBInsertBombHunt #1 [%s][%s] %s %d", szAccountID, szName, __FILE__, __LINE__);
-		result = 0;
+		return FALSE;
 	}
-	return result;
+
+	m_Query.Clear();
+	return TRUE;
 }
 
-int CBombHuntDBSet::DBDeleteBombHunt(char *szAccountID, char *szName)
+BOOL CBombHuntDBSet::DBDeleteBombHunt(char *szAccountID, char *szName)
 {
-	int result;
 	CString QueryStr;
+	QueryStr.Format("EXEC WZ_BombHuntSetDelete '%s', '%s'", szAccountID, szName);
 
-	QueryStr.Format(
-		"EXEC WZ_BombHuntSetDelete '%s', '%s'",
-		szAccountID,
-		szName);
-	if (this->m_DBQuery.Exec(QueryStr))
+	if (m_Query.Exec(QueryStr) == FALSE)
 	{
-		this->m_DBQuery.Clear();
-		result = 1;
+		m_Query.Clear();
+		LogAddTD("error-L3 : [BombHunt] DBDeleteBombHunt #1 [%s][%s] %s %d", szAccountID, szName, __FILE__, __LINE__);
+		return FALSE;
 	}
-	else
-	{
-		this->m_DBQuery.Clear();
-		LogAddTD(
-			"error-L3 : [BombHunt] DBDeleteBombHunt #1 [%s][%s] %s %d",
-			szAccountID,
-			szName, __FILE__, __LINE__);
-		result = 0;
-	}
-	return result;
+
+	m_Query.Clear();
+	return TRUE;
 }
 
-int CBombHuntDBSet::DBInsertBombHuntLog(char *szAccountID, char *szName, unsigned __int16 wScore, char btClear)
+BOOL CBombHuntDBSet::DBInsertBombHuntLog(char *szAccountID, char *szName, WORD wScore, BYTE btClear)
 {
-	int result;
 	CString QueryStr;
-
 	QueryStr.Format("EXEC WZ_BombHuntLogSetSave  '%s', '%s', %d, %d", szAccountID, szName, wScore, btClear);
 
-	if (this->m_DBQuery.Exec(QueryStr))
+	if (m_Query.Exec(QueryStr) == FALSE)
 	{
-		this->m_DBQuery.Clear();
-		result = 1;
-	}
-	else
-	{
-		this->m_DBQuery.Clear();
+		m_Query.Clear();
 		LogAddTD("error-L3 : [MuRummy] DBInsertBombHuntLog #1 [%s][%s] %s %d", szAccountID, szName, __FILE__, __LINE__);
-
-		result = 0;
+		return FALSE;
 	}
-	return result;
+
+	m_Query.Clear();
+	return TRUE;
 }
