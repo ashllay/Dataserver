@@ -227,5 +227,31 @@ enum eOptionType
 	AT_SET_IMPROVE_VITALITY = 0xC7,
 };
 
+enum GUILD_STATUS
+{
+	G_NONE = 0xFFFFFFFF,
+	G_PERSON = 0x0,
+	G_MASTER = 0x80,
+	G_SUB_MASTER = 0x40,
+	G_BATTLE_MASTER = 0x20,
+};
+
+enum
+{
+	PRE_LEAGUE = 0x0,
+	SEMI_LEAGUE = 0x1,
+	FINAL_LEAGUE = 0x2,
+	LAST_WINNER = 0x3,
+};
+
+enum __DSF_TYPE
+{
+	DSF_TYPE_NONE = 0x0,
+	DSF_TYPE_LEAGUE = 0x1,
+	DSF_TYPE_SEMIFINAL = 0x2,
+	DSF_TYPE_FINAL = 0x3,
+	DSF_TYPE_WINNER = 0x4,
+};
+
 #endif
 

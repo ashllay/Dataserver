@@ -1,27 +1,20 @@
-// CharPreviewDBSet.h: interface for the CCharPreviewDBSet class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#if !defined(AFX_CHARPREVIEWDBSET_H__9278C328_E1A7_449D_B695_72E6CCBBFF97__INCLUDED_)
-#define AFX_CHARPREVIEWDBSET_H__9278C328_E1A7_449D_B695_72E6CCBBFF97__INCLUDED_
-
-#if _MSC_VER > 1000
+#ifndef __CHARPREVIEWDBSET_H__
+#define __CHARPREVIEWDBSET_H__
 #pragma once
-#endif // _MSC_VER > 1000
 
-class CCharPreviewDBSet  
+class CCharPreviewDBSet
 {
 public:
 	CCharPreviewDBSet();
 	virtual ~CCharPreviewDBSet();
 
 	BOOL Conenect();
-	//BOOL GetChar(char* Name, /*char *AccountId, */int& _level, int& _class, BYTE* Inventory, BYTE& _ctlcode, BYTE& _dbverstion, BYTE& _btGuildStatus);
-	BOOL GetChar(char *Name, char *AccountId, int *_level, int *_class, BYTE *Inventory, BYTE *_ctlcode, BYTE *_dbverstion, BYTE *_pkLevel, BYTE *_btGuildStatus); // idb
-	BOOL GetRealNameAndServerCode(char *szUBFName, char *szRealName, WORD *ServerCode, int IsUBFServer);//s12
+
+	BOOL GetChar(char* Name, char* AccountId, int& _level, int& _class, LPBYTE Inventory, BYTE& _ctlcode, BYTE& _dbverstion, BYTE& _pkLevel, BYTE& _btGuildStatus);
+	BOOL GetRealNameAndServerCode(char* szUBFName, char* szRealName, int* ServerCode, BOOL IsUBFServer);
 
 public:
 	CQuery m_DBQuery;
 };
 
-#endif // !defined(AFX_CHARPREVIEWDBSET_H__9278C328_E1A7_449D_B695_72E6CCBBFF97__INCLUDED_)
+#endif

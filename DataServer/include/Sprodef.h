@@ -1453,72 +1453,6 @@ typedef struct
 	BYTE PlayGuideCheck;
 } SDHP_SKILLKEYDATA, *LPSDHP_SKILLKEYDATA;
 
-typedef struct
-{
-	PBMSG_HEAD h;	// C1:17
-	int iUserIndex;	// 4
-	char chAccountID[MAX_IDSTRING + 1];	//
-	char chCharacterName[MAX_IDSTRING + 1];	//
-}PMSG_CHARACTER_RESET, *LPPMSG_CHARACTER_RESET;
-
-typedef struct
-{
-	PBMSG_HEAD h;	// C1:17
-	int iUserIndex;	// 4
-	int ResetNumber;	//
-}PMSG_ANS_CHARACTER_RESET, *LPPMSG_ANS_CHARACTER_RESET;
-
-typedef struct
-{
-	PBMSG_HEAD h;	// C1:17
-	int iUserIndex;	// 4
-	char chAccountID[MAX_IDSTRING + 1];	//
-	char chCharacterName[MAX_IDSTRING + 1];	//
-
-	int m_iRuleIndex; //
-	BOOL m_bClearStat;	//
-	int m_iLevelAfterReset;	//
-	int m_iLevelUpPoint; //
-	BOOL m_bReqSpecialItem; //
-	BOOL m_bBornPlace; //
-	int m_iResetNumber; //
-	BOOL m_bClearBuffState; //
-	BOOL m_bClearMagicList; //
-}PMSG_REQ_SAVE_CHARACTER_RESET, *LPPMSG_REQ_SAVE_CHARACTER_RESET;
-
-typedef struct
-{
-	PBMSG_HEAD h;	// C1:17
-	int iUserIndex;	// 4
-
-	int m_iRuleIndex; //
-	BOOL m_bClearStat;	//
-	int m_iLevelAfterReset;	//
-	int m_iLevelUpPoint; //
-	BOOL m_bReqSpecialItem; //
-	BOOL m_bBornPlace; //
-	int m_iResetNumber; //
-	BOOL m_bClearBuffState; //
-	BOOL m_bClearMagicList; //
-}PMSG_ANS_SAVE_CHARACTER_RESET, *LPPMSG_ANS_SAVE_CHARACTER_RESET;
-
-typedef struct
-{
-	PBMSG_HEAD h;	// C1:17
-	char chAccountID[MAX_IDSTRING + 1];
-	int iUserIndex;
-	BYTE AccountType;
-	INT64 EndTime;
-}PMSG_REQ_VIP, *LPPMSG_REQ_VIP;
-
-typedef struct
-{
-	PBMSG_HEAD h;	// C1:17
-	int iUserIndex;
-	BYTE AccountType;
-	INT64 EndTime;
-}PMSG_ANS_VIP, *LPPMSG_ANS_VIP;
-
 //----------------------------------------------------------------------------
 // [0x60] 옵션 키 값을 받는다.
 //----------------------------------------------------------------------------
@@ -1653,7 +1587,6 @@ typedef struct
 	BYTE		Result;
 } SDHP_CHARACTER_TRANSFER_RESULT, *LPSDHP_CHARACTER_TRANSFER_RESULT;
 
-#ifdef UPDATE_CHANGE_CHARACTERNAME_20080410 // 캐릭명 변경 프로토콜
 //----------------------------------------------------------------------------
 // GD[0x16] 캐릭터 변경을 요청.
 //----------------------------------------------------------------------------
@@ -1678,1054 +1611,741 @@ typedef struct
 	char		NewName[MAX_IDSTRING];
 	BYTE		btResult;		// 0: 성공, 1: 동일 캐릭터명 존재
 } SDHP_CHANGE_NAME_RESULT, *LPSDHP_CHANGE_NAME_RESULT;
-#endif	// UPDATE_CHANGE_CHARACTERNAME_20080410
-
-
-
-
-#ifdef MU_CASTLESIEGE_DS_PROTOCOL_20041105		// 공성전 관련 추가된 프로토콜 (GS <-> DS)
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x00] 성 전체 정보 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCastleEventCycle;		// 공성전 주기
-} CSP_REQ_CASTLEDATA, *LPCSP_REQ_CASTLEDATA;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x00] 성 전체 정보 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	WORD		wStartYear;				// 공성 시작 - 년
-	BYTE		btStartMonth;			// 공성 시작 - 월
-	BYTE		btStartDay;				// 공성 시작 - 일
-	WORD		wEndYear;				// 공성 종료 - 년
-	BYTE		btEndMonth;				// 공성 종료 - 월
-	BYTE		btEndDay;				// 공성 종료 - 일
-	BYTE		btIsSiegeGuildList;		// 공성관련 길드정보가 이미 구축되었는가 ?
-	BYTE		btIsSiegeEnded;			// 공성이 이미 치루어 졌는가 ?
-	BYTE		btIsCastleOccupied;		// 성이 이미 사용자들에게 차지된 상태인가 ?
-	CHAR		szCastleOwnGuild[MAX_GUILDNAMESTRING];	// 캐슬을 차지한 길드명 (없으면 "")
-	INT64		i64CastleMoney;			// 현재 성의 보유 젠
-	INT			iTaxRateChaos;			// 카오스 조합 세율
-	INT			iTaxRateStore;			// 상점 세율
-	INT			iTaxHuntZone;			// 사냥터 입장료
-	INT			iFirstCreate;			// 이것이 최초로 만드는 것인가 ?
-} CSP_ANS_CASTLEDATA, *LPCSP_ANS_CASTLEDATA;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x01] 수성측 길드의 길마이름 요청 -> 경비병 NPC 성 상태 출력 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;					// 맵 서버군 번호
-	INT			iIndex;						// 게임서버 오브젝트 인덱스
-} CSP_REQ_OWNERGUILDMASTER, *LPCSP_REQ_OWNERGUILDMASTER;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x01] 수성측 길드의 길마이름 요청 응답 -> 경비병 NPC 성 상태 출력 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;					// 성공여부 (0:실패/1:성공/2:성주인없음/3:성정보비정상/4:성길드없어짐)
-	WORD		wMapSvrNum;					// 맵 서버군 번호
-	INT			iIndex;						// 게임서버 오브젝트 인덱스
-	CHAR		szCastleOwnGuild[MAX_GUILDNAMESTRING];		// 캐슬을 차지한 길드명 (없으면 "")
-	CHAR		szCastleOwnGuildMaster[MAX_IDSTRING];		// 캐슬을 차지한 길드마스터명 (없으면 "")
-} CSP_ANS_OWNERGUILDMASTER, *LPCSP_ANS_OWNERGUILDMASTER;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x03] 수성측 NPC 구입 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-	INT			iNpcDfLevel;			// 방어력 레벨
-	INT			iNpcRgLevel;			// 회복력 레벨
-	INT			iNpcMaxHp;				// 최대 HP
-	INT			iNpcHp;					// HP
-	BYTE		btNpcX;					// 좌표 - X
-	BYTE		btNpcY;					// 좌표 - Y
-	BYTE		btNpcDIR;				// 방향
-	INT			iBuyCost;				// NPC구입비용
-} CSP_REQ_NPCBUY, *LPCSP_REQ_NPCBUY;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x03] 수성측 NPC 구입 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-	INT			iBuyCost;				// NPC구입비용
-} CSP_ANS_NPCBUY, *LPCSP_ANS_NPCBUY;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x04] 수성측 NPC 수리 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-	INT			iRepairCost;			// NPC수리비용
-} CSP_REQ_NPCREPAIR, *LPCSP_REQ_NPCREPAIR;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x04] 수성측 NPC 수리 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-	INT			iNpcMaxHp;				// 최대 HP
-	INT			iNpcHp;					// 수정될 HP
-	INT			iRepairCost;			// NPC수리비용
-} CSP_ANS_NPCREPAIR, *LPCSP_ANS_NPCREPAIR;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x05] 수성측 NPC 업그레이드 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-	INT			iNpcUpType;				// NPC업그레이드 타입 (1:방어력/2:회복력/3:최대HP)
-	INT			iNpcUpValue;			// NPC업그레이드 수치
-	INT			iNpcUpIndex;			// NPC업그레이드 레벨의 인덱스 (MAX HP도 레벨화)
-} CSP_REQ_NPCUPGRADE, *LPCSP_REQ_NPCUPGRADE;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x05] 수성측 NPC 업그레이드 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-	INT			iNpcUpType;				// NPC업그레이드 타입 (1:방어력/2:회복력/3:최대HP)
-	INT			iNpcUpValue;			// NPC업그레이드 수치
-	INT			iNpcUpIndex;			// NPC업그레이드 레벨의 인덱스 (MAX HP도 레벨화)
-} CSP_ANS_NPCUPGRADE, *LPCSP_ANS_NPCUPGRADE;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x06] 성주측 세금정보 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-} CSP_REQ_TAXINFO, *LPCSP_REQ_TAXINFO;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x06] 성주측 세금정보 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT64		i64CastleMoney;			// 현재 성의 자금
-	INT			iTaxRateChaos;			// 카오스 조합 세율
-	INT			iTaxRateStore;			// 상점 세율
-	INT			iTaxHuntZone;			// 사냥터 입장료
-} CSP_ANS_TAXINFO, *LPCSP_ANS_TAXINFO;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x07] 성주측 성정보 수정 요청 - 세율 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iTaxKind;				// 세율 종류 (1:카오스 조합 / 2:상점 / 3:사냥터 입장료)
-	INT			iTaxRate;				// 세율
-} CSP_REQ_TAXRATECHANGE, *LPCSP_REQ_TAXRATECHANGE;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x07] 성주측 성정보 수정 요청 응답 - 세율 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iTaxKind;				// 세율 종류 (1:카오스 조합 / 2:상점 / 3:사냥터 입장료)
-	INT			iTaxRate;				// 세율
-} CSP_ANS_TAXRATECHANGE, *LPCSP_ANS_TAXRATECHANGE;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x08] 성주측 성정보 수정요청 - 소유 젠 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iMoneyChanged;			// 상대적인 젠 증가분 (+/-)
-} CSP_REQ_MONEYCHANGE, *LPCSP_REQ_MONEYCHANGE;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x08] 성주측 성정보 수정요청 응답 - 소유 젠 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iMoneyChanged;			// 상대적인 젠 증가분 (+/-)
-	INT64		i64CastleMoney;			// 계산된 결과
-} CSP_ANS_MONEYCHANGE, *LPCSP_ANS_MONEYCHANGE;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x09] 성주측 성정보 수정요청 - 공성 시작/종료 날짜 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	WORD		wStartYear;				// 공성 시작 - 년
-	BYTE		btStartMonth;			// 공성 시작 - 월
-	BYTE		btStartDay;				// 공성 시작 - 일
-	WORD		wEndYear;				// 공성 종료 - 년
-	BYTE		btEndMonth;				// 공성 종료 - 월
-	BYTE		btEndDay;				// 공성 종료 - 일
-} CSP_REQ_SDEDCHANGE, *LPCSP_REQ_SDEDCHANGE;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x09] 성주측 성정보 수정요청 응답 - 공성 시작/종료 날짜 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	WORD		wStartYear;				// 공성 시작 - 년
-	BYTE		btStartMonth;			// 공성 시작 - 월
-	BYTE		btStartDay;				// 공성 시작 - 일
-	WORD		wEndYear;				// 공성 종료 - 년
-	BYTE		btEndMonth;				// 공성 종료 - 월
-	BYTE		btEndDay;				// 공성 종료 - 일
-} CSP_ANS_SDEDCHANGE, *LPCSP_ANS_SDEDCHANGE;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x0A] 공성측 특정 등록 길드 정보 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-} CSP_REQ_GUILDREGINFO, *LPCSP_REQ_GUILDREGINFO;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x0A] 공성측 특정 등록 길드 정보 요청 응답 (0xC2)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	INT			iRegMarkCount;			// 등록된 문장수
-	bool		bIsGiveUp;				// 포기여부
-	BYTE		btRegRank;				// 등록순위
-} CSP_ANS_GUILDREGINFO, *LPCSP_ANS_GUILDREGINFO;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x0B] 성주측 성정보 수정요청 - 공성 종료 여부 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	BOOL		bIsSiegeEnded;			// 공성 종료 여부
-} CSP_REQ_SIEGEENDCHANGE, *LPCSP_REQ_SIEGEENDCHANGE;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x0B] 성주측 성정보 수정요청 응답 - 공성 종료 여부 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	BOOL		bIsSiegeEnded;			// 공성 종료 여부
-} CSP_ANS_SIEGEENDCHANGE, *LPCSP_ANS_SIEGEENDCHANGE;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x0C] 성주측 성정보 수정요청 - 성의 주인길드, 차지된 상태 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	BOOL		bIsCastleOccupied;		// 성이 이미 차지되었는가 ?
-	CHAR		szOwnerGuildName[MAX_GUILDNAMESTRING];	// 성의 주인길드 이름
-} CSP_REQ_CASTLEOWNERCHANGE, *LPCSP_REQ_CASTLEOWNERCHANGE;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x0C] 성주측 성정보 수정요청 응답 - 성의 주인길드, 차지된 상태 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	BOOL		bIsCastleOccupied;		// 성이 이미 차지되었는가 ?
-	CHAR		szOwnerGuildName[MAX_GUILDNAMESTRING];	// 성의 주인길드 이름
-} CSP_ANS_CASTLEOWNERCHANGE, *LPCSP_ANS_CASTLEOWNERCHANGE;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x0D] 공성측 길드의 공성전 등록 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	CHAR		szEnemyGuildName[MAX_GUILDNAMESTRING];	// 최종 공격길드 이름
-} CSP_REQ_REGATTACKGUILD, *LPCSP_REQ_REGATTACKGUILD;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x0D] 공성측 길드의 공성전 등록 요청 응답 C1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공/2:이미등록됨/3:수성측길드/4:길드없음/5:길마레벨부족/6:등록길드수초과/7:길드원수부족)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	CHAR		szEnemyGuildName[MAX_GUILDNAMESTRING];	// 최종 공격길드 이름
-} CSP_ANS_REGATTACKGUILD, *LPCSP_ANS_REGATTACKGUILD;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x0E] 공성주기 끝 - 정보 초기화 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_REQ_CASTLESIEGEEND, *LPCSP_REQ_CASTLESIEGEEND;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x0E] 공성주기 끝 - 정보 초기화 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_ANS_CASTLESIEGEEND, *LPCSP_ANS_CASTLESIEGEEND;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x0F] 자신의 맵서버군에게 특정 메시지 전달 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	CHAR		szMsgText[128];			// 자신의 맵서버군에게 전달할 메시지
-} CSP_REQ_MAPSVRMULTICAST, *LPCSP_REQ_MAPSVRMULTICAST;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x0F] 자신의 맵서버군에게 특정 메시지 전달 요청 -> 전달 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	CHAR		szMsgText[128];			// 자신의 맵서버군에게 전달할 메시지
-} CSP_ANS_MAPSVRMULTICAST, *LPCSP_ANS_MAPSVRMULTICAST;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x10] 공성측 특정 등록 길드 마크 등록 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	INT			iItemPos;				// 성주의 표식의 위치
-} CSP_REQ_GUILDREGMARK, *LPCSP_REQ_GUILDREGMARK;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x10] 공성측 특정 등록 길드 마크 등록 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	INT			iItemPos;				// 성주의 표식의 위치
-	INT			iRegMarkCount;			// 등록된 문장수
-} CSP_ANS_GUILDREGMARK, *LPCSP_ANS_GUILDREGMARK;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x11] 공성측 특정 등록 길드 마크 개수 초기화 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-} CSP_REQ_GUILDRESETMARK, *LPCSP_REQ_GUILDRESETMARK;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x11] 공성측 특정 등록 길드 마크 개수 초기화 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	INT			iRegMarkCount;			// 이전까지 등록된 문장수 (현재는 없는것)
-} CSP_ANS_GUILDRESETMARK, *LPCSP_ANS_GUILDRESETMARK;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x12] 공성측 특정 등록 길드 공성 포기여부 수정 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	BOOL		bIsGiveUp;				// 공성 포기여부
-} CSP_REQ_GUILDSETGIVEUP, *LPCSP_REQ_GUILDSETGIVEUP;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x12] 공성측 특정 등록 길드 공성 포기여부 수정 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	BOOL		bIsGiveUp;				// 공성 포기여부
-	INT			iRegMarkCount;			// 등록된 문장수 (DB에서는 지워지고 돈으로 환불 받을 것)
-} CSP_ANS_GUILDSETGIVEUP, *LPCSP_ANS_GUILDSETGIVEUP;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x16] 수성측 NPC 제거 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-} CSP_REQ_NPCREMOVE, *LPCSP_REQ_NPCREMOVE;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x16] 수성측 NPC 제거 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-} CSP_ANS_NPCREMOVE, *LPCSP_ANS_NPCREMOVE;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x17] 현재의 공성상태 동기화 요청 (상태, 세율) (0xC1)
-//----------------------------------------------------------------------------
-typedef struct {
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCastleState;			// 현재 성 상태
-	INT			iTaxRateChaos;			// 현재 성 세율 (카오스 조합)
-	INT			iTaxRateStore;			// 현재 성 세율 (상점)
-	INT			iTaxHuntZone;			// 사냥터 입장료
-	CHAR		szOwnerGuildName[MAX_GUILDNAMESTRING];	// 현재 성을 차지하고 있는 길드이름
-} CSP_REQ_CASTLESTATESYNC, *LPCSP_REQ_CASTLESTATESYNC;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x17] 현재의 공성상태 동기화 요청 응답 (상태, 세율) (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCastleState;			// 현재 성 상태
-	INT			iTaxRateChaos;			// 현재 성 세율 (카오스 조합)
-	INT			iTaxRateStore;			// 현재 성 세율 (상점)
-	INT			iTaxHuntZone;			// 사냥터 입장료
-	CHAR		szOwnerGuildName[MAX_GUILDNAMESTRING];	// 현재 성을 차지하고 있는 길드이름
-} CSP_ANS_CASTLESTATESYNC, *LPCSP_ANS_CASTLESTATESYNC;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x18] 맵서버군의 성 공납금 추가 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct {
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCastleTributeMoney;	// 성 공납금
-} CSP_REQ_CASTLETRIBUTEMONEY, *LPCSP_REQ_CASTLETRIBUTEMONEY;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x18] 맵서버군의 성 공납금 추가 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct {
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_ANS_CASTLETRIBUTEMONEY, *LPCSP_ANS_CASTLETRIBUTEMONEY;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x19] 맵서버군의 성 세율, 돈 초기화 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct {
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_REQ_RESETCASTLETAXINFO, *LPCSP_REQ_RESETCASTLETAXINFO;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x19] 맵서버군의 성 세율, 돈 초기화 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct {
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_ANS_RESETCASTLETAXINFO, *LPCSP_ANS_RESETCASTLETAXINFO;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x1A] 공성 참여길드 리스트 초기화 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct {
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_REQ_RESETSIEGEGUILDINFO, *LPCSP_REQ_RESETSIEGEGUILDINFO;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x1A] 공성 참여길드 리스트 초기화 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct {
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_ANS_RESETSIEGEGUILDINFO, *LPCSP_ANS_RESETSIEGEGUILDINFO;
-
-
-//----------------------------------------------------------------------------
-// GD [0x80][0x1B] 공성 참여신청 길드 리스트 초기화 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct {
-	PBMSG_HEAD2	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_REQ_RESETREGSIEGEINFO, *LPCSP_REQ_RESETREGSIEGEINFO;
-
-
-//----------------------------------------------------------------------------
-// DG [0x80][0x1B] 공성 참여신청 길드 리스트 초기화 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct {
-	PBMSG_HEAD2	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_ANS_RESETREGSIEGEINFO, *LPCSP_ANS_RESETREGSIEGEINFO;
-
-
-//----------------------------------------------------------------------------
-// GD [0x81] 공성전 최초 모든 초기화 데이터 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCastleEventCycle;		// 공성전 주기
-} CSP_REQ_CSINITDATA, *LPCSP_REQ_CSINITDATA;
-
-
-//----------------------------------------------------------------------------
-// DG [0x81] 공성전 최초 모든 초기화 데이터 요청 응답 (0xC2)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	WORD		wStartYear;				// 공성 시작 - 년
-	BYTE		btStartMonth;			// 공성 시작 - 월
-	BYTE		btStartDay;				// 공성 시작 - 일
-	WORD		wEndYear;				// 공성 종료 - 년
-	BYTE		btEndMonth;				// 공성 종료 - 월
-	BYTE		btEndDay;				// 공성 종료 - 일
-	BYTE		btIsSiegeGuildList;		// 공성관련 길드정보가 이미 구축되었는가 ?
-	BYTE		btIsSiegeEnded;			// 공성이 이미 치루어 졌는가 ?
-	BYTE		btIsCastleOccupied;		// 성이 이미 사용자들에게 차지된 상태인가 ?
-	CHAR		szCastleOwnGuild[MAX_GUILDNAMESTRING];	// 캐슬을 차지한 길드명 (없으면 "")
-	INT64		i64CastleMoney;			// 현재 성의 보유 젠
-	INT			iTaxRateChaos;			// 카오스 조합 세율
-	INT			iTaxRateStore;			// 상점 세율
-	INT			iTaxHuntZone;			// 사냥터 입장료
-	INT			iFirstCreate;			// 이것이 최초로 만드는 것인가 ?
-	INT			iCount;					// 데이터 개수
-} CSP_ANS_CSINITDATA, *LPCSP_ANS_CSINITDATA;
-
-typedef struct
-{
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-	INT			iNpcDfLevel;			// 방어력 레벨
-	INT			iNpcRgLevel;			// 회복력 레벨
-	INT			iNpcMaxHp;				// 최대 HP
-	INT			iNpcHp;					// HP
-	BYTE		btNpcX;					// 좌표 - X
-	BYTE		btNpcY;					// 좌표 - Y
-	BYTE		btNpcDIR;				// 방향
-} CSP_CSINITDATA, *LPCSP_CSINITDATA;
-
-
-//----------------------------------------------------------------------------
-// GD [0x82] 수성측 NPC정보 정보 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-} CSP_REQ_NPCDATA, *LPCSP_REQ_NPCDATA;
-
-
-//----------------------------------------------------------------------------
-// DG [0x82] 수성측 NPC정보 정보 요청 응답 (0xC2)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iCount;					// 데이터 개수
-} CSP_ANS_NPCDATA, *LPCSP_ANS_NPCDATA;
-
-typedef struct
-{
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-	INT			iNpcDfLevel;			// 방어력 레벨
-	INT			iNpcRgLevel;			// 회복력 레벨
-	INT			iNpcMaxHp;				// 최대 HP
-	INT			iNpcHp;					// HP
-	BYTE		btNpcX;					// 좌표 - X
-	BYTE		btNpcY;					// 좌표 - Y
-	BYTE		btNpcDIR;				// 방향
-} CSP_NPCDATA, *LPCSP_NPCDATA;
-
-
-//----------------------------------------------------------------------------
-// GD [0x83] 공성측 등록 길드 정보 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-} CSP_REQ_ALLGUILDREGINFO, *LPCSP_REQ_ALLGUILDREGINFO;
-
-
-//----------------------------------------------------------------------------
-// DG [0x83] 공성측 등록 길드 정보 요청 응답 (0xC2)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iIndex;					// 게임서버 오브젝트 인덱스
-	INT			iCount;					// 데이터 개수
-} CSP_ANS_ALLGUILDREGINFO, *LPCSP_ANS_ALLGUILDREGINFO;
-
-typedef struct
-{
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	INT			iRegMarkCount;			// 등록된 문장수
-	bool		bIsGiveUp;				// 포기여부
-	BYTE		btRegRank;				// 등록순위
-} CSP_GUILDREGINFO, *LPCSP_GUILDREGINFO;
-
-
-//----------------------------------------------------------------------------
-// GD [0x84] 수성측 NPC 리스트 즉시 생성 요청 (0xC2)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCount;					// 데이터 개수
-} CSP_REQ_NPCSAVEDATA, *LPCSP_REQ_NPCSAVEDATA;
-
-typedef struct
-{
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-	INT			iNpcDfLevel;			// 방어력 레벨
-	INT			iNpcRgLevel;			// 회복력 레벨
-	INT			iNpcMaxHp;				// 최대 HP
-	INT			iNpcHp;					// HP
-	BYTE		btNpcX;					// 좌표 - X
-	BYTE		btNpcY;					// 좌표 - Y
-	BYTE		btNpcDIR;				// 방향
-} CSP_NPCSAVEDATA, *LPCSP_NPCSAVEDATA;
-
-
-//----------------------------------------------------------------------------
-// DG [0x84] 수성측 NPC 리스트 즉시 생성 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_ANS_NPCSAVEDATA, *LPCSP_ANS_NPCSAVEDATA;
-
-
-//----------------------------------------------------------------------------
-// GD [0x85] 공성측 길드선정 후보자료 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_REQ_CALCREGGUILDLIST, *LPCSP_REQ_CALCREGGUILDLIST;
-
-
-//----------------------------------------------------------------------------
-// DG [0x85] 공성측 길드선정 후보자료 요청 응답 (0xC2)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCount;					// 데이터 개수
-} CSP_ANS_CALCREGGUILDLIST, *LPCSP_ANS_CALCREGGUILDLIST;
-
-typedef struct
-{
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	INT			iRegMarkCount;			// 등록된 문장수
-	INT			iGuildMemberCount;		// 길드멤버 수
-	INT			iGuildMasterLevel;		// 길드마스터 레벨
-	INT			iSeqNum;				// 등록 순서
-} CSP_CALCREGGUILDLIST, *LPCSP_CALCREGGUILDLIST;
-
-
-//----------------------------------------------------------------------------
-// GD [0x86] 공/수 길드의 연합정보를 요청 (0xC2)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCount;					// 데이터 개수
-} CSP_REQ_CSGUILDUNIONINFO, *LPCSP_REQ_CSGUILDUNIONINFO;
-
-typedef struct
-{
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	INT			iCsGuildID;				// 공성시 사용하는 공/수 길드 체크값
-} CSP_CSGUILDUNIONINFO, *LPCSP_CSGUILDUNIONINFO;
-
-
-//----------------------------------------------------------------------------
-// DG [0x86] 공/수 길드의 연합정보를 요청 응답 (0xC2)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCount;					// 데이터 개수
-} CSP_ANS_CSGUILDUNIONINFO, *LPCSP_ANS_CSGUILDUNIONINFO;
-
-// 응답으로 이 뒤에 CSP_CSGUILDUNIONINFO 의 데이터가 iCount 개 존재
-
-
-//----------------------------------------------------------------------------
-// GD [0x87] 공/수 길드의 최종정보를 저장 요청 (0xC2)	  
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCount;					// 데이터 개수
-} CSP_REQ_CSSAVETOTALGUILDINFO, *LPCSP_REQ_CSSAVETOTALGUILDINFO;
-
-typedef struct
-{
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	INT			iCsGuildID;				// 공/수 각 길드의 고유의 ID (1:수성 / 2이상:공성)
-	INT			iGuildInvolved;			// 공성전의 당사자 길드 들인가 ?
-#ifdef ADD_CASTLE_TOTAL_GUILD_SCORE_20061123
-	INT			iGuildScore;			// 선정될 당시의 길드 점수
-#endif	
-} CSP_CSSAVETOTALGUILDINFO, *LPCSP_CSSAVETOTALGUILDINFO;
-
-
-//----------------------------------------------------------------------------
-// DG [0x87] 공/수 길드의 최종정보를 저장 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_ANS_CSSAVETOTALGUILDINFO, *LPCSP_ANS_CSSAVETOTALGUILDINFO;
-
-
-//----------------------------------------------------------------------------
-// GD [0x88] 공/수 길드의 최종정보를 불러오기 요청 (0xC1)	  
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_REQ_CSLOADTOTALGUILDINFO, *LPCSP_REQ_CSLOADTOTALGUILDINFO;
-
-
-//----------------------------------------------------------------------------
-// DG [0x88] 공/수 길드의 최종정보를 불러오기 요청 응답 (0xC2)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCount;					// 데이터 개수
-} CSP_ANS_CSLOADTOTALGUILDINFO, *LPCSP_ANS_CSLOADTOTALGUILDINFO;
-
-typedef struct
-{
-	CHAR		szGuildName[MAX_GUILDNAMESTRING];			// 길드이름
-	INT			iCsGuildID;				// 공/수 각 길드의 고유의 ID (1:수성 / 2이상:공성)
-	INT			iGuildInvolved;			// 공성전의 당사자 길드 들인가 ?
-#ifdef ADD_CASTLE_TOTAL_GUILD_SCORE_20061123
-	INT			iGuildScore;			// 길드 선정 당시의 점수
-#endif
-} CSP_CSLOADTOTALGUILDINFO, *LPCSP_CSLOADTOTALGUILDINFO;
-
-
-//----------------------------------------------------------------------------
-// GD [0x89] 수성측 NPC 리스트 정보갱신 요청 (0xC2)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PWMSG_HEAD	h;
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-	INT			iCount;					// 데이터 개수
-} CSP_REQ_NPCUPDATEDATA, *LPCSP_REQ_NPCUPDATEDATA;
-
-typedef struct
-{
-	INT			iNpcNumber;				// NPC번호
-	INT			iNpcIndex;				// NPC인덱스
-	INT			iNpcDfLevel;			// 방어력 레벨
-	INT			iNpcRgLevel;			// 회복력 레벨
-	INT			iNpcMaxHp;				// 최대 HP
-	INT			iNpcHp;					// HP
-	BYTE		btNpcX;					// 좌표 - X
-	BYTE		btNpcY;					// 좌표 - Y
-	BYTE		btNpcDIR;				// 방향
-} CSP_NPCUPDATEDATA, *LPCSP_NPCUPDATEDATA;
-
-
-//----------------------------------------------------------------------------
-// DG [0x89] 수성측 NPC 리스트 정보갱신 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-	INT			iResult;				// 성공여부 (0:실패/1:성공)
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-} CSP_ANS_NPCUPDATEDATA, *LPCSP_ANS_NPCUPDATEDATA;
-
-
-#endif // MU_CASTLESIEGE_DS_PROTOCOL_20041105
-
-
-
-
-
-#ifdef MU_CRYWOLF_DS_PROTOCOL_20050505	// 크라이울프 관련 GS <-> DS 프로토콜 정의
-
-//----------------------------------------------------------------------------
-// GD [0xB0] 크라이울프 현재 상태 동기화 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-
-	INT			iCrywolfState;			// 현재 크라이울프 진행 상태
-	INT			iOccupationState;		// 현재 크라이울프 점령 상태
-
-} CWP_REQ_CRYWOLFSYNC, *LPCWP_REQ_CRYWOLFSYNC;
-
-
-//----------------------------------------------------------------------------
-// DG [0xB0] 크라이울프 현재 상태 동기화 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	BYTE		btResult;
-
-	INT			iCrywolfState;			// 현재 크라이울프 진행 상태
-	INT			iOccupationState;		// 현재 크라이울프 점령 상태
-
-} CWP_ANS_CRYWOLFSYNC, *LPCWP_ANS_CRYWOLFSYNC;
-
-//----------------------------------------------------------------------------
-// GD [0xB1] 크라이울프 정보 로드 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-
-} CWP_REQ_CRYWOLFINFOLOAD, *LPCWP_REQ_CRYWOLFINFOLOAD;
-
-
-//----------------------------------------------------------------------------
-// DG [0xB1] 크라이울프 정보 로드 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	BYTE		btResult;
-
-	INT			iCrywolfState;			// 현재 크라이울프 진행 상태
-	INT			iOccupationState;		// 현재 크라이울프 점령 상태
-
-} CWP_ANS_CRYWOLFINFOLOAD, *LPCWP_ANS_CRYWOLFINFOLOAD;
-
-//----------------------------------------------------------------------------
-// GD [0xB2] 크라이울프 정보 저장 요청 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	WORD		wMapSvrNum;				// 맵 서버군 번호
-
-	INT			iCrywolfState;			// 현재 크라이울프 진행 상태
-	INT			iOccupationState;		// 현재 크라이울프 점령 상태
-
-} CWP_REQ_CRYWOLFINFOSAVE, *LPCWP_REQ_CRYWOLFINFOSAVE;
-
-
-//----------------------------------------------------------------------------
-// DG [0xB2] 크라이울프 정보 저장 요청 응답 (0xC1)
-//----------------------------------------------------------------------------
-typedef struct
-{
-	PBMSG_HEAD	h;
-
-	BYTE		btResult;
-
-} CWP_ANS_CRYWOLFINFOSAVE, *LPCWP_ANS_CRYWOLFINFOSAVE;
-
-#endif // MU_CRYWOLF_DS_PROTOCOL_20050505
+
+
+typedef struct CSP_REQ_CASTLEDATA
+{
+	PBMSG_HEAD2 h; // C1:80:00 GS->DS
+	WORD wMapSvrNum;
+	int iCastleEventCycle;
+} *LPCSP_REQ_CASTLEDATA;
+
+typedef struct CSP_ANS_CASTLEDATA
+{
+	PBMSG_HEAD2 h; // C1:80:00 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	WORD wStartYear;
+	BYTE btStartMonth;
+	BYTE btStartDay;
+	WORD wEndYear;
+	BYTE btEndMonth;
+	BYTE btEndDay;
+	BYTE btIsSiegeGuildList;
+	BYTE btIsSiegeEnded;
+	BYTE btIsCastleOccupied;
+	char szCastleOwnGuild[MAX_GUILDNAMESTRING];
+	__int64 i64CastleMoney;
+	int iTaxRateChaos;
+	int iTaxRateStore;
+	int iTaxHuntZone;
+	int iFirstCreate;
+} *LPCSP_ANS_CASTLEDATA;
+
+typedef struct CSP_REQ_OWNERGUILDMASTER
+{
+	PBMSG_HEAD2 h; // C1:80:01 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+} *LPCSP_REQ_OWNERGUILDMASTER;
+
+typedef struct CSP_ANS_OWNERGUILDMASTER
+{
+	PBMSG_HEAD2 h; // C1:80:01 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	char szCastleOwnGuild[MAX_GUILDNAMESTRING];
+	char szCastleOwnGuildMaster[MAX_IDSTRING];
+} *LPCSP_ANS_OWNERGUILDMASTER;
+
+typedef struct CSP_REQ_NPCBUY
+{
+	PBMSG_HEAD2 h; // C1:80:03 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	int iNpcNumber;
+	int iNpcIndex;
+	int iNpcDfLevel;
+	int iNpcRgLevel;
+	int iNpcMaxHp;
+	int iNpcHp;
+	BYTE btNpcX;
+	BYTE btNpcY;
+	BYTE btNpcDIR;
+	int iBuyCost;
+} *LPCSP_REQ_NPCBUY;
+
+typedef struct CSP_ANS_NPCBUY
+{
+	PBMSG_HEAD2 h; // C1:80:03 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	int iNpcNumber;
+	int iNpcIndex;
+	int iBuyCost;
+} *LPCSP_ANS_NPCBUY;
+
+typedef struct CSP_REQ_NPCREPAIR
+{
+	PBMSG_HEAD2 h; // C1:80:04 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	int iNpcNumber;
+	int iNpcIndex;
+	int iRepairCost;
+} *LPCSP_REQ_NPCREPAIR;
+
+typedef struct CSP_ANS_NPCREPAIR
+{
+	PBMSG_HEAD2 h; // C1:80:04 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	int iNpcNumber;
+	int iNpcIndex;
+	int iNpcMaxHp;
+	int iNpcHp;
+	int iRepairCost;
+} *LPCSP_ANS_NPCREPAIR;
+
+typedef struct CSP_REQ_NPCUPGRADE
+{
+	PBMSG_HEAD2 h; // C1:80:05 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	int iNpcNumber;
+	int iNpcIndex;
+	int iNpcUpType;
+	int iNpcUpValue;
+	int iNpcUpIndex;
+} *LPCSP_REQ_NPCUPGRADE;
+
+typedef struct CSP_ANS_NPCUPGRADE
+{
+	PBMSG_HEAD2 h; // C1:80:05 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	int iNpcNumber;
+	int iNpcIndex;
+	int iNpcUpType;
+	int iNpcUpValue;
+	int iNpcUpIndex;
+} *LPCSP_ANS_NPCUPGRADE;
+
+typedef struct CSP_REQ_TAXINFO
+{
+	PBMSG_HEAD2 h; // C1:80:06 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+} *LPCSP_REQ_TAXINFO;
+
+typedef struct CSP_ANS_TAXINFO
+{
+	PBMSG_HEAD2 h; // C1:80:06 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	__int64 i64CastleMoney;
+	int iTaxRateChaos;
+	int iTaxRateStore;
+	int iTaxHuntZone;
+} *LPCSP_ANS_TAXINFO;
+
+typedef struct CSP_REQ_TAXRATECHANGE
+{
+	PBMSG_HEAD2 h; // C1:80:07 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	int iTaxKind;
+	int iTaxRate;
+} *LPCSP_REQ_TAXRATECHANGE;
+
+typedef struct CSP_ANS_TAXRATECHANGE
+{
+	PBMSG_HEAD2 h; // C1:80:07 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	int iTaxKind;
+	int iTaxRate;
+} *LPCSP_ANS_TAXRATECHANGE;
+
+
+typedef struct CSP_REQ_MONEYCHANGE
+{
+	PBMSG_HEAD2 h; // C1:80:08 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	int iMoneyChanged;
+} *LPCSP_REQ_MONEYCHANGE;
+
+typedef struct CSP_ANS_MONEYCHANGE
+{
+	PBMSG_HEAD2 h; // C1:80:08 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	int iMoneyChanged;
+	__int64 i64CastleMoney;
+} *LPCSP_ANS_MONEYCHANGE;
+
+typedef struct CSP_REQ_SDEDCHANGE
+{
+	PBMSG_HEAD2 h; // C1:80:09 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	WORD wStartYear;
+	BYTE btStartMonth;
+	BYTE btStartDay;
+	WORD wEndYear;
+	BYTE btEndMonth;
+	BYTE btEndDay;
+} *LPCSP_REQ_SDEDCHANGE;
+
+typedef struct CSP_ANS_SDEDCHANGE
+{
+	PBMSG_HEAD2 h; // C1:80:09 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	WORD wStartYear;
+	BYTE btStartMonth;
+	BYTE btStartDay;
+	WORD wEndYear;
+	BYTE btEndMonth;
+	BYTE btEndDay;
+} *LPCSP_ANS_SDEDCHANGE;
+
+typedef struct CSP_REQ_GUILDREGINFO
+{
+	PBMSG_HEAD2 h; // C1:80:0A GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	char szGuildName[MAX_GUILDNAMESTRING];
+} *LPCSP_REQ_GUILDREGINFO;
+
+typedef struct CSP_ANS_GUILDREGINFO
+{
+	PBMSG_HEAD2 h; // C1:80:0A DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	char szGuildName[MAX_GUILDNAMESTRING];
+	int iRegMarkCount;
+	bool bIsGiveUp;
+	BYTE btRegRank;
+} *LPCSP_ANS_GUILDREGINFO;
+
+typedef struct CSP_REQ_SIEGEENDCHANGE
+{
+	PBMSG_HEAD2 h; // C1:80:0B GS->DS
+	WORD wMapSvrNum;
+	BOOL bIsSiegeEnded;
+} *LPCSP_REQ_SIEGEENDCHANGE;
+
+typedef struct CSP_ANS_SIEGEENDCHANGE
+{
+	PBMSG_HEAD2 h; // C1:80:0B DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	BOOL bIsSiegeEnded;
+} *LPCSP_ANS_SIEGEENDCHANGE;
+
+typedef struct CSP_REQ_CASTLEOWNERCHANGE
+{
+	PBMSG_HEAD2 h; // C1:80:0C GS->DS
+	WORD wMapSvrNum;
+	BOOL bIsCastleOccupied;
+	char szOwnerGuildName[MAX_GUILDNAMESTRING];
+} *LPCSP_REQ_CASTLEOWNERCHANGE;
+
+typedef struct CSP_ANS_CASTLEOWNERCHANGE
+{
+	PBMSG_HEAD2 h; // C1:80:0C DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	BOOL bIsCastleOccupied;
+	char szOwnerGuildName[MAX_GUILDNAMESTRING];
+} *LPCSP_ANS_CASTLEOWNERCHANGE;
+
+typedef struct CSP_REQ_REGATTACKGUILD
+{
+	PBMSG_HEAD2 h; // C1:80:0D GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	char szEnemyGuildName[MAX_GUILDNAMESTRING];
+} *LPCSP_REQ_REGATTACKGUILD;
+
+typedef struct CSP_ANS_REGATTACKGUILD
+{
+	PBMSG_HEAD2 h; // C1:80:0D DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	char szEnemyGuildName[MAX_GUILDNAMESTRING];
+} *LPCSP_ANS_REGATTACKGUILD;
+
+typedef struct CSP_REQ_CASTLESIEGEEND
+{
+	PBMSG_HEAD2 h; // C1:80:0E GS->DS
+	WORD wMapSvrNum;
+} *LPCSP_REQ_CASTLESIEGEEND;
+
+typedef struct CSP_ANS_CASTLESIEGEEND
+{
+	PBMSG_HEAD2 h; // C1:80:0E DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+} *LPCSP_ANS_CASTLESIEGEEND;
+
+typedef struct CSP_REQ_MAPSVRMULTICAST
+{
+	PBMSG_HEAD2 h; // C1:80:0F GS->DS
+	WORD wMapSvrNum;
+	char szMsgText[128];
+} *LPCSP_REQ_MAPSVRMULTICAST;
+
+typedef struct CSP_ANS_MAPSVRMULTICAST
+{
+	PBMSG_HEAD2 h; // C1:80:0F DS->GS
+	WORD wMapSvrNum;
+	char szMsgText[128];
+} *LPCSP_ANS_MAPSVRMULTICAST;
+
+typedef struct CSP_REQ_GUILDREGMARK
+{
+	PBMSG_HEAD2 h; // C1:80:10 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	char szGuildName[MAX_GUILDNAMESTRING];
+	int iItemPos;
+} *LPCSP_REQ_GUILDREGMARK;
+
+typedef struct CSP_ANS_GUILDREGMARK
+{
+	PBMSG_HEAD2	h; // C1:80:10 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	char szGuildName[MAX_GUILDNAMESTRING];
+	int iItemPos;
+	int iRegMarkCount;
+} *LPCSP_ANS_GUILDREGMARK;
+
+typedef struct CSP_REQ_GUILDRESETMARK
+{
+	PBMSG_HEAD2 h; // C1:80:11 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	char szGuildName[MAX_GUILDNAMESTRING];
+} *LPCSP_REQ_GUILDRESETMARK;
+
+typedef struct CSP_ANS_GUILDRESETMARK
+{
+	PBMSG_HEAD2 h; // C1:80:11 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	char szGuildName[MAX_GUILDNAMESTRING];
+	int iRegMarkCount;
+} *LPCSP_ANS_GUILDRESETMARK;
+
+typedef struct CSP_REQ_GUILDSETGIVEUP
+{
+	PBMSG_HEAD2 h; // C1:80:12 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+	char szGuildName[MAX_GUILDNAMESTRING];
+	BOOL bIsGiveUp;
+} *LPCSP_REQ_GUILDSETGIVEUP;
+
+typedef struct CSP_ANS_GUILDSETGIVEUP
+{
+	PBMSG_HEAD2 h; // C1:80:12 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	char szGuildName[MAX_GUILDNAMESTRING];
+	BOOL bIsGiveUp;
+	int iRegMarkCount;
+} *LPCSP_ANS_GUILDSETGIVEUP;
+
+typedef struct CSP_REQ_NPCREMOVE
+{
+	PBMSG_HEAD2 h; // C1:80:16 GS->DS
+	WORD wMapSvrNum;
+	int iNpcNumber;
+	int iNpcIndex;
+} *LPCSP_REQ_NPCREMOVE;
+
+typedef struct CSP_ANS_NPCREMOVE
+{
+	PBMSG_HEAD2 h; // C1:80:16 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iNpcNumber;
+	int iNpcIndex;
+} *LPCSP_ANS_NPCREMOVE;
+
+typedef struct CSP_REQ_CASTLESTATESYNC
+{
+	PBMSG_HEAD2 h; // C1:80:17 GS->DS
+	WORD wMapSvrNum;
+	int iCastleState;
+	int iTaxRateChaos;
+	int iTaxRateStore;
+	int iTaxHuntZone;
+	char szOwnerGuildName[MAX_GUILDNAMESTRING];
+} *LPCSP_REQ_CASTLESTATESYNC;
+
+typedef struct CSP_ANS_CASTLESTATESYNC
+{
+	PBMSG_HEAD2 h; // C1:80:17 DS->GS
+	WORD wMapSvrNum;
+	int iCastleState;
+	int iTaxRateChaos;
+	int iTaxRateStore;
+	int iTaxHuntZone;
+	char szOwnerGuildName[MAX_GUILDNAMESTRING];
+} *LPCSP_ANS_CASTLESTATESYNC;
+
+typedef struct CSP_REQ_CASTLETRIBUTEMONEY
+{
+	PBMSG_HEAD2 h; // C1:80:18 GS->DS
+	WORD wMapSvrNum;
+	int iCastleTributeMoney;
+} *LPCSP_REQ_CASTLETRIBUTEMONEY;
+
+typedef struct CSP_ANS_CASTLETRIBUTEMONEY
+{
+	PBMSG_HEAD2 h; // C1:80:18 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+} *LPCSP_ANS_CASTLETRIBUTEMONEY;
+
+typedef struct CSP_REQ_RESETCASTLETAXINFO
+{
+	PBMSG_HEAD2 h; // C1:80:19 GS->DS
+	WORD wMapSvrNum;
+} *LPCSP_REQ_RESETCASTLETAXINFO;
+
+typedef struct CSP_ANS_RESETCASTLETAXINFO
+{
+	PBMSG_HEAD2 h; // C1:80:19 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+} *LPCSP_ANS_RESETCASTLETAXINFO;
+
+typedef struct CSP_REQ_RESETSIEGEGUILDINFO
+{
+	PBMSG_HEAD2 h; // C1:80:1A GS->DS
+	WORD wMapSvrNum;
+} *LPCSP_REQ_RESETSIEGEGUILDINFO;
+
+typedef struct CSP_ANS_RESETSIEGEGUILDINFO
+{
+	PBMSG_HEAD2 h; // C1:80:1A DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+} *LPCSP_ANS_RESETSIEGEGUILDINFO;
+
+typedef struct CSP_REQ_RESETREGSIEGEINFO
+{
+	PBMSG_HEAD2 h; // C1:80:1B GS->DS
+	WORD wMapSvrNum;
+} *LPCSP_REQ_RESETREGSIEGEINFO;
+
+typedef struct CSP_ANS_RESETREGSIEGEINFO
+{
+	PBMSG_HEAD2 h; // C1:80:1B DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+} *LPCSP_ANS_RESETREGSIEGEINFO;
+
+typedef struct CSP_REQ_CSINITDATA
+{
+	PBMSG_HEAD h; // C1:81 GS->DS
+	WORD wMapSvrNum;
+	int iCastleEventCycle;
+} *LPCSP_REQ_CSINITDATA;
+
+typedef struct CSP_ANS_CSINITDATA
+{
+	PWMSG_HEAD h; // C2:81 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	WORD wStartYear;
+	BYTE btStartMonth;
+	BYTE btStartDay;
+	WORD wEndYear;
+	BYTE btEndMonth;
+	BYTE btEndDay;
+	BYTE btIsSiegeGuildList;
+	BYTE btIsSiegeEnded;
+	BYTE btIsCastleOccupied;
+	BYTE szCastleOwnGuild[MAX_GUILDNAMESTRING];
+	__int64 i64CastleMoney;
+	int iTaxRateChaos;
+	int iTaxRateStore;
+	int iTaxHuntZone;
+	int iFirstCreate;
+	int iCount;
+} *LPCSP_ANS_CSINITDATA;
+
+typedef struct CSP_CSINITDATA
+{
+	int iNpcNumber;
+	int iNpcIndex;
+	int iNpcDfLevel;
+	int iNpcRgLevel;
+	int iNpcMaxHp;
+	int iNpcHp;
+	BYTE btNpcX;
+	BYTE btNpcY;
+	BYTE btNpcDIR;
+} *LPCSP_CSINITDATA;
+
+typedef struct CSP_REQ_NPCDATA
+{
+	PBMSG_HEAD h; // C1:82 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+} *LPCSP_REQ_NPCDATA;
+
+typedef struct CSP_ANS_NPCDATA
+{
+	PWMSG_HEAD h; // C2:82 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	int iCount;
+} *LPCSP_ANS_NPCDATA;
+
+typedef struct CSP_NPCDATA
+{
+	int iNpcNumber;
+	int iNpcIndex;
+	int iNpcDfLevel;
+	int iNpcRgLevel;
+	int iNpcMaxHp;
+	int iNpcHp;
+	BYTE btNpcX;
+	BYTE btNpcY;
+	BYTE btNpcDIR;
+} *LPCSP_NPCDATA;
+
+typedef struct CSP_REQ_ALLGUILDREGINFO
+{
+	PBMSG_HEAD h; // C1:83 GS->DS
+	WORD wMapSvrNum;
+	int iIndex;
+} *LPCSP_REQ_ALLGUILDREGINFO;
+
+typedef struct CSP_ANS_ALLGUILDREGINFO
+{
+	PWMSG_HEAD h; // C2:83 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iIndex;
+	int iCount;
+} *LPCSP_ANS_ALLGUILDREGINFO;
+
+typedef struct CSP_GUILDREGINFO
+{
+	char szGuildName[MAX_GUILDNAMESTRING];
+	int iRegMarkCount;
+	bool bIsGiveUp;
+	BYTE btRegRank;
+} *LPCSP_GUILDREGINFO;
+
+typedef struct CSP_REQ_NPCSAVEDATA
+{
+	PWMSG_HEAD h; // C2:84 GS->DS
+	WORD wMapSvrNum;
+	int iCount;
+} *LPCSP_REQ_NPCSAVEDATA;
+
+typedef struct CSP_NPCSAVEDATA
+{
+	int	iNpcNumber;
+	int	iNpcIndex;
+	int	iNpcDfLevel;
+	int	iNpcRgLevel;
+	int	iNpcMaxHp;
+	int	iNpcHp;
+	BYTE btNpcX;
+	BYTE btNpcY;
+	BYTE btNpcDIR;
+} *LPCSP_NPCSAVEDATA;
+
+typedef struct CSP_ANS_NPCSAVEDATA
+{
+	PBMSG_HEAD h; // C1:84 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+} *LPCSP_ANS_NPCSAVEDATA;
+
+typedef struct CSP_REQ_CALCREGGUILDLIST
+{
+	PBMSG_HEAD h; // C1:85 GS->DS
+	WORD wMapSvrNum;
+} *LPCSP_REQ_CALCREGGUILDLIST;
+
+typedef struct CSP_ANS_CALCREGGUILDLIST
+{
+	PWMSG_HEAD h; // C2:85 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iCount;
+} *LPCSP_ANS_CALCREGGUILDLIST;
+
+typedef struct CSP_CALCREGGUILDLIST
+{
+	char szGuildName[MAX_GUILDNAMESTRING];
+	int iRegMarkCount;
+	int iGuildMemberCount;
+	int iGuildMasterLevel;
+	int iSeqNum;
+} *LPCSP_CALCREGGUILDLIST;
+
+typedef struct CSP_REQ_CSGUILDUNIONINFO
+{
+	PWMSG_HEAD h; // C2:86 GS->DS
+	WORD wMapSvrNum;
+	int iCount;
+} *LPCSP_REQ_CSGUILDUNIONINFO;
+
+typedef struct CSP_CSGUILDUNIONINFO
+{
+	char szGuildName[MAX_GUILDNAMESTRING];
+	int iCsGuildID;
+} *LPCSP_CSGUILDUNIONINFO;
+
+typedef struct CSP_ANS_CSGUILDUNIONINFO
+{
+	PWMSG_HEAD h; // C2:86 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iCount;
+} *LPCSP_ANS_CSGUILDUNIONINFO;
+
+typedef struct CSP_REQ_CSSAVETOTALGUILDINFO
+{
+	PWMSG_HEAD h; // C2:87 GS->DS
+	WORD wMapSvrNum;
+	int iCount;
+} *LPCSP_REQ_CSSAVETOTALGUILDINFO;
+
+typedef struct CSP_CSSAVETOTALGUILDINFO
+{
+	char szGuildName[MAX_GUILDNAMESTRING];
+	int iCsGuildID;
+	int iGuildInvolved;
+	int iGuildScore;
+} *LPCSP_CSSAVETOTALGUILDINFO;
+
+typedef struct CSP_ANS_CSSAVETOTALGUILDINFO
+{
+	PBMSG_HEAD h; // C1:87 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+} *LPCSP_ANS_CSSAVETOTALGUILDINFO;
+
+typedef struct CSP_REQ_CSLOADTOTALGUILDINFO
+{
+	PBMSG_HEAD h; // C1:88 GS->DS
+	WORD wMapSvrNum;
+} *LPCSP_REQ_CSLOADTOTALGUILDINFO;
+
+typedef struct CSP_ANS_CSLOADTOTALGUILDINFO
+{
+	PWMSG_HEAD h; // C2:88 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+	int iCount;
+} *LPCSP_ANS_CSLOADTOTALGUILDINFO;
+
+typedef struct CSP_CSLOADTOTALGUILDINFO
+{
+	char szGuildName[MAX_GUILDNAMESTRING];
+	int iCsGuildID;
+	int iGuildInvolved;
+	int iGuildScore;
+} *LPCSP_CSLOADTOTALGUILDINFO;
+
+typedef struct CSP_REQ_NPCUPDATEDATA
+{
+	PWMSG_HEAD h; // C2:89 GS->DS
+	WORD wMapSvrNum;
+	int iCount;
+} *LPCSP_REQ_NPCUPDATEDATA;
+
+typedef struct CSP_NPCUPDATEDATA
+{
+	int iNpcNumber;
+	int iNpcIndex;
+	int iNpcDfLevel;
+	int iNpcRgLevel;
+	int iNpcMaxHp;
+	int iNpcHp;
+	BYTE btNpcX;
+	BYTE btNpcY;
+	BYTE btNpcDIR;
+} *LPCSP_NPCUPDATEDATA;
+
+typedef struct CSP_ANS_NPCUPDATEDATA
+{
+	PBMSG_HEAD h; // C1:89 DS->GS
+	int iResult;
+	WORD wMapSvrNum;
+} *LPCSP_ANS_NPCUPDATEDATA;
+
+typedef struct CWP_REQ_CRYWOLFSYNC
+{
+	PBMSG_HEAD h; // C1:B0 GS->DS
+	WORD wMapSvrNum;
+	int iCrywolfState;
+	int iOccupationState;
+} *LPCWP_REQ_CRYWOLFSYNC;
+
+typedef struct CWP_ANS_CRYWOLFSYNC
+{
+	PBMSG_HEAD h; // C1:B0 DS->GS
+	BYTE btResult;
+	int iCrywolfState;
+	int iOccupationState;
+} *LPCWP_ANS_CRYWOLFSYNC;
+
+typedef struct CWP_REQ_CRYWOLFINFOLOAD
+{
+	PBMSG_HEAD h; // C1:B1 GS->DS
+	WORD wMapSvrNum;
+} *LPCWP_REQ_CRYWOLFINFOLOAD;
+
+typedef struct CWP_ANS_CRYWOLFINFOLOAD
+{
+	PBMSG_HEAD h; // C1:B1 DS->GS
+	BYTE btResult;
+	int iCrywolfState;
+	int iOccupationState;
+} *LPCWP_ANS_CRYWOLFINFOLOAD;
+
+typedef struct CWP_REQ_CRYWOLFINFOSAVE
+{
+	PBMSG_HEAD h; // C1:B2 GS->DS
+	WORD wMapSvrNum;
+	int iCrywolfState;
+	int iOccupationState;
+} *LPCWP_REQ_CRYWOLFINFOSAVE;
+
+typedef struct CWP_ANS_CRYWOLFINFOSAVE
+{
+	PBMSG_HEAD h; // C1:B2 DS->GS
+	BYTE btResult;
+} *LPCWP_ANS_CRYWOLFINFOSAVE;
 
 #ifdef MASTER_LEVEL_UP_SYSTEM_20070912		// DS <-> GS 프로토콜
 //----------------------------------------------------------------------------
@@ -4571,18 +4191,6 @@ struct SDHP_RENEW_RANKING
 	char byCCFType;
 };
 
-/* 1080 */
-struct PMSG_REQ_UBF_ACCOUNT_USERINFO
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char szAccountID[11];
-	char szName[11];
-	int iServerCode;
-	int IsUnityBattleFieldServer;
-	char btObserverMode;
-};
-
 /* 1081 */
 struct PMSG_UBF_REGISTER_ACCOUNT_USER
 {
@@ -4646,17 +4254,6 @@ struct PMSG_ANS_UBF_SET_RECEIVED_REWARD
 	int iUserIndex;
 	char btReturn;
 	char btSubReturn;
-};
-
-/* 1087 */
-struct PMSG_REQ_UBF_GET_REWARD
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	int iServerCode;
-	char btServerKind;
-	char btContentsType;
-	char szName[11];
 };
 
 /* 1088 */
@@ -5015,28 +4612,66 @@ struct SDHP_ANS_KILLPOINT_RESULT
 	int nTotalPoint;
 };
 
-/* 827 */
-struct PMSG_ANS_UBF_ACCOUNT_USERINFO
+typedef struct PMSG_REQ_UBF_ACCOUNT_USERINFO
 {
-	PBMSG_HEAD2 h;
+	PBMSG_HEAD2 h; // C1:FA:01 GS->DS
 	int iUserIndex;
-	char btResult;
-	char btRegisterState;
-	char btRegisterMonth;
-	char btRegisterDay;
-	char btObserverMode;
-};
-
-/* 829 */
-struct PMSG_ANS_GET_UBF_REAL_NAME
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char szUBFName[11];
-	char szRealName[11];
+	char szAccountID[MAX_IDSTRING + 1];
+	char szName[MAX_IDSTRING + 1];
 	int iServerCode;
-	char btRetrun;
-};
+	BOOL IsUnityBattleFieldServer;
+	BYTE btObserverMode;
+} *LPPMSG_REQ_UBF_ACCOUNT_USERINFO;
+
+typedef struct PMSG_ANS_UBF_ACCOUNT_USERINFO
+{
+	PBMSG_HEAD2 h; // C1:FA:01 DS->GS
+	int iUserIndex;
+	BYTE btResult;
+	BYTE btRegisterState;
+	BYTE btRegisterMonth;
+	BYTE btRegisterDay;
+	BYTE btObserverMode;
+} *LPPMSG_ANS_UBF_ACCOUNT_USERINFO;
+
+typedef struct PMSG_REQ_UBF_GET_REWARD
+{
+	PBMSG_HEAD2 h; // C1:FA:06 GS->DS
+	int iUserIndex;
+	int iServerCode;
+	BYTE btServerKind;
+	BYTE btContentsType;
+	char szName[MAX_IDSTRING + 1];
+} *LPPMSG_REQ_UBF_GET_REWARD;
+
+typedef struct PMSG_ANS_UBF_GET_REWARD
+{
+	PBMSG_HEAD2 h; // C1:FA:06 DS->GS
+	int iUserIndex;
+	BYTE btResult;
+	BYTE btContentsType;
+	BYTE btArrayCCF_Reward[4];
+	BYTE btArrayDSF_Reward[4];
+	BYTE btArrayCCN_Reward[2];
+	BYTE btArrayDSN_Reward[14];
+} *LPPMSG_ANS_UBF_GET_REWARD;
+
+typedef struct PMSG_REQ_GET_UBF_REAL_NAME
+{
+	PBMSG_HEAD2 h; // C1:FA:08 GS->DS
+	int iUserIndex;
+	char szUBFName[MAX_IDSTRING + 1];
+} *LPPMSG_REQ_GET_UBF_REAL_NAME;
+
+typedef struct PMSG_ANS_GET_UBF_REAL_NAME
+{
+	PBMSG_HEAD2 h; // C1:FA:08 DS->GS
+	int iUserIndex;
+	char szUBFName[MAX_IDSTRING + 1];
+	char szRealName[MAX_IDSTRING + 1];
+	int iServerCode;
+	BYTE btRetrun;
+} *LPPMSG_ANS_GET_UBF_REAL_NAME;
 
 
 /* 671 */
@@ -5208,27 +4843,19 @@ struct _tagPMSG_REQ_AE_PLAY_DS
 	char btPlay;
 };
 
-/* 826 */
-struct _stCCFRankingInfo
+typedef struct _stCCFRankingInfo
 {
-	char szCharName[11];
-	char byRank;
+	_stCCFRankingInfo()
+	{
+		memset(szCharName, 0, sizeof(szCharName));
+		byRank = 0;
+		nPoint = 0;
+	}
+
+	char szCharName[MAX_IDSTRING + 1];
+	BYTE byRank;
 	int nPoint;
 };
-
-/* 828 */
-struct PMSG_ANS_UBF_GET_REWARD
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btResult;
-	char btContentsType;
-	char btArrayCCF_Reward[4];
-	char btArrayDSF_Reward[4];
-	char btArrayCCN_Reward[2];
-	char btArrayDSN_Reward[14];
-};
-
 
 /* 1079 */
 struct _tagPMSG_ANS_ITL_USERCOUNTANS
