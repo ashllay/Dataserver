@@ -6,39 +6,12 @@
 #include "..\\Include\\ReadScript.h"
 #include "..\\common\\Winutil.h"
 #include "ZzzItem.h"
-
-#ifdef SCRIPT_DECODE_WORK
-#include "..\\common\\WZScriptEncode.h"
-#endif
-
 #include "..\\common\\SetItemOption.h"
 
-#ifdef AUTH_GAMESERVER
-#include "..\\common\\WzMemScript.h"
-#endif
-
-#ifndef CHARACTERDB_SERVER
-#ifdef ADD_ITEM_SOCKET_OPTION_SYSTEM_20080415
-#include "ItemSocketOptionDefine.h"
-extern CItemSocketOptionSystem g_SocketOptionSystem;
-#endif // ADD_ITEM_SOCKET_OPTION_SYSTEM_20080415
-#endif
-
-#ifdef DARKLORD_WORK
 CPetItemExp	gPetItemExp;
-#endif
-
-#ifdef ADD_RANDOM_RANGE_OF_ITEMINDEX_20050808
 int g_MaxItemIndexOfEachItemType[MAX_ITEM_TYPE] = { 0, };
-#endif
-
-
-//extern void GCServerMsgStringSend(char *szMsg, int aIndex, BYTE type);
-
 ITEM_ATTRIBUTE      ItemAttribute[MAX_ITEM];
 
-//----------------------------------------------------------------------------
-// 아이템 정보를 초기화 한다.
 CItem::CItem()
 {
 	Clear();

@@ -1,15 +1,6 @@
-﻿//----------------------------------------------------------------------------
-// 서버와 클라이언트가 공유하는 헤더 정의
-//----------------------------------------------------------------------------
-#ifndef __PUBLIC_H__
+﻿#ifndef __PUBLIC_H__
 #define __PUBLIC_H__
 
-#ifndef GAME_VERSION
-#include "define.h"
-#endif
-
-//----------------------------------------------------------------------------
-// 캐릭터 번호
 enum ClassNumber
 {
 	CLASS_WIZARD,
@@ -22,149 +13,22 @@ enum ClassNumber
 	CLASS_LANCER
 };
 
+#define MAX_MAGIC	150
 
-//#define MAX_MAGIC	20	// 사용자당 최대 마법 개수
-//#ifdef ADD_NEW_SKILL_FOR_CASTLE_01_20041116// 공성전 패치 때 마법개수 늘림
-#define MAX_MAGIC	150//60	// 사용자당 최대 마법 개수
-//#endif
-
-#define MAX_TOTALMAGIC100	// 마법최대 개수
-
-#define DEF_DARKLORD_LEVEL	1	// 다크로드 캐릭터 생성시 기본 레벨
-//----------------------------------------------------------------------------
-// 저항력 번호
-// -1: 없음, 0: 얼음, 1: 독, 2:번개, 3:불, 4:땅, 5:바람, 6:물
-#define RESISTANCE_COLD0
-#define RESISTANCE_POISON	1
-#define RESISTANCE_THUNDER	2
-#define RESISTANCE_FIRE3
-
-#define RESISTANCE_EARTH	4
-#define RESISTANCE_WIND5
-#define RESISTANCE_WATER	6
-
-//#ifdef ADD_MASTER_LEVEL_SKILL_SYSTEM_ACTIVE_20080107	// MAX_SKILL 수정
-#define MAX_SKILL	600
-//#endif
-
-
-// View 상태
-#define STATE_NONE	0	//  보통.
-#define STATE_POISON0x00000001  //  독 걸린상태.
-#define STATE_FREEZE0x00000002  //  얼음 걸린상태.
-#define STATE_ATTACK0x00000004  //  공격력 증가.
-#define STATE_DEFENSE0x00000008  //  방어력 증가.
-#define STATE_ADD_LIFE0x00000010	//  생명력 증가.
-#define STATE_HARDEN0x00000020	//  석화.
-#define STATE_REDUCE_DEFENSE0x00000040	//  방어감소(마검사)	(몬스터 스킬도 같이 사용)
-#define STATE_REDUCE_ATTACKDAMAGE	0x00000080	//  공격감소(법사)
-
-
-#define STATE_REDUCE_MAGICDEFENSE	0x00000100	//  방어력증가(법사)
-#define STATE_REDUCE_MAGICPOWER0x00000200	//  마법 능력 감소 (몬스터 스킬)
-#define STATE_ADD_AG0x00000400	//  AG증가 속도 향상
-#define STATE_ADD_CRITICAL_DAMAGE	0x00000800	//  크리티컬 데미지 증가
-
-//#ifdef ADD_AUTHORITY_CODE_OF_EVENT_GM_20050602
-#define STATE_ADD_GM_MARK	        0x01000000	//  GM 마크 스킨 추가
-//#endif
-
-#define STATE_IMMUNE_TO_MAGIC0x00000080	// 마법방어 무적(몹한테만.)	(STATE_REDUCE_ATTACKDAMAGE = 법사, 소울바리어)
-#define STATE_IMMUNE_TO_HARM0x00000008	// 물리방어 무적(몹한테만.)	(STATE_DEFENSE = 요정, 방어력향상)
-
-
-//#ifdef ADD_NEW_SKILL_FOR_CASTLE_01_20041116
-#define STATE_BRAND_OF_SKILL0x00000200	// 다크로드가 보장하는 기술 브랜드 ^^
-#define STATE_STUNED0x00001000	// 스턴 걸린 상태.
-#define STATE_ADD_MANA0x00002000	// 마나 증가.
-#define STATE_CLOAKING0x00004000	// 투명 상태.
-#define STATE_BLESS_POTION	0x00008000	// 축복의 물약.
-#define STATE_SOUL_POTION	0x00010000	// 영혼의 물약.
-#define STATE_REMOVAL_MAGIC	0x00100000	// 마법 해제.
-//#endif
-
-//#ifdef ADD_NEW_MONSTER_SYSTEM_01_20050714
-#define STATE_IMMUNE_TO_SKILL0x00200000	// 특정 스킬에 IMMUNE 상태
-//#endif
-
-//#ifdef ADD_SKILL_MUSE_ELF_INFINITYARROW_20060406
-#define STATE_INFINITY_ARROW0x04000000	// 인피니티 애로우(뮤즈엘프) 스킬
-//#endif
-
-//#ifdef CASTLE_NPC_GATE_WORK_20041206
-#define STATE_CASTLE_GATE	0x00020000	// 성문의 여닫힌 상태
-//#endif
-//#ifdef CASTLE_NPC_CROWN_WORK_20041210
-#define STATE_CASTLE_CROWN	0x00020000	// 왕관의 등록 중 상태
-//#endif
-
-//#ifdef MU_CASTLESIEGE_JOINSIDE_VIEWPORT_20041209
-#define STATE_JOIN_SIDE_DEFEND0x00040000	// 공성전 시 공/수 구분
-#define STATE_JOIN_SIDE_ATTACK0x00080000	// 공성전 시 공/수 구분 - 공성 01
-//#endif
-
-//#ifdef MODIFY_CASTLESIEGE_IDENTIFICATION_20051012
-#define STATE_JOIN_SIDE_ATTACK_2	0x00400000	// 공성전 시 공/수 구분 - 공성 02
-#define STATE_JOIN_SIDE_ATTACK_3	0x00800000	// 공성전 시 공/수 구분 - 공성 03
-//#endif
-
-
-//#ifdef ADD_NPC_SHADOW_PHANTOM_20050616
-#define STATE_NPC_HELP              0x02000000  // 쉐도우 팬텀 공격력 향상 & 방어력 향상 스킬 상태
-//#endif
-
-//#ifdef CRYWOLF_NPC_WORK_20050912
-#define STATE_BESERKER	0x00800000	// BERSERKER 상태
-
-#define STATE_CRYWOLF_NPC_HIDE	0x10000000	// 크라이울프 ONLY - NPC HIDE 상태
-
-#define STATE_CRYWOLF_STATUE_SHIELD1	0x00000001	// 늑대의 신상 ONLY - 1단계 방어막 생성 상태
-#define STATE_CRYWOLF_STATUE_SHIELD2	0x00000002	// 늑대의 신상 ONLY - 2단계 방어막 생성 상태
-#define STATE_CRYWOLF_STATUE_SHIELD3	0x00000004	// 늑대의 신상 ONLY - 3단계 방어막 생성 상태
-#define STATE_CRYWOLF_STATUE_SHIELD4	0x00000008	// 늑대의 신상 ONLY - 4단계 방어막 생성 상태
-#define STATE_CRYWOLF_STATUE_SHIELD5	0x00000100	// 늑대의 신상 ONLY - 5단계 방어막 생성 상태
-
-#define STATE_CRYWOLF_ALTAR_ENABLE0x00010000	// 늑대의 제단 ONLY - 계약 가능 상태
-#define STATE_CRYWOLF_ALTAR_DISABLE0x00020000	// 늑대의 제단 ONLY - 계약 불능 상태
-#define STATE_CRYWOLF_ALTAR_CONTRACTED	0x00040000	// 늑대의 제단 ONLY - 계약 되어 있는 상태
-#define STATE_CRYWOLF_ALTAR_ATTEMPT0x00080000	// 늑대의 제단 ONLY - 계약 시도 상태
-#define STATE_CRYWOLF_ALTAR_OCCUFIED	0x00100000	// 늑대의 제단 ONLY - 점령 당한 상태
-//#endif
-
-//#ifdef PCBANG_POINT_SYSTEM_20070206// 인장 버퍼
-#define STATE_SEAL_ITEM	0x08000000	// PC방 포인트 인장 아이템 
-//#endif
-
-//#ifdef ADD_PCS_MARK_OF_EXP_20070205
-#define STATE_MARK_USE	0x08000000
-//#endif // ADD_PCS_MARK_OF_EXP_20070205
-
-//#ifdef ADD_EVENT_MAP_ILLUSION_TEMPLE_20070328	// 환영 사원 전용 스킬
-#define STATE_ILLUSION_TEMPLE_PRODECTION0x00040000	// 보호의 주문
-#define STATE_ILLUSION_TEMPLE_RESTRAINT	0x00080000	// 속박의 주문
-//#endif
-
-//#ifdef EXPAND_VIEWSKILLSTATE_WORD_TO_INT_20041122
-#define DEL_VIEWSKILLSTATE( x, y )( x &= ~ y )
-#define ADD_VIEWSKILLSTATE( x, y )( x |= y   )
-//#endif
-
-//ifdef CHARACTER_AUTO_RECUPERATION_SYSTEM_20050614
 enum CHARACTER_AUTO_RECUPERATION_TIME
 {
 	CART_10_SEC = 1000 * 10,
 	CART_15_SEC = 1000 * 15,
 	CART_25_SEC = 1000 * 25,
 };
+
 enum HP_MP_AG_VALUE_PER_TIME
 {
 	VPT_HP_MP_AG_1_PER_1_SEC = 1,
 	VPT_HP_MP_AG_5_PER_1_SEC = 5,
 	VPT_HP_MP_AG_10_PER_1_SEC = 10
 };
-//#endif
 
-//#ifdef DARKLORD_WORK
 enum eSkillType
 {
 	AT_SKILL_POISON = 0x1,
@@ -363,46 +227,31 @@ enum eOptionType
 	AT_SET_IMPROVE_VITALITY = 0xC7,
 };
 
-//#ifdef ADD_JEWEL_OF_HARMONY_SYSTEM_20060530
-enum eJewelOfHarmonyItemOption
+enum GUILD_STATUS
 {
-	// 공통
-	AT_JEWELOFHARMONY_NOT_STRENGTHEN_ITEM = 0,	// 효과 없음 : 강화되지 않은 아이템
-
-	// 무기류 옵션
-	AT_JEWELOFHARMONY_WEAPON_IMPROVE_MINATTACKDAMAGE = 1,	// 최소 공격력 상승 (값)
-	AT_JEWELOFHARMONY_WEAPON_IMPROVE_MAXATTACKDAMAGE = 2,	// 최대 공격력 상승 (값)
-	AT_JEWELOFHARMONY_WEAPON_DECREASE_REQUIRE_STR = 3,	// 필요 힘 감소 (값)
-	AT_JEWELOFHARMONY_WEAPON_DECREASE_REQUIRE_DEX = 4,	// 필요 민첩 감소 (값)
-	AT_JEWELOFHARMONY_WEAPON_IMPROVE_ATTACKDAMAGE_BOTH = 5,	// 공격력 상승 (최소,최대) (값)
-	AT_JEWELOFHARMONY_WEAPON_IMPROVE_CRITICALDAMAGE = 6,	// 크리티컬 데미지 상승 (값)
-	AT_JEWELOFHARMONY_WEAPON_IMPROVE_SKILLDAMAGE = 7,	// 스킬 공격력 상승 (값)
-	AT_JEWELOFHARMONY_WEAPON_IMPROVE_ATTACKSUCCESRATE_PVP = 8,	// 공격 성공율 상승 (PVP)  (값)
-	AT_JEWELOFHARMONY_WEAPON_DECREASE_SD_RATE = 9,	// SD 감소율 상승 (실드 데미지 흡수율 감소. 직접 HP에 주는 데미지가 증가)  (값)
-	AT_JEWELOFHARMONY_WEAPON_IMPROVE_IGNORE_SD_RATE = 10,  // 공격시 SD 무시 확률 상승 : SD를 무시하고 직접 HP에 데미지를 가한다.  (값)
-
-	// 지팡이류
-	AT_JEWELOFHARMONY_STAFF_IMPROVE_MAGICDAMAGE = 1,	// 마력 상승(값)
-	AT_JEWELOFHARMONY_STAFF_DECREASE_REQUIRE_STR = 2,	// 필요 힘 감소 (값)
-	AT_JEWELOFHARMONY_STAFF_DECREASE_REQUIRE_DEX = 3,	// 필요 민첩 감소 (값)
-	AT_JEWELOFHARMONY_STAFF_IMPROVE_SKILLDAMAGE = 4,	// 스킬 공격력 상승 (값)
-	AT_JEWELOFHARMONY_STAFF_IMPROVE_CRITICALDAMAGE = 5,	// 크리티컬 데미지 상승 (값)
-	AT_JEWELOFHARMONY_STAFF_DECREASE_SD_RATE = 6,	// SD 감소율 상승 (실드 데미지 흡수율 감소. 직접 HP에 주는 데미지가 증가)  (값)//#endif
-	AT_JEWELOFHARMONY_STAFF_IMPROVE_ATTACKSUCCESRATE_PVP = 7,	// 공격 성공율 상승 (PVP)  (값)
-	AT_JEWELOFHARMONY_STAFF_IMPROVE_IGNORE_SD_RATE = 8,   // 공격시 SD 무시 확률 상승 : SD를 무시하고 직접 HP에 데미지를 가한다.  (값)
-
-	// 방어구류
-	AT_JEWELOFHARMONY_DEFENSE_IMPROVE_DEFENSE = 1,   // 방어력 상승 (값)
-	AT_JEWELOFHARMONY_DEFENSE_IMPROVE_MAX_AG = 2,	// 최대 AG 상승 (값)
-	AT_JEWELOFHARMONY_DEFENSE_IMPROVE_MAX_HP = 3,	// 최대 HP 상승 (값)
-	AT_JEWELOFHARMONY_DEFENSE_IMPROVE_AUTO_REFILL_HP = 4,	// 생명력 자동 증가량 상승
-	AT_JEWELOFHARMONY_DEFENSE_IMPROVE_AUTO_REFILL_MP = 5,	// 마나 자동 증가량 상승
-	AT_JEWELOFHARMONY_DEFENSE_IMPROVE_BLOCKSUCCESRATE_PVP = 6,	// 방어 성공률 상승 (PVP) 값
-	AT_JEWELOFHARMONY_DEFENSE_IMPROVE_DAMAGE_DECREASE = 7,	// 데미지 감소 % 상승
-	AT_JEWELOFHARMONY_DEFENSE_IMPROVE_SD_RATE = 8   // SD 비율 상승 ( PVP시에 SD 비율이 높아짐 )
+	G_NONE = 0xFFFFFFFF,
+	G_PERSON = 0x0,
+	G_MASTER = 0x80,
+	G_SUB_MASTER = 0x40,
+	G_BATTLE_MASTER = 0x20,
 };
 
+enum
+{
+	PRE_LEAGUE = 0x0,
+	SEMI_LEAGUE = 0x1,
+	FINAL_LEAGUE = 0x2,
+	LAST_WINNER = 0x3,
+};
 
+enum __DSF_TYPE
+{
+	DSF_TYPE_NONE = 0x0,
+	DSF_TYPE_LEAGUE = 0x1,
+	DSF_TYPE_SEMIFINAL = 0x2,
+	DSF_TYPE_FINAL = 0x3,
+	DSF_TYPE_WINNER = 0x4,
+};
 
 #endif
 

@@ -1,21 +1,10 @@
-
-// MainFrm.cpp : implementation of the CMainFrame class
-//
-
 #include "stdafx.h"
 #include "Dataserver.h"
-
 #include "MainFrm.h"
 #include "ServerPrc.h"
 #include "WZIPCheck.h"
 #include "BadSyntaxChk.h"
 #include "MapServerManager_DS.h"
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#endif
 
 char szVersion[] = DATASERVER_VERSION;
 
@@ -44,8 +33,6 @@ CWarehouseDBSet CWhDBSet;
 CZenEvenDb CZenEvenDBSet;
 CCharPreviewDBSet gCharPreDBSet;
 LuckyItemDBSet g_LuckyItemDBSet;
-
-//season 12+
 CMonsterKillInfoDbSet g_MonsterKillInfoDbSet;
 CBlockChatUserDBSet g_BlockChatUserDBSet;
 LabyrinthDBSet g_LabyrinthDBSet;
@@ -69,24 +56,16 @@ CRuudLogDbSet g_RuudLogDBSet;
 CGremoryCaseDBSet g_CGremoryCaseDBSet;
 CDevilSquareFinalDBSet g_DSFDBset;
 ChaosCastleFinalDBSet g_CCFDbSet;
-int gbIsJumpingServer;
 
+BOOL gbIsJumpingServer;
 
 CQuestExpDBSet g_QuestExpDBSet;
 CPeriodItemExDBSet PeriodItemExDBSet;
-#ifdef MASTER_LEVEL_UP_SYSTEM_20070912
 CMasterLevelSystemDBSet MasterLevelSystemDBSet;
-#endif
 CQuestMonKillDBSet QuestMonKillDBSet;
-#ifdef MU_CRYWOLF_DS_PROTOCOL_20050505
 CCrywolfDBSet CrywolfDBSet;
-#endif
-#ifdef MU_CASTLESIEGE_DS_PROTOCOL_20041105
 CCastleDBSet CastleDBSet;
-#endif
-#ifdef DARKLORD_WORK
 CPetDBSet PetDBSet;
-#endif
 CCharDBSet gCharDbSet;
 CAccountCharDBSet gACDbSet;
 
@@ -100,10 +79,7 @@ char szDbConnectDsn[52];
 
 #define WM_ASYNCSELECTMSG_CLIENT		(WM_USER+1001)
 
-#define WM_ASYNCSELECTMSG_SERVERACCEPT	(WM_USER+1002)	// 서버의 접속을 기다리는 메시지
-
-/////////////////////////////////////////////////////////////////////////////
-// CMainFrame
+#define WM_ASYNCSELECTMSG_SERVERACCEPT	(WM_USER+1002)
 
 IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 

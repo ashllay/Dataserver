@@ -1,9 +1,9 @@
+#ifndef __BOMBHUNTDBSET_H__
+#define __BOMBHUNTDBSET_H__
 #pragma once
-//#include "Include\ProDef.h"
+
 #include "..\Include\Sprodef.h"
-
 #include "DBConBase.h"
-
 
 class CBombHuntDBSet : public CDBConBase
 {
@@ -12,9 +12,15 @@ public:
 	CBombHuntDBSet();
 	virtual ~CBombHuntDBSet();
 
-	int Connect();
-	int DBSelectBombHunt(char *szAccountID, char *szName, unsigned __int16 *wOutScore, char *btOutGameState, char *szOutTileState); // idb
-	int DBInsertBombHunt(char *szAccountID, char *szName, unsigned __int16 wScore, unsigned __int16 wGameState, char *szTileState); // idb
-	int DBDeleteBombHunt(char *szAccountID, char *szName); // idb
-	int DBInsertBombHuntLog(char *szAccountID, char *szName, unsigned __int16 wScore, char btClear); // idb
+	BOOL Connect();
+
+	BOOL DBSelectBombHunt(char *szAccountID, char *szName, WORD& wOutScore, BYTE& btOutGameState, char *szOutTileState);
+	BOOL DBInsertBombHunt(char *szAccountID, char *szName, WORD wScore, WORD wGameState, char *szTileState);
+	BOOL DBDeleteBombHunt(char *szAccountID, char *szName);
+	BOOL DBInsertBombHuntLog(char *szAccountID, char *szName, WORD wScore, BYTE btClear);
+
+public:
+	CQuery m_Query;
 };
+
+#endif

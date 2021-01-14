@@ -31,9 +31,6 @@
     <Filter Include="APP\Main">
       <UniqueIdentifier>{87b90925-a7f7-4013-a19d-f08b81f8c780}</UniqueIdentifier>
     </Filter>
-    <Filter Include="APP\NewFilter1">
-      <UniqueIdentifier>{247cb460-1a57-4be0-a8c8-b938c53108ed}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -260,9 +257,6 @@
     </ClInclude>
     <ClInclude Include="include\ReadScript.h">
       <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="common\ItemSocketOptionDefine.h">
-      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="common\SetItemOption.h">
       <Filter>Common</Filter>
