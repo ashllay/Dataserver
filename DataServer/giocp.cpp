@@ -319,7 +319,9 @@ DWORD WINAPI ServerRecvWorkerThread(LPVOID p)
 		LeaveCriticalSection(&criti);
 		if( loopN > 0 )
 		{
-			//DWORD dwTime = GetTickCount();
+#ifdef DEBUG_IOCP_LOG
+			DWORD dwTime = GetTickCount();
+#endif
 			//for( int n=0; n<loopN; n++)
 			{
 				if( WzRecvQ.GetFromQueue((LPBYTE)RecvData, &nSize, &headcode, &uindex, &iSessionId) == TRUE )
@@ -343,6 +345,9 @@ DWORD WINAPI ServerRecvWorkerThread(LPVOID p)
 					}
 				}
 			}
+#ifdef DEBUG_IOCP_LOG
+			LogAdd("[PacketLog] OUT [0x%02X] %u", headcode[0], GetTickCount() - TickCount);
+#endif
 			//LogAdd("Process End : [%d]", GetTickCount() - dwTime);
 		}
 		Sleep(1);
@@ -503,11 +508,45 @@ BOOL RecvDataParse(LPPER_IO_CONTEXT	lpIOContext, int uIndex)
 			{
 				WzRecvQ3.AddToQueue((LPBYTE)(recvbuf+lOfs), size, headcode, uIndex, g_DelayHandler.GetQuerySessionId());
 			}
-			else if(headcode == 0xF6 || headcode == 0xF7)
+			else if(headcode == 0xF6
+				|| headcode == 0xF7
+				//s12
+				//|| headcode == 0xE4
+				//|| headcode == 0x3E
+				//|| headcode == 0x4C
+				//|| headcode == 0xE8
+				//|| headcode == 0x4E
+				//|| headcode == 0xF1
+				//|| headcode == 0xF2
+				//|| headcode == 0xE9
+				//|| headcode == 0xEA
+				//|| headcode == 0xEB
+				//|| headcode == 0xEC
+				//|| headcode == 0xED
+				//|| headcode == 0xF3
+				//|| headcode == 0x79
+				//
+				)
 			{
 				WzRecvQ2.AddToQueue((LPBYTE)(recvbuf+lOfs), size, headcode, uIndex, g_DelayHandler.GetQuerySessionId());
 			}
-			else if(headcode == 0x13 || headcode == 0x14)
+			else if(headcode == 0x13
+				|| headcode == 0x14
+				//s12
+				//|| headcode == 0xEE
+				//|| headcode == 0xF0
+				//|| headcode == 0xFC
+				//|| headcode == 0xF9
+				//|| headcode == 0x80
+				//|| headcode >= 0x81 && headcode <= 0x89
+				//|| headcode == 0xE5
+				//|| headcode == 0xF8
+				//|| headcode == 0xFA
+				//|| headcode == 0xFB
+				//|| headcode == 0xFD
+				//|| headcode == 0xEF
+				//
+				)
 			{
 				WzRecvQ4.AddToQueue((LPBYTE)(recvbuf+lOfs), size, headcode, uIndex, g_DelayHandler.GetQuerySessionId());
 			}
@@ -556,6 +595,9 @@ int IoSend(int aIndex, LPBYTE lpMsg, DWORD dwSize)
 		return FALSE;
 	}
 	lpPerSocketContext = gSObj[aIndex].lpPerSocketContext;*/
+#ifdef DEBUG_IOCP_LOG
+	LogAdd("[PacketLog] [0x%02X][0x%02X][0x%02X][0x%02X]", *lpMsg, lpMsg[1], lpMsg[2], lpMsg[3]);
+#endif
 	if( dwSize > MAX_BUFF_SIZE )
 	{
 		LogAdd("Error : Max msg %s %d", __FILE__, __LINE__);

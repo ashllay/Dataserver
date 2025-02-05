@@ -20,95 +20,90 @@ BOOL LabyrinthDBSet::Connect()
 
 int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUserIndex, char *Buffer, int *nBufferLen)
 {
-	int result; // eax
-	MISSION_INFO stMissionInfo; // [esp+128h] [ebp-17Ch]
-	int nMissionCnt; // [esp+150h] [ebp-154h]
-	int nOfs; // [esp+15Ch] [ebp-148h]
-	int nRet; // [esp+168h] [ebp-13Ch]
-	__int16 sqlRet; // [esp+174h] [ebp-130h]
-	CString qSql; // [esp+180h] [ebp-124h]
-	SDHP_ANS_LABYRINTH_INFO pMsg; // [esp+18Ch] [ebp-118h]
-	__int64 v24; // [esp+274h] [ebp-30h]
-	int v25; // [esp+27Ch] [ebp-28h]
-	unsigned __int8 v26; // [esp+280h] [ebp-24h]
-	char v27; // [esp+281h] [ebp-23h]
-	const char *v8;
+	MISSION_INFO stMissionInfo;
+	int nMissionCnt;
+	int nOfs;
+	int nRet;
+	__int16 sqlRet;
+	CString qSql;
+	SDHP_ANS_LABYRINTH_INFO pMsg;
 
+	pMsg.h.set((LPBYTE)&pMsg, 0x77, 0, sizeof(pMsg));
 
-	//PWMSG_HEAD2::set(&pMsg.h.c, 119, 0, 248);
 	pMsg.nUserIndex = nUserIndex;
 	pMsg.btResult = 2;
 
-	qSql.Format("EXEC WZ_Labyrinth_Info_Load '%s', '%s'",
-		szAccountID,
-		szName);
+	qSql.Format("EXEC WZ_Labyrinth_Info_Load '%s', '%s'", szAccountID, szName);
 
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		sqlRet = this->m_DBQuery.Fetch();
-		if (sqlRet == -1)
+		if (sqlRet == SQL_NULL_DATA)
 		{
 			this->m_DBQuery.Clear();
-			LogAddTD(
-				"error-L3 : [LABYRINTH] LoadLabyrinthInfo #2, Fail Fetch %s %d", __FILE__, __LINE__);
+			LogAddTD("error-L3 : [LABYRINTH] LoadLabyrinthInfo #2, Fail Fetch %s %d", __FILE__, __LINE__);
 			pMsg.btResult = 2;
-			memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
-			*nBufferLen = 248;
-			result = pMsg.btResult;
+			memcpy_s(Buffer, 7000, &pMsg, sizeof(pMsg));
+			*nBufferLen = sizeof(pMsg);
+			return pMsg.btResult;
 		}
-		else if (sqlRet == 100)
+		else if (sqlRet == SQL_NO_DATA)
 		{
 			this->m_DBQuery.Clear();
 			LogAddTD("[LABYRINTH] LoadLabyrinthInfo, Empty user data. (%s)(%s)", szAccountID, szName);
 			pMsg.btResult = 1;
-			memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
-			*nBufferLen = 248;
-			result = pMsg.btResult;
+			memcpy_s(Buffer, 7000, &pMsg, sizeof(pMsg));
+			*nBufferLen = sizeof(pMsg);
+			return pMsg.btResult;
 		}
 		else
 		{
 			pMsg.btDimensionLevel = this->m_DBQuery.GetInt("DimensionLevel");
 			pMsg.wConfigNum = this->m_DBQuery.GetInt("ConfigNum");
 			pMsg.btCurrentZone = this->m_DBQuery.GetInt("CurrentZone");
-			*(&pMsg.btCurrentZone + 1) = this->m_DBQuery.GetInt("VisitedCnt");
-			*&pMsg.btVisitedList[199] = this->m_DBQuery.GetInt64("EntireExp");
-			v24 = this->m_DBQuery.GetInt64("EntireMonKillCnt");
-			v25 = this->m_DBQuery.GetInt("ClearCnt");
-			v26 = this->m_DBQuery.GetInt("ClearState");
+			pMsg.btVisitedCnt = this->m_DBQuery.GetInt("VisitedCnt");
+			pMsg.nEntireExp = this->m_DBQuery.GetInt64("EntireExp");
+			pMsg.nEntireMonKillCnt = this->m_DBQuery.GetInt64("EntireMonKillCnt");
+			pMsg.nClearCnt = this->m_DBQuery.GetInt("ClearCnt");
+			pMsg.btClearState = this->m_DBQuery.GetInt("ClearState");
+
 			this->m_DBQuery.Clear();
-			qSql.Format("EXEC WZ_Labyrinth_Path_Load '%s', '%s'",
-				szAccountID,szName);
-			nRet = this->m_DBQuery.ReadBlob(v8, &pMsg.btCurrentZone + 2);
+
+			qSql.Format("EXEC WZ_Labyrinth_Path_Load '%s', '%s'", szAccountID, szName);
+
+			nRet = this->m_DBQuery.ReadBlob(qSql, pMsg.btVisitedList);
+
 			this->m_DBQuery.Clear();
-			qSql.Format("EXEC WZ_Labyrinth_Mission_Load '%s', '%s'",
-				szAccountID,szName);
+
+			qSql.Format("EXEC WZ_Labyrinth_Mission_Load '%s', '%s'", szAccountID, szName);
+
 			if (this->m_DBQuery.Exec(qSql))
 			{
 				sqlRet = this->m_DBQuery.Fetch();
-				if (sqlRet == -1)
+
+				if (sqlRet == SQL_NULL_DATA)
 				{
 					this->m_DBQuery.Clear();
 					LogAddTD("error-L3 : [LABYRINTH] LoadLabyrinthInfo #4, Fail Fetch Mission. %s %d", __FILE__, __LINE__);
 					pMsg.btResult = 2;
-					memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
-					*nBufferLen = 248;
-					result = pMsg.btResult;
+					memcpy_s(Buffer, 7000, &pMsg, sizeof(pMsg));
+					*nBufferLen = sizeof(pMsg);
+					return pMsg.btResult;
 				}
-				else if (sqlRet == 100)
+				else if (sqlRet == SQL_NO_DATA)
 				{
 					this->m_DBQuery.Clear();
 					LogAddTD("[LABYRINTH] LoadLabyrinthInfo, Empty user Mission data. (%s)(%s)", szAccountID, szName);
-					pMsg.btResult = v26 < 1;
-					v27 = 0;
-					memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
-					*nBufferLen = 248;
-					result = pMsg.btResult;
+					pMsg.btResult = pMsg.btClearState < 1;
+					memcpy_s(Buffer, 7000, &pMsg, sizeof(pMsg));
+					*nBufferLen = sizeof(pMsg);
+					return pMsg.btResult;
 				}
 				else
 				{
-					nOfs = 248;
+					nOfs = sizeof(pMsg);
 					nMissionCnt = 0;
-					while (sqlRet != 100 && sqlRet != -1)
+					while (sqlRet != SQL_NO_DATA && sqlRet != -SQL_NULL_DATA)
 					{
 						stMissionInfo.btZoneNumber = this->m_DBQuery.GetInt("ZoneNumber");
 						stMissionInfo.btMissionType = this->m_DBQuery.GetInt("MissionType");
@@ -121,18 +116,18 @@ int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUser
 						stMissionInfo.nRewardItemIndex = this->m_DBQuery.GetInt("RewardItemIndex");
 						stMissionInfo.nRewardValue = this->m_DBQuery.GetInt("RewardValue");
 						stMissionInfo.btRewardCheckState = this->m_DBQuery.GetInt("RewardCheckState");
-						v27 = ++nMissionCnt;
-						memcpy_s(&Buffer[nOfs], 0x1B58u, &stMissionInfo, 0x20u);
-						nOfs += 32;
+						++nMissionCnt;
+						memcpy_s(&Buffer[nOfs], 7000, &stMissionInfo, sizeof(MISSION_INFO));
+						nOfs += sizeof(MISSION_INFO);
 						sqlRet = this->m_DBQuery.Fetch();
 					}
 					pMsg.h.sizeH = HIBYTE(nOfs);
-					pMsg.h.sizeL = nOfs;
+					pMsg.h.sizeL = LOBYTE(nOfs);
 					pMsg.btResult = 0;
-					memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
+					memcpy_s(Buffer, 7000, &pMsg, sizeof(pMsg));
 					*nBufferLen = nOfs;
 					this->m_DBQuery.Clear();
-					result = pMsg.btResult;
+					return pMsg.btResult;
 				}
 			}
 			else
@@ -140,25 +135,22 @@ int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUser
 				this->m_DBQuery.Clear();
 				LogAddTD("error-L3 : [LABYRINTH] LoadLabyrinthInfo #3, Fail Exec Mission. %s %d", __FILE__, __LINE__);
 				pMsg.btResult = 2;
-				memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
-				*nBufferLen = 248;
-				result = pMsg.btResult;
+				memcpy_s(Buffer, 7000, &pMsg, sizeof(pMsg));
+				*nBufferLen = sizeof(pMsg);
+				return pMsg.btResult;
 			}
 		}
 	}
-	else
-	{
-		this->m_DBQuery.Clear();
-		LogAddTD("error-L3 : [LABYRINTH] LoadLabyrinthInfo #1, Fail Exec %s %d", __FILE__, __LINE__);
-		pMsg.btResult = 2;
-		memcpy_s(Buffer, 0x1B58u, &pMsg, 0xF8u);
-		*nBufferLen = 248;
-		result = pMsg.btResult;
-	}
-	return result;
+
+	this->m_DBQuery.Clear();
+	LogAddTD("error-L3 : [LABYRINTH] LoadLabyrinthInfo #1, Fail Exec %s %d", __FILE__, __LINE__);
+	pMsg.btResult = 2;
+	memcpy_s(Buffer, 7000, &pMsg, sizeof(pMsg));
+	*nBufferLen = sizeof(pMsg);
+	return pMsg.btResult;
 }
 
-int LabyrinthDBSet::SaveLabyrinthInfo(BYTE *aRecv)
+int LabyrinthDBSet::SaveLabyrinthInfo(SDHP_REQ_LABYRINTH_INFO_SAVE*aRecv)
 {
 	int result;
 	MISSION_INFO *RecvBuf;
@@ -167,43 +159,38 @@ int LabyrinthDBSet::SaveLabyrinthInfo(BYTE *aRecv)
 	CString qSql;
 
 	qSql.Format("EXEC WZ_Labyrinth_Info_Save '%s', '%s', %d, %d, %d, %d, ?, %I64d, %I64d, %d, %d",
-		lpRecv + 5,
-		aRecv + 16,
-		aRecv[32],
-		*(aRecv + 17),
-		aRecv[36],
-		aRecv[37],
-		*(aRecv + 60),
-		*(aRecv + 61),
-		*(aRecv + 62),
-		*(aRecv + 63),
-		*(aRecv + 64),
-		aRecv[260]);
+		aRecv->szAccountID[11],
+		aRecv->szName[11],
+		aRecv->btDimensionLevel,
+		aRecv->wConfigNum,
+		aRecv->btCurrentZone,
+		aRecv->btVisitedCnt,
+		aRecv->btVisitedList[200],
+		aRecv->nEntireExp,
+		aRecv->nEntireMonKillCnt,
+		aRecv->nClearCnt,
+		aRecv->btClearState);
 	this->m_DBQuery.WriteBlob(qSql, aRecv + 38, 200);
 	this->m_DBQuery.Clear();
-	if (aRecv[261])
+	if (lpRecv->btMissionCount)
 	{
-		nOfs = 264;
+		nOfs = sizeof(SDHP_REQ_LABYRINTH_INFO_SAVE);
 		for (int i = 0; i < lpRecv->btMissionCount; ++i)
 		{
 			RecvBuf = (MISSION_INFO *)&aRecv[nOfs];
 			qSql.Format("EXEC WZ_Labyrinth_Mission_Insert '%s', '%s', %d, %d, %d, %d, %d",
-				lpRecv->szAccountID,
-				lpRecv->szName,
-				aRecv[nOfs],
-				aRecv[nOfs + 1],
-				*&aRecv[nOfs + 4],
-				aRecv[nOfs + 13],
-				aRecv[nOfs + 14]);
+				lpRecv->szAccountID, lpRecv->szName,
+				RecvBuf->btZoneNumber, RecvBuf->btMissionType,
+				RecvBuf->nMissionValue, RecvBuf->btIsMainMission,
+				RecvBuf->btMainMissionOrder);
 			if (!this->m_DBQuery.Exec(qSql))
 			{
 				this->m_DBQuery.Clear();
-				LogAddTD(
-					"error-L3 : [LABYRINTH] SaveLabyrinthInfo, Fail Mission Insert Exec. %s %d", __FILE__, __LINE__);
+				LogAddTD("error-L3 : [LABYRINTH] SaveLabyrinthInfo, Fail Mission Insert Exec. %s %d", __FILE__, __LINE__);
 				return 1;
 			}
 			this->m_DBQuery.Clear();
-			nOfs += 32;
+			nOfs += sizeof(MISSION_INFO);
 		}
 		
 		result = 0;
@@ -215,7 +202,54 @@ int LabyrinthDBSet::SaveLabyrinthInfo(BYTE *aRecv)
 	return result;
 }
 
-//----- (00441690) --------------------------------------------------------
+int LabyrinthDBSet::SaveLabyrinthInfo(BYTE* aRecv)
+{
+	int nOfs;
+	MISSION_INFO* RecvBuf;
+	SDHP_REQ_LABYRINTH_INFO_SAVE* lpRecv;
+	CString qSql;
+
+	lpRecv = (SDHP_REQ_LABYRINTH_INFO_SAVE*)aRecv;
+
+	qSql.Format(
+		"EXEC WZ_Labyrinth_Info_Save '%s', '%s', %d, %d, %d, %d, ?, %I64d, %I64d, %d, %d",
+		lpRecv->szAccountID,
+		lpRecv->szName,
+		lpRecv->btDimensionLevel,
+		lpRecv->wConfigNum,
+		lpRecv->btCurrentZone,
+		lpRecv->btVisitedCnt,
+		lpRecv->btVisitedList,
+		lpRecv->nEntireExp,
+		lpRecv->nEntireMonKillCnt,
+		lpRecv->nClearCnt,
+		lpRecv->btClearState);
+
+	this->m_DBQuery.WriteBlob(qSql, lpRecv->btVisitedList, sizeof(lpRecv->btVisitedList));
+	this->m_DBQuery.Clear();
+
+	if (lpRecv->btMissionCount)
+	{
+		nOfs = sizeof(SDHP_REQ_LABYRINTH_INFO_SAVE);
+		for (int i = 0; i < lpRecv->btMissionCount; ++i)
+		{
+			RecvBuf = (MISSION_INFO*)&aRecv[nOfs];
+
+			qSql.Format("EXEC WZ_Labyrinth_Mission_Insert '%s', '%s', %d, %d, %d, %d, %d", lpRecv->szAccountID, lpRecv->szName, RecvBuf->btZoneNumber, RecvBuf->btMissionType, RecvBuf->nMissionValue, RecvBuf->btIsMainMission, RecvBuf->btMainMissionOrder);
+
+			if (!this->m_DBQuery.Exec(qSql))
+			{
+				this->m_DBQuery.Clear();
+				LogAddTD("error-L3 : [LABYRINTH] SaveLabyrinthInfo, Fail Mission Insert Exec. %s %d", __FILE__, __LINE__);
+				return 1;
+			}
+			this->m_DBQuery.Clear();
+			nOfs += sizeof(MISSION_INFO);
+		}
+	}
+	return 0;
+}
+
 __int64 LabyrinthDBSet::UpdateLabyrinthInfo(SDHP_REQ_LABYRINTH_INFO_UPDATE *aRecv)
 {
 	CString qSql;
@@ -231,7 +265,7 @@ __int64 LabyrinthDBSet::UpdateLabyrinthInfo(SDHP_REQ_LABYRINTH_INFO_UPDATE *aRec
 		HIDWORD(aRecv->nEntireExp),
 		LODWORD(aRecv->nEntireMonKillCnt),
 		HIDWORD(aRecv->nEntireMonKillCnt));
-	this->m_DBQuery.WriteBlob(qSql,aRecv->btVisitedList, 200);
+	this->m_DBQuery.WriteBlob(qSql,aRecv->btVisitedList, sizeof(aRecv->btVisitedList));
 	this->m_DBQuery.Clear();
 	
 	return TRUE;
@@ -242,9 +276,7 @@ int LabyrinthDBSet::UpdateLabyrinthMission(SDHP_REQ_LABYRINTH_MISSION_UPDATE *aR
 {
 	int result;
 	CString qSql;
-	int v9;
 
-	v9 = 0;
 	qSql.Format(
 		
 		"EXEC WZ_Labyrinth_Mission_Update '%s', '%s', %d, %d, %d, %d, %d, %d",
@@ -275,8 +307,6 @@ int LabyrinthDBSet::UpdateLabyrinthMission(SDHP_REQ_LABYRINTH_MISSION_UPDATE *aR
 		if (this->m_DBQuery.Exec(qSql))
 		{
 			this->m_DBQuery.Clear();
-			v9 = -1;
-			
 			result = 0;
 		}
 		else
@@ -284,7 +314,6 @@ int LabyrinthDBSet::UpdateLabyrinthMission(SDHP_REQ_LABYRINTH_MISSION_UPDATE *aR
 			this->m_DBQuery.Clear();
 			LogAddTD(
 				"error-L3 : [LABYRINTH] UpdateLabyrinthMission #2, Fail Exec. %s %d",__FILE__,__LINE__);
-			v9 = -1;
 			
 			result = 1;
 		}
@@ -292,48 +321,40 @@ int LabyrinthDBSet::UpdateLabyrinthMission(SDHP_REQ_LABYRINTH_MISSION_UPDATE *aR
 	else
 	{
 		this->m_DBQuery.Clear();
-		LogAddTD(
-			"error-L3 : [LABYRINTH] UpdateLabyrinthMission #1, Fail Exec. %s %d", __FILE__, __LINE__);
-		v9 = -1;
-		
+		LogAddTD("error-L3 : [LABYRINTH] UpdateLabyrinthMission #1, Fail Exec. %s %d", __FILE__, __LINE__);
 		result = 1;
 	}
 	return result;
 }
 
-//----- (00441A30) --------------------------------------------------------
+
 int LabyrinthDBSet::DeleteLabyrinthMission(char *szAccountID, char *szName)
 {
 	int result;
 	CString qSql;
-	int v8;
-	v8 = 0;
+
 	qSql.Format("EXEC WZ_Labyrinth_Mission_Delete '%s', '%s'",szAccountID,szName);
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		this->m_DBQuery.Clear();
-		v8 = -1;
 		result = 0;
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
 		LogAddTD("error-L3 : [LABYRINTH] DeleteLabyrinthMission, Fail Exec. %s %d", __FILE__, __LINE__);
-		v8 = -1;
 		result = 1;
 	}
 	return result;
 }
 // 5CDD20: using guessed type int `LabyrinthDBSet::DeleteLabyrinthMission'::`2'::__LINE__Var;
 
-//----- (00441B80) --------------------------------------------------------
+
 int LabyrinthDBSet::EndUpdateLabyrinthInfo(char *szAccountID, char *szName, int nClearCnt, char btClearState)
 {
 	int result;
 	CString qSql;
-	int v10;
 
-	v10 = 0;
 	qSql.Format(
 		
 		"EXEC WZ_Labyrinth_End_Update '%s', '%s', %d, %d",
@@ -345,14 +366,12 @@ int LabyrinthDBSet::EndUpdateLabyrinthInfo(char *szAccountID, char *szName, int 
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		this->m_DBQuery.Clear();
-		v10 = -1;
 		result = 0;
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
 		LogAddTD("error-L3 : [LABYRINTH] EndUpdateLabyrinthInfom, Fail Exec %s %d", __FILE__, __LINE__);
-		v10 = -1;
 		result = 1;
 	}
 	return result;
@@ -363,49 +382,41 @@ int LabyrinthDBSet::UpdateLabyrinthRewardState(char *szAccountID, char *szName, 
 {
 	int result;
 	CString qSql; 
-	int v10;
-	v10 = 0;
 
 	qSql.Format("EXEC WZ_Labyrinth_Reward_Complete_Update '%s', '%s', %d, %d",szAccountID,szName,btIsMainMission,btRewardCheckState);
 
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		this->m_DBQuery.Clear();
-		v10 = -1;
 		result = 0;
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
 		LogAddTD("error-L3 : [LABYRINTH] UpdateLabyrinthRewardState, Fail Exec %s %d", __FILE__, __LINE__);
-		v10 = -1;
 		result = 1;
 	}
 	return result;
 }
 
 
-//----- (00441E40) --------------------------------------------------------
+
 int LabyrinthDBSet::SaveLabyrinthClearLog(char *szAccountID, char *szName, int nDimensionLevel)
 {
 	int result;
 	CString qSql;
-	int v9;
 
-	v9 = 0;
 	qSql.Format("EXEC WZ_LabyrinthClearLogSetSave '%s', '%s', %d",szAccountID,szName,nDimensionLevel);
 	
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		this->m_DBQuery.Clear();
-		v9 = -1;
 		result = 0;
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
 		LogAddTD("error-L3 : [LABYRINTH] SaveLabyrinthClearLog, Fail Exec %s %d", __FILE__, __LINE__);
-		v9 = -1;
 		result = 1;
 	}
 	return result;

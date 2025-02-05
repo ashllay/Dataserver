@@ -119,7 +119,7 @@ public:
 	BOOL LoadSnsInfo(char *szAccountID, char *Name, BYTE *lpSnsInfo);
 	BOOL DeleteSnsInfo(char *szAccountID, char *szName);
 	__int64 SaveEventInvenItem(char *Name, BYTE *ItemBuf, char *AccountId);
-	int LoadEventInvenItem(char *Name, char *ItemBuf, char *AccountId, int *DbVersion);
+	int LoadEventInvenItem(char *Name, BYTE *ItemBuf, char *AccountId, int *DbVersion);
 	void RuudToken_Update(char *AccountID, char *Name, unsigned int dwRuudCnt);
 	void RuudToken_LoadCount(char *AccountID, char *Name, int *nRuudCnt);
 	int CreateCharacterMoneyUpdate(CString Name);

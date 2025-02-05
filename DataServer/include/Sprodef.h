@@ -267,56 +267,29 @@ typedef struct
 	PBMSG_HEAD	h;
 	//int			UserNumber;	// 유저 절대 번호 
 	char		Id[MAX_IDSTRING];
-	WORD		Number;	// 게임 서버 유저번호
+	short		Number;	// 게임 서버 유저번호
 	int			IsUnityBattleFiledServer;//s12
 } SDHP_GETCHARLIST, *LPSDHP_GETCHARLIST;
-//struct SDHP_GETCHARLIST_RECV 
-//{
-//	PBMSG_HEAD header;    // C1:01    
-//	char Account[10];  
-//	WORD Index;  
-//	int IsUnityBattleFiledServer;
-//};
-
 
 //----------------------------------------------------------------------------
 // 캐릭터 리스트 카운트  (2바이트 크기를 사용)
 //----------------------------------------------------------------------------
 typedef struct
 {
-	PWMSG_HEAD header;    // C1:01   
-	WORD Index;
-	BYTE Count;
-	int DbNumber;
-	BYTE GenerableClass;
-	char AccountId[11];
-	BYTE MoveCnt;
-	BYTE CharacterSlotCount;
-	BYTE ExtendedWarehouseCount;
-	//	short		Number;
-	//	BYTE		Count;
-	//	int			DbNumber;
-	//	BYTE		GenerableClass;		// 마검사를 만들수 있는 계정인지..
-	//	char		AccountId[MAX_IDSTRING+1];
-	//#ifdef CHARACTER_MOVE_20040810
-	//	BYTE		MoveCnt;
-	//#endif
-	//	BYTE		CharacterSlotCount;
-	//	BYTE		ExtendedWarehouseCount;
-} SDHP_CHARLISTCOUNT, *LPSDHP_CHARLISTCOUNT;
-
-struct SDHP_CHARLISTCOUNT_SEND 
-{
-	PWMSG_HEAD header;    // C1:01  
-	WORD Index;  
-	BYTE Count;  
-	int DbNumber;  
-	BYTE GenerableClass;  
-	char AccountId[11]; 
-	BYTE MoveCnt;  
-	BYTE CharacterSlotCount;  
-	BYTE ExtendedWarehouseCount;
-};
+	PWMSG_HEAD h;
+#ifdef _SEASON12
+	short		Number;
+#endif
+	BYTE		Count;
+	int			DbNumber;
+	BYTE		GenerableClass;		// 마검사를 만들수 있는 계정인지..
+	char		AccountId[MAX_IDSTRING + 1];
+#ifdef CHARACTER_MOVE_20040810
+	BYTE		MoveCnt;
+#endif
+	BYTE		CharacterSlotCount;
+	BYTE		ExtendedWarehouseCount;
+} SDHP_CHARLISTCOUNT, * LPSDHP_CHARLISTCOUNT;
 
 //----------------------------------------------------------------------------
 // [0x02] 계정 인증 요청시 캐릭터 정보(카운터 만큼 반복됨)
@@ -325,8 +298,8 @@ struct SDHP_CHARLISTCOUNT_SEND
 typedef struct
 {
 	BYTE Index;
-	char Name[10];
-	char UnityBFOfRealName[10];
+	char Name[MAX_IDSTRING];
+	char UnityBFOfRealName[MAX_IDSTRING];
 	WORD ServerCodeOfHomeWorld;
 	WORD Level;
 	BYTE Class;
@@ -1143,44 +1116,25 @@ typedef struct
 // MapNumber 가 255 일때는 카오스 박스이다.
 typedef struct
 {
-	PBMSG_HEAD h;
-	char x;
-	char y;
-	unsigned __int16 MapNumber;
-	__int16 Type;
-	char Level;
-	char Dur;
-	char Op1;
-	char Op2;
-	char Op3;
-	char NewOption;
-	int aIndex;
-	__int16 lootindex;
-	char SetOption;
-	char SocketSlotCount;
-	int lDuration;
-	unsigned int dwEventIndex;
-	char SocketOption[5];
-	char MainAttribute;
-	/*PBMSG_HEAD	h;
-	BYTE		x;
-	BYTE		y;
-	BYTE		MapNumber;
-	short		Type;
-	BYTE		Level;
-	BYTE		Dur;
-	BYTE		Op1;
-	BYTE		Op2;
-	BYTE		Op3;
-	BYTE		NewOption;
-	int			aIndex;
-	short		lootindex;
-	BYTE		SetOption;
-	BYTE		SocketSlotCount;
-	long		lDuration;
-	DWORD		dwEventIndex;
-	BYTE		SocketOption[5];
-	BYTE		MainAttribute;*/
+	PBMSG_HEAD h; // C1:52/55 GS->DS
+	BYTE x;
+	BYTE y;
+	WORD MapNumber;
+	short Type;
+	BYTE Level;
+	BYTE Dur;
+	BYTE Op1;
+	BYTE Op2;
+	BYTE Op3;
+	BYTE NewOption;
+	int	aIndex;
+	short lootindex;
+	BYTE SetOption;
+	BYTE SocketSlotCount;
+	long lDuration;
+	DWORD dwEventIndex;
+	BYTE SocketOption[5];
+	BYTE MainAttribute;
 } SDHP_ITEMCREATE, *LPSDHP_ITEMCREATE;
 
 //----------------------------------------------------------------------------
@@ -1188,30 +1142,10 @@ typedef struct
 //----------------------------------------------------------------------------
 typedef struct
 {
-	PBMSG_HEAD h;
-	char x;
-	char y;
-	char MapNumber;
-	unsigned int m_Number;
-	__int16 Type;
-	char Level;
-	char Dur;
-	char Op1;
-	char Op2;
-	char Op3;
-	char NewOption;
-	int aIndex;
-	__int16 lootindex;
-	char SetOption;
-	char SocketSlotCount;
-	int lDuration;
-	unsigned int dwEventIndex;
-	char SocketOption[5];
-	char MainAttribute;
-	/*PBMSG_HEAD	h;
+	PBMSG_HEAD h; // C1:52 DS->GS
 	BYTE x;
 	BYTE y;
-	BYTE MapNumber;
+	WORD MapNumber;
 	DWORD m_Number;
 	short Type;
 	BYTE Level;
@@ -1226,8 +1160,9 @@ typedef struct
 	BYTE SocketSlotCount;
 	long lDuration;
 	DWORD dwEventIndex;
-	BYTE		SocketOption[5];
-	BYTE		MainAttribute;*/
+	BYTE SocketOption[5];
+	BYTE MainAttribute;
+	BYTE TargetInvenPos;//s12_1
 } SDHP_ITEMCREATERECV, *LPSDHP_ITEMCREATERECV;
 
 
@@ -1694,15 +1629,15 @@ typedef struct
 typedef struct
 {
 	PBMSG_HEAD	h;
-	char		Notice[61];
+	char		Notice[MAX_CHAT + 1];
 } SDHP_NOTICE, *LPSDHP_NOTICE;
 
 // 0x41 유저 공지
 typedef struct
 {
 	PBMSG_HEAD	h;
-	char		szId[10];
-	char		Notice[61];
+	char		szId[MAX_IDSTRING];
+	char		Notice[MAX_CHAT + 1];
 } SDHP_USER_NOTICE, *LPSDHP_USER_NOTICE;
 
 
@@ -3934,259 +3869,6 @@ struct SDHP_USERSETTING_SAVEDATA
 	BYTE btSaveData[255];
 };
 
-/* 1108 */
-struct _tagSDHP_REQ_EVENT_MONSTER_KILL_INFO
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char AccountID[11];
-	char CharName[11];
-};
-struct _tagSDHP_ANS_EVENT_MONSTER_KILL_INFO
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	__int16 MonsterIndex1;
-	unsigned __int16 MonsterLevel1;
-	int KillCount1;
-	__int16 MonsterIndex2;
-	unsigned __int16 MonsterLevel2;
-	int KillCount2;
-	__int16 MonsterIndex3;
-	unsigned __int16 MonsterLevel3;
-	int KillCount3;
-	__int16 MonsterIndex4;
-	unsigned __int16 MonsterLevel4;
-	int KillCount4;
-	__int16 MonsterIndex5;
-	unsigned __int16 MonsterLevel5;
-	int KillCount5;
-	__int64 DamageScore;
-	char btResult;
-};
-
-/* 676 */
-struct _tagSDHP_REQ_EVENT_MONSTER_KILL_INFO_SAVE
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char AccountID[11];
-	char CharName[11];
-	__int16 MonsterIndex1;
-	unsigned __int16 MonsterLevel1;
-	int KillCount1;
-	__int16 MonsterIndex2;
-	unsigned __int16 MonsterLevel2;
-	int KillCount2;
-	__int16 MonsterIndex3;
-	unsigned __int16 MonsterLevel3;
-	int KillCount3;
-	__int16 MonsterIndex4;
-	unsigned __int16 MonsterLevel4;
-	int KillCount4;
-	__int16 MonsterIndex5;
-	unsigned __int16 MonsterLevel5;
-	int KillCount5;
-	__int64 DamageScore;
-};
-
-/* 706 */
-struct _ST_BLOCK_CHATTING_USER
-{
-	bool bIsUsed;
-	char btSlotNum;
-	char szCharName[11];
-};
-
-/* 707 */
-struct SDHP_ANS_BLOCK_CHAT_USER_INFO
-{
-	PWMSG_HEAD2 h;
-	int nUserIndex;
-	char szCharName[11];
-	char btUserCnt;
-	_ST_BLOCK_CHATTING_USER BlockCharList[20];
-};
-
-/* 708 */
-struct SDHP_REQ_ADD_BLOCK_CHAT_USER_INFO
-{
-	PBMSG_HEAD2 h;
-	int nUserIndex;
-	char szCharName[11];
-	_ST_BLOCK_CHATTING_USER szBlockChar;
-};
-
-/* 709 */
-struct SDHP_REQ_DEL_BLOCK_CHAT_USER_INFO
-{
-	PBMSG_HEAD2 h;
-	int nUserIndex;
-	char szCharName[11];
-	_ST_BLOCK_CHATTING_USER szBlockChar;
-};
-/* 1127 */
-struct  SDHP_REQ_BLOCK_CHAT_USER_INFO
-{
-	PBMSG_HEAD h;
-	int iUserIndex;
-	char szCharName[11];
-};
-
-struct _SDHP_REQ_RESTORE_ITEM_LIST_SAVE
-{
-	PWMSG_HEAD2 h;
-	int userIndex;
-	char AccountID[11];
-	char Name[11];
-	char dbRestoreItemData[150];
-};
-
-/* 1110 */
-struct _SDHP_REQ_RESTORE_ITEM_LIST
-{
-	PWMSG_HEAD2 h;
-	int userIndex;
-	char AccountID[11];
-	char Name[11];
-};
-
-/* 6306 */
-struct SDHP_REQ_LABYRINTH_INFO
-{
-	PWMSG_HEAD2 h;
-	char szAccountID[11];
-	char szName[11];
-	int nUserIndex;
-};
-
-/* 6307 */
-struct SDHP_REQ_LABYRINTH_MISSION_DELETE
-{
-	PWMSG_HEAD2 h;
-	char szAccountID[11];
-	char szName[11];
-	int nUserIndex;
-};
-
-/* 703 */
-struct _SDHP_ANS_RESTORE_ITEM_LIST
-{
-	PWMSG_HEAD2 h;
-	int userIndex;
-	char result;
-	char dbRestoreItemData[150];
-	char dbVersion;
-};
-
-/* 6304 */
-struct SDHP_REQ_LABYRINTH_INFO_UPDATE
-{
-	PWMSG_HEAD2 h;
-	char szAccountID[11];
-	char szName[11];
-	int nUserIndex;
-	char btDimensionLevel;
-	unsigned __int16 wConfigNum;
-	char btCurrentZone;
-	char btVisitedCnt;
-	char btVisitedList[200];
-	__int64 nEntireExp;
-	__int64 nEntireMonKillCnt;
-};
-
-/* 6305 */
-struct  SDHP_REQ_LABYRINTH_MISSION_UPDATE
-{
-	PWMSG_HEAD2 h;
-	char szAccountID[11];
-	char szName[11];
-	int nUserIndex;
-	char btZoneNumber;
-	char btMissionType;
-	int nMissionValue;
-	int nAcquisionValue;
-	char btMissionState;
-	char btIsMainMission;
-	char btMainMissionOrder;
-	int nRewardItemType;
-	int nRewardItemIndex;
-	int nRewardValue;
-	char btRewardCheckState;
-};
-
-
-/* 6309 */
-struct  SDHP_ANS_LABYRINTH_INFO
-{
-	PWMSG_HEAD2 h;
-	int nUserIndex;
-	char btResult;
-	char btDimensionLevel;
-	unsigned __int16 wConfigNum;
-	char btCurrentZone;
-	int nLeftTime;
-	char btVisitedCnt;
-	BYTE btVisitedList[200];
-	char btClearState;
-	char btMissionCount;
-};
-
-/* 6310 */
-struct MISSION_INFO
-{
-	char btZoneNumber;
-	char btMissionType;
-	int nMissionValue;
-	int nAcquisionValue;
-	char btMissionState;
-	char btIsMainMission;
-	char btMainMissionOrder;
-	int nRewardItemType;
-	int nRewardItemIndex;
-	int nRewardValue;
-	char btRewardCheckState;
-};
-
-/* 6311 */
-struct SDHP_REQ_LABYRINTH_INFO_SAVE
-{
-	PWMSG_HEAD2 h;
-	char szAccountID[11];
-	char szName[11];
-	int nUserIndex;
-	char btDimensionLevel;
-	unsigned __int16 wConfigNum;
-	char btCurrentZone;
-	char btVisitedCnt;
-	char btVisitedList[200];
-	__int64 nEntireExp;
-	__int64 nEntireMonKillCnt;
-	int nClearCnt;
-	char btClearState;
-	char btMissionCount;
-};
-
-/* 6312 */
-struct SDHP_REQ_LABYRINTH_REWARD_COMPLETE
-{
-	PWMSG_HEAD2 h;
-	char szAccountID[11];
-	char szName[11];
-	int nUserIndex;
-	char btIsMainMission;
-	char btRewardCheckState;
-};
-
-/* 6313 */
-struct SDHP_REQ_LABYRINTH_CLEAR_LOG_SET_SAVE
-{
-	PWMSG_HEAD2 h;
-	char szAccountID[11];
-	char szName[11];
-	int nUserIndex;
-	int nDimensionLevel;
-};
 /* 1128 */
 struct SDHP_REQ_GET_PCBANG_PLAYTIME_INFO
 {
@@ -4245,13 +3927,7 @@ struct SDHP_REQ_SAVE_PLAYTIME_EVENT_INFO
 	char btGrade;
 };
 
-/* 1109 */
-struct SDHP_ANS_EVENT_MONSTER_KILL_INFO_SAVE
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btResult;
-};
+
 
 struct SDHP_REQ_LOAD_MINESYSTEM_UPT_USERINFO
 {
@@ -4270,112 +3946,7 @@ struct __declspec(align(4)) SDHP_REQ_MINESYSTEM_UPT_USERINFO
 	int iCurrentStage;
 	BYTE byRequestType;
 };
-/* 1065 */
-struct _tagSDHP_REQ_DBMUUN_INVEN_SAVE
-{
-	PWMSG_HEAD h;
-	char AccountID[11];
-	char Name[11];
-	BYTE dbInventory[1632];
-};
 
-/* 1066 */
-struct SDHP_REQ_DBMUUN_INVEN_LOAD
-{
-	PBMSG_HEAD h;
-	char AccountID[11];
-	char Name[11];
-	__int16 aIndex;
-};
-
-/* 1067 */
-struct _tagSDHP_ANS_DBMUUN_INVEN_LOAD
-{
-	_tagSDHP_ANS_DBMUUN_INVEN_LOAD()
-	{
-		memset(this->dbItems, 0xFF, 1632);
-		this->DbVersion = 0;
-		this->SubEquip = 0;
-		this->aIndex = 0;
-	}
-	PWMSG_HEAD h;
-	BYTE dbItems[1632];
-	char DbVersion;
-	char SubEquip;
-	short aIndex;
-};
-/* 1068 */
-struct SDHP_REQ_DBMUUN_INVEN_SUB_EQUIP_OPEN
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	short aIndex;
-};
-
-/* 1070 */
-struct _tagSDHP_REQ_MUUN_PERIOD_INFO_SELECT
-{
-	PBMSG_HEAD2 h;
-	char Name[11];
-	WORD aIndex;
-};
-/* 1072 */
-struct _tagSDHP_REQ_MUUN_PERIOD_INFO_INSERT
-{
-	PBMSG_HEAD2 h;
-	__int16 aIndex;
-	char Name[11];
-	unsigned __int16 wItemType;
-	unsigned int dwSerial;
-	unsigned int dwItemDuration;
-	int lItemExpireDate;
-};
-
-/* 1073 */
-struct _tagSDHP_REQ_MUUN_PERIOD_INFO_UPDATE
-{
-	PBMSG_HEAD2 h;
-	char Name[11];
-	__int16 aIndex;
-	unsigned __int16 wItemType;
-	DWORD dwSerial;
-	BYTE btUsedInfo;
-};
-/* 666 */
-struct _stMuunConditionInfoList
-{
-	_stMuunConditionInfoList()
-	{
-		this->btConditionType = -1;
-		this->btSlotIndex = -1;
-		this->wValue = 0;
-	}
-	BYTE btConditionType;
-	BYTE btSlotIndex;
-	WORD wValue;
-};
-
-struct _tagSDHP_REQ_MUUN_CONDITION_INFO_SAVE
-{
-	PBMSG_HEAD2 h;
-	char Name[11];
-	_stMuunConditionInfoList MuunConditionInfoList[2];
-};
-/* 1075 */
-struct _tagSDHP_REQ_MUUN_CONDITION_INFO_LOAD
-{
-	PBMSG_HEAD2 h;
-	char Name[11];
-	short aIndex;
-};
-
-/* 1077 */
-struct _tagSDHP_REQ_MUUN_CONDITION_INFO_DEL
-{
-	PBMSG_HEAD2 h;
-	char Name[11];
-};
 
 /* 824 */
 struct SDHP_ANS_LOAD_MINESYSTEM_UPT_USERINFO
@@ -4414,14 +3985,6 @@ struct _tagSDHP_ANS_MUUN_PERIOD_INFO_SELECT
 	char btCnt;
 };
 
-/* 1076 */
-struct _tagSDHP_ANS_MUUN_CONDITION_INFO_LOAD
-{
-	PBMSG_HEAD2 h;
-	short aIndex;
-	_stMuunConditionInfoList MuunConditionInfoList[2];
-};
-
 
 /* 953 */
 struct SDHP_REQ_SET_CHARACTER_SLOT_COUNT
@@ -4442,185 +4005,7 @@ struct SDHP_ANS_SET_CHARACTER_SLOT_COUNT
 	unsigned int EventIndex;
 };
 
-/* 1134 */
-struct SDHP_REQ_HUNTING_RECORD_INFO
-{
-	PBMSG_HEAD2 h;
-	char AccountId[11];
-	char szName[11];
-	int iUserIndex;
-	char btMapIndex;
-	char btCallType;
-	char btAnotherUser;
-};
 
-/* 1135 */
-struct SDHP_REQ_HUNTING_RECORD_INFO_USER_OPEN
-{
-	PBMSG_HEAD2 h;
-	char AccountId[11];
-	char szName[11];
-	int iUserIndex;
-};
-
-/* 1136 */
-struct SDHP_REQ_HUNTING_RECORD_INFO_CURRENT
-{
-	PBMSG_HEAD2 h;
-	char AccountId[11];
-	char szName[11];
-	int iUserIndex;
-	char btMapIndex;
-	int iYear;
-	char btMonth;
-	char btDay;
-	char btCallType;
-};
-
-/* 1137 */
-struct SDHP_REQ_DELETE_HUNTING_RECORD_INFO
-{
-	PBMSG_HEAD2 h;
-	char AccountId[11];
-	char szName[11];
-	int iUserIndex;
-	char btMapIndex;
-	int iYear;
-	char btMonth;
-	char btDay;
-};
-
-/* 764 */
-struct SDHP_REQ_HUNTING_RECORD_INFO_USER_OPEN_SAVE
-{
-	PBMSG_HEAD2 h;
-	char AccountId[11];
-	char szName[11];
-	int iUserIndex;
-	char btOpen;
-};
-/* 762 */
-struct SDHP_REQ_HUNTING_RECORD_INFO_SAVE
-{
-	PWMSG_HEAD2 h;
-	char btListCnt;
-	char AccountId[11];
-	char szName[11];
-};
-
-/* 761 */
-struct SDHP_ANS_HUNTING_RECORD_COUNT
-{
-	PWMSG_HEAD2 head;
-	char btResult;
-	char btListCnt;
-	char btMapIndex;
-	char btCallType;
-	char btAnotherUser;
-	int iUserIndex;
-};
-
-/* 760 */
-struct HUNTING_RECORD_INFO
-{
-	char btMapIndex;
-	int iYear;
-	char btMonth;
-	char btDay;
-	int iCurrentLevel;
-	int iHuntingAccrueSecond;
-	__int64 i64NormalAccrueDamage;
-	__int64 i64PentagramAccrueDamage;
-	int iHealAccrueValue;
-	int iMonsterKillCount;
-	__int64 i64AccrueExp;
-	int iClass;
-	int iMaxNormalDamage;
-	int iMinNormalDamage;
-	int iMaxPentagramDamage;
-	int iMinPentagramDamage;
-	int iGetNormalAccrueDamage;
-	int iGetPentagramAccrueDamage;
-};
-
-/* 763 */
-struct SDHP_ANS_HUNTING_RECORD_INFO_USER_OPEN
-{
-	PBMSG_HEAD2 h;
-	char btResult;
-	int iUserIndex;
-	char btOpen;
-};
-
-/* 765 */
-struct SDHP_ANS_HUNTING_RECORD_INFO_CURRENT
-{
-	PWMSG_HEAD2 h;
-	int iUserIndex;
-	char btCallType;
-	char btListCnt;
-	char btMapIndex;
-	int iYear;
-	char btMonth;
-	char btDay;
-	int iCurrentLevel;
-	int iHuntingAccrueSecond;
-	__int64 i64NormalAccrueDamage;
-	__int64 i64PentagramAccrueDamage;
-	int iHealAccrueValue;
-	int iMonsterKillCount;
-	__int64 i64AccrueExp;
-	int iClass;
-	int iMaxNormalDamage;
-	int iMinNormalDamage;
-	int iMaxPentagramDamage;
-	int iMinPentagramDamage;
-	int iGetNormalAccrueDamage;
-	int iGetPentagramAccrueDamage;
-};
-/* 796 */
-struct _PMSG_QUESTEXP_INFO
-{
-	PWMSG_HEAD h;
-	char btQuestCnt;
-	char szCharName[11];
-};
-typedef _PMSG_QUESTEXP_INFO *LPPMSG_QUESTEXP_INFO;
-/*  227 */
-#pragma pack(1)
-typedef struct _QUESTEXP_INFO
-{
-	_QUESTEXP_INFO::_QUESTEXP_INFO();
-
-	DWORD dwQuestIndexID;
-	WORD wProgState;
-	BYTE btAskIndex[5];
-	BYTE btAskValue[5];
-	BYTE btAskState[5];
-	long lStartDate;
-	long lEndDate;
-}_QUESTEXP_INFO, *LP_QUESTEXP_INFO;
-#pragma pack()
-
-/* 798 */
-struct __unaligned PMSG_ANS_QUESTEXP_INFO
-{
-	PWMSG_HEAD head;
-char btQuestCnt;
-int iUserIndex;
-};
-
-/* 956 */
-struct SDHP_ANS_SET_EXTENDEDINVEN_COUNT
-{
-	PBMSG_HEAD h;
-	WORD Number;
-	char Result;
-	BYTE ExtendedInvenCount;
-	DWORD EventIndex;
-	int ItemPos;
-	BYTE BuyAtInGameShop;
-};
 
 
 typedef struct
@@ -4653,7 +4038,7 @@ typedef struct
 	int aIndex;
 	char AccountID[MAX_IDSTRING + 1];
 	char Name[MAX_IDSTRING + 1];
-	unsigned char btResult;
+	BYTE btResult;
 	BYTE btMacroData[511];
 	//unsigned char btMacroData[511];
 }SDHP_MACRODATA, *LPSDHP_MACRODATA;
@@ -4674,95 +4059,7 @@ struct PMSG_ANS_USERID
 	char chUserID[MAX_IDSTRING + 1];
 	BYTE btResult;
 };
-struct SDHP_ANS_SET_EXTENDEDWAREHOUSE_COUNT
-{
-	PBMSG_HEAD h;
-	WORD Number;
-	BYTE Result;
-	BYTE ExtendedWarehouseCount;
-	DWORD EventIndex;
-	int ItemPos;
-	BYTE BuyAtInGameShop;
-	//BYTE IsReplace;
-};
 
-
-/* 805 */
-struct PMSG_ANS_PENTAGRAMJEWEL
-{
-	PWMSG_HEAD head;
-	BYTE btJewelCnt;
-	int iUserIndex;
-	int iAnsType;
-};
-
-/* 804 */
-struct PENTAGRAMJEWEL_INFO
-{
-	BYTE btJewelPos;
-	BYTE btJewelIndex;
-	BYTE btMainAttribute;
-	BYTE btItemType;
-	WORD wItemIndex;
-	BYTE btLevel;
-	BYTE btRank1OptionNum;
-	BYTE btRank1Level;
-	BYTE btRank2OptionNum;
-	BYTE btRank2Level;
-	BYTE btRank3OptionNum;
-	BYTE btRank3Level;
-	BYTE btRank4OptionNum;
-	BYTE btRank4Level;
-	BYTE btRank5OptionNum;
-	BYTE btRank5Level;
-};
-
-/* 806 */
-struct PMSG_PENTAGRAMJEWEL_INFO
-{
-	PWMSG_HEAD h;
-	BYTE btJewelCnt;
-	BYTE btJewelPos;
-	int iUserGuid;
-	char AccountId[11];
-	char szName[11];
-};
-
-/* 807 */
-struct PMSG_DEL_PENTAGRAMJEWEL
-{
-	PWMSG_HEAD h;
-	int iUserGuid;
-	char AccountId[11];
-	char szName[11];
-	BYTE btJewelPos;
-	BYTE btJewelIndex;
-};
-
-/* 808 */
-struct PMSG_INSERT_PENTAGRAMJEWEL
-{
-	PBMSG_HEAD h;
-	int iUserGuid;
-	BYTE AccountId[11];
-	BYTE szName[11];
-	BYTE btJewelPos;
-	BYTE btJewelIndex;
-	BYTE btItemType;
-	WORD iItemIndex;
-	BYTE btMainAttribute;
-	BYTE btLevel;
-	BYTE btRank1OptionNum;
-	BYTE btRank1Level;
-	BYTE btRank2OptionNum;
-	BYTE btRank2Level;
-	BYTE btRank3OptionNum;
-	BYTE btRank3Level;
-	BYTE btRank4OptionNum;
-	BYTE btRank4Level;
-	BYTE btRank5OptionNum;
-	BYTE btRank5Level;
-};
 
 /* 994 */
 struct _tagPMSG_REQ_AB_ALL_JOIN_USER_DS
@@ -4786,183 +4083,6 @@ struct _tagSDHP_REQ_DBEVENT_INVEN_SAVE
 	char AccountID[11];
 	char Name[11];
 	BYTE dbInventory[512];
-};
-/* 1028 */
-struct _tagPMSG_REQ_MURUMMY_SELECT_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	WORD aIndex;
-};
-/* 831 */
-struct _tagMuRummyCardInfoDS
-{
-	_tagMuRummyCardInfoDS()
-	{
-		this->btColor = -1;
-		this->btNumber = -1;
-		this->btSlotNum = -1;
-		this->btSeq = -1;
-		this->btStatus = -1;
-	}
-	BYTE btColor;
-	BYTE btNumber;
-	BYTE btSlotNum;
-	BYTE btSeq;
-	BYTE btStatus;
-};
-
-/* 832 */
-struct _tagMuRummyCardUpdateDS
-{
-	_tagMuRummyCardUpdateDS()
-	{
-		this->btSlotNum = -1;
-		this->btSeq = -1;
-		this->btStatus = -1;
-	}
-
-	BYTE btSlotNum;
-	BYTE btSeq;
-	BYTE btStatus;
-};
-
-/* 1029 */
-struct _tagPMSG_ANS_MURUMMY_SELECT_DS
-{
-	PBMSG_HEAD2 h;
-	WORD aIndex;
-	WORD wScore;
-	BYTE btResult;
-	BYTE btGameType;
-	BYTE btSpecialCardDeckCnt;
-	_tagMuRummyCardInfoDS stMuRummyCardInfoDS[27];
-};
-
-/* 1030 */
-struct _tagPMSG_REQ_MURUMMY_INSERT_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	WORD aIndex;
-	BYTE btGameType;
-	BYTE btSpecialCardDeckCnt;
-	_tagMuRummyCardInfoDS stMuRummyCardInfoDS[27];
-};
-
-/* 1031 */
-struct _tagPMSG_REQ_MURUMMY_SCORE_UPDATE_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	WORD wScore;
-	BYTE btGameType;
-	BYTE btSpecialCardDeckCnt;
-	BYTE btMatchType;
-	_tagMuRummyCardUpdateDS stCardUpdateDS[4];
-};
-
-/* 1032 */
-struct _tagPMSG_REQ_MURUMMY_UPDATE_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	BYTE btSlotNum;
-	BYTE btStatus;
-	BYTE btSequence;
-};
-
-/* 1033 */
-struct _tagPMSG_REQ_MURUMMY_DELETE_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-};
-
-/* 1034 */
-struct _tagPMSG_REQ_MURUMMY_SLOTUPDATE_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	_tagMuRummyCardUpdateDS stCardUpdateDS;
-};
-
-/* 1035 */
-struct _tagPMSG_REQ_MURUMMY_INFO_UPDATE_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	WORD wScore;
-	BYTE btGameType;
-	BYTE btSpecialCardCnt;
-	_tagMuRummyCardUpdateDS stMuRummyCardUpdateDS[27];
-};
-
-/* 1036 */
-struct _tagPMSG_REQ_MURUMMY_LOG_INSERT_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	WORD wScore;
-};
-
-/* 1037 */
-struct _tagPMSG_REQ_BOMB_HUNT_SELECT_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	unsigned __int16 aIndex;
-};
-
-/* 1038 */
-struct _tagPMSG_ANS_BOMB_HUNT_SELECT_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 aIndex;
-	char btResult;
-	unsigned __int16 wScore;
-	char btGameState;
-	char szTileState[49];
-};
-
-/* 1039 */
-struct _tagPMSG_REQ_BOMB_HUNT_INSERT_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	unsigned __int16 aIndex;
-	unsigned __int16 wScore;
-	char btGameState;
-	char szTileState[49];
-};
-
-/* 1040 */
-struct _tagPMSG_REQ_BOMB_HUNT_DELETE_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	unsigned __int16 aIndex;
-};
-
-/* 1041 */
-struct _tagPMSG_REQ_BOMB_HUNT_LOG_INSERT_DS
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	unsigned __int16 wScore;
-	char btClear;
 };
 
 /* 1042 */
@@ -4993,612 +4113,61 @@ struct PMSG_ANS_PSHOPITEMVALUE_INFO
 	int iUserIndex;
 };
 
-/* 841 */
-struct PMSG_UPDATE_PSHOPITEMVALUE_INFO
+typedef struct PMSG_UPDATE_PSHOPITEMVALUE_INFO
 {
-	PWMSG_HEAD h;
-	char btItemCnt;
-	char AccountId[11];
-	char szName[11];
-};
+	PWMSG_HEAD h; // C2:EB GS->DS
+	BYTE btItemCnt;
+	char AccountId[MAX_IDSTRING + 1];
+	char szName[MAX_IDSTRING + 1];
+} *LPPMSG_UPDATE_PSHOPITEMVALUE_INFO;
 
-/* 842 */
-struct PMSG_DEL_PSHOPITEM
+typedef struct PMSG_DEL_PSHOPITEM
 {
-	PBMSG_HEAD h;
-	char AccountId[11];
-	char szName[11];
+	PBMSG_HEAD h; // C1:EC GS->DS
+	char AccountId[MAX_IDSTRING + 1];
+	char szName[MAX_IDSTRING + 1];
 	int nPShopItemInvenNum;
-};
+} *LPPMSG_DEL_PSHOPITEM;
 
-/* 843 */
-struct PMSG_MOVE_PSHOPITEM
+typedef struct PMSG_MOVE_PSHOPITEM
 {
-	PBMSG_HEAD h;
-	char AccountId[11];
-	char szName[11];
+	PBMSG_HEAD h; // C1:ED GS->DS
+	char AccountId[MAX_IDSTRING + 1];
+	char szName[MAX_IDSTRING + 1];
 	int nOldPShopItemInvenNum;
 	int nNewPShopItemInvenNum;
-};
+} *LPPMSG_MOVE_PSHOPITEM;
 
-/* 1112 */
-struct PMSG_NOTICE
+enum
 {
-	PBMSG_HEAD h;
-	char type;
-	char btCount;
-	unsigned __int16 wDelay;
-	unsigned int dwColor;
-	char btSpeed;
-	char Notice[256];
+	CCF_TYPE_NONE = 0x0,
+	CCF_TYPE_TRYOUT = 0x1,
+	CCF_TYPE_SEMIFINAL = 0x2,
+	CCF_TYPE_FINAL = 0x3,
+	CCF_TYPE_DB_ING = 0xFF,
 };
 
-/* 1113 */
-struct _tagCHAOS_CASTLE_NOTICE
-{
-	PBMSG_HEAD2 h;
-	char btState;
-	PMSG_NOTICE pNotice;
-};
-
-/* 1114 */
-struct _tagREQCHAOS_CASTLE_USER_GS
-{
-	PBMSG_HEAD2 h;
-	int userIndex;
-	char AccountID[11];
-	char Name[11];
-	bool bPCBangFree;
-	char btEnterLevel;
-};
-
-/* 1116 */
-struct _tagANSCHAOS_CASTLE_USER_GS
-{
-	PBMSG_HEAD2 h;
-	int serverIndex;
-	int userIndex;
-	char AccountID[11];
-	char Name[11];
-	bool bPCBangFree;
-	char btEnterLevel;
-	char btCount;
-	unsigned __int16 wRemainTime;
-};
-
-
-/* 1118 */
-struct _tagREQGETSPECIALIZEDSERVERINFO
-{
-	PBMSG_HEAD2 h;
-	int userIndex;
-	char btJoinResult;
-	char AccountID[11];
-};
-
-/* 1119 */
-struct _tagANSGETSPECIALIZEDSERVERINFO
-{
-	PBMSG_HEAD2 h;
-	int userIndex;
-	char btJoinResult;
-	char AccountID[11];
-	unsigned int dwPlayTime_Normal;
-	unsigned int dwPlayTime_PCRoom;
-	unsigned int dwCloseDateTime;
-};
-
-
-/* 1120 */
-struct _tagREQSETSPECIALIZEDSERVERINFO
-{
-	PBMSG_HEAD2 h;
-	int userIndex;
-	char AccountID[11];
-	unsigned int dwPlayTime_Normal;
-	unsigned int dwPlayTime_PCRoom;
-	unsigned int dwCloseDateTime;
-};
-
-/* 1121 */
-struct _tagREQSETRUUDTOKENLOG
-{
-	PBMSG_HEAD2 h;
-	int userIndex;
-	char AccountID[11];
-	char Name[11];
-	unsigned int dwRuudTotal;
-	unsigned int dwRuudValue;
-	char byFlag;
-};
-
-/* 811 */
-struct _tagPMSG_REQ_JEWEL_UPGRADE_INFO_INSERT_DS
-{
-	PBMSG_HEAD h;
-	char AccountID[11];
-	char Name[11];
-	__int16 iJewelType;
-	__int16 iJewelIndex;
-	__int16 iUpgradeType;
-	__int16 iSuccess;
-};
-
-/* 1043 */
-struct SDHP_REQ_SAVE_ITL_GUILDPOINT
-{
-	PBMSG_HEAD2 h;
-	char GuildName[9];
-	int nType;
-	char byWin;
-	char byLose;
-	char byOccupiedCnt;
-	char byEnterCnt;
-};
-
-/* 1044 */
-struct SDHP_REQ_SAVE_ITL_GUILDCOUNT
-{
-	PBMSG_HEAD2 h;
-	char GuildName[9];
-	char byCount;
-};
-
-/* 1045 */
-struct SDHP_REQ_SAVE_ITL_USERPOINT
-{
-	PBMSG_HEAD2 h;
-	char UserName[11];
-	char GName[9];
-	int nOccupiedCount;
-	int nKillP;
-	int nInvalidationCount;
-	int Type;
-	int EnterCount;
-	int Win;
-};
-
-/* 1046 */
-struct _tagPMSG_REQ_ITL_GUILDCOUNTREQ
-{
-	PBMSG_HEAD2 h;
-	char GuildName[9];
-	int nUserIndex;
-	unsigned __int16 wMapSverNum;
-};
-
-/* 1047 */
-struct _tagPMSG_ANS_ITL_GUILDCOUNTANS
-{
-	PBMSG_HEAD2 h;
-	int nUserIndex;
-	char byCount;
-};
-
-/* 1048 */
-struct _tagPMSG_ANS_ITL_RANKING
-{
-	PWMSG_HEAD2 h;
-	char byGuildCnt;
-};
-
-/* 1049 */
-struct _tagPMSG_ANS_ITL_GUILDCNT
-{
-	PWMSG_HEAD2 h;
-	char byGuildCnt;
-};
-
-/* 1050 */
-struct _tagPMSG_REQ_LEAGUERANK_RENEW
-{
-	PBMSG_HEAD2 h;
-	char byITLType;
-};
-
-/* 1051 */
-struct _tagPMSG_REQ_GUILDRANK_GET
-{
-	PBMSG_HEAD2 h;
-};
-
-/* 1052 */
-struct PMSG_REQ_ITL_TOURNAMENT
-{
-	PBMSG_HEAD2 h;
-	char byITLType;
-};
-
-/* 1053 */
-struct PMSG_REQ_ITL_RENEW_REWARD
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wMapSvrNum;
-};
-
-/* 1054 */
-struct PMSG_REQ_ITL_GET_REWARDLIST
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wMapSvrNum;
-};
-
-/* 1055 */
-struct PMSG_REQ_ITL_REWARDRECEIVED
-{
-	PBMSG_HEAD2 h;
-	char szCharName[11];
-};
-
-/* 1056 */
-struct _tagPMSG_ANS_ITL_REWARDLIST
-{
-	PWMSG_HEAD2 h;
-	char byCnt;
-};
-
-/* 1078 */
-struct _tagPMSG_REQ_ITL_USERCOUNTREQ
-{
-	PBMSG_HEAD2 h;
-	char UserName[9];
-	int nUserIndex;
-};
-
-/* 1057 */
-struct _tagSDHP_REQ_GREMORY_CASE_INSERT
-{
-	PBMSG_HEAD2 h;
-	__int16 aIndex;
-	char AccountID[11];
-	char Name[11];
-	char btGCType;
-	char btGiveType;
-	char btItemType;
-	unsigned __int16 wItemIndex;
-	char btLevel;
-	char btDur;
-	char btSkill;
-	char btLuck;
-	char btOpt;
-	char btSetOpt;
-	unsigned __int16 wNewOpt;
-	char btBonusSocketOpt;
-	char btSocketOpt[5];
-	unsigned int dwReceiptExpireDuration;
-	unsigned int dwItemDuration;
-	int lRecvDate;
-	int lRecvExpireDate;
-	int lItemExpireDate;
-};
-
-/* 1058 */
-struct _tagSDHP_ANS_GREMORY_CASE_INSERT
-{
-	PBMSG_HEAD2 h;
-	__int16 aIndex;
-	char btResult;
-	char btGCType;
-	char btGiveType;
-	char btItemType;
-	unsigned __int16 wItemIndex;
-	char btLevel;
-	char btDur;
-	char btSkill;
-	char btLuck;
-	char btOpt;
-	char btSetOpt;
-	unsigned __int16 wNewOpt;
-	char btBonusSocketOpt;
-	char btSocketOpt[5];
-	unsigned int dwSerial;
-	int lRecvDate;
-	int lRecvExpireDate;
-	int lItemExpireDate;
-};
-
-/* 1059 */
-struct _tagSDHP_REQ_GC_UPDATE
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	__int16 aIndex;
-	char btGCType;
-	char btItemType;
-	unsigned __int16 wItemIndex;
-	char btLevel;
-	unsigned int dwSerial;
-	int lRecvDate;
-	BYTE btUsedInfo;
-};
-
-/* 1060 */
-struct _tagSDHP_ANS_GC_UPDATE
-{
-	PBMSG_HEAD2 h;
-	__int16 aIndex;
-	char btResult;
-	char btItemType;
-	unsigned __int16 wItemIndex;
-	char btLevel;
-	unsigned int dwSerial;
-	int lRecvDate;
-};
-
-/* 1063 */
-struct _tagSDHP_REQ_GC_UPDATE_INSERT
-{
-	PBMSG_HEAD2 h;
-	__int16 aIndex;
-	char btUpdate_GCType;
-	char btUpdate_ItemType;
-	unsigned __int16 wUpdate_ItemIndex;
-	char btUpdate_Level;
-	unsigned int dwUpdate_Serial;
-	int lUpdate_RecvDate;
-	char btUpdate_UsedInfo;
-	char AccountID[11];
-	char Name[11];
-	char btGCType;
-	char btGiveType;
-	char btItemType;
-	unsigned __int16 wItemIndex;
-	char btLevel;
-	char btDur;
-	char btSkill;
-	char btLuck;
-	char btOpt;
-	char btSetOpt;
-	unsigned __int16 wNewOpt;
-	char btBonusSocketOpt;
-	char btSocketOpt[5];
-	unsigned int dwReceiptDuration;
-	unsigned int dwItemDuration;
-	int lRecvDate;
-	int lRecvExpireDate;
-	int lItemExpireDate;
-};
-
-/* 1061 */
-struct _tagSDHP_REQ_GREMORY_CASE_SELECT
-{
-	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
-	__int16 aIndex;
-	char btGCType;
-};
-
-/* 816 */
-struct _stCancelGuildNames
-{
-	char szGuildNames[9];
-};
-/* 814 */
-struct _stABWinGuildInfoDS
-{
-	char szGuildName[9];
-	DWORD dwGuild;
-	WORD wOccupyObelisk;
-	WORD wObeliskGroup;
-};
-
-/* 968 */
-struct _tagPMSG_REQ_AB_GUILD_JOIN_SELECT_DS
-{
-	PBMSG_HEAD2 h;
-	char szGuildMaster[11];
-	unsigned __int16 wNumber;
-};
-
-/* 969 */
-struct _tagPMSG_REQ_ARCA_BATTLE_GUILD_JOIN_DS
-{
-	PBMSG_HEAD2 h;
-	char szGuildMaster[11];
-	char szGuildName[9];
-	unsigned int dwGuild;
-	unsigned __int16 wNumber;
-};
-
-/* 970 */
-struct _tagPMSG_ANS_ARCA_BATTLE_GUILD_JOIN_DS
-{
-	PBMSG_HEAD2 h;
-	char btResult;
-	unsigned __int16 wNumber;
-};
-
-/* 971 */
-struct _tagPMSG_REQ_ARCA_BATTLE_GUILD_MEMBER_JOIN_DS
-{
-	PBMSG_HEAD2 h;
-	char szCharName[11];
-	char szGuildName[9];
-	unsigned int dwGuild;
-	unsigned __int16 wNumber;
-};
-
-/* 972 */
-struct _tagPMSG_ANS_ARCA_BATTLE_GUILD_MEMBER_JOIN_DS
-{
-	PBMSG_HEAD2 h;
-	char btResult;
-	unsigned __int16 wNumber;
-};
-
-/* 973 */
-struct _tagPMSG_REQ_AB_WIN_GUILD_INFO_INSERT_DS
-{
-	PBMSG_HEAD2 h;
-	char btGuildCnt;
-	unsigned __int16 wMapSvrNum;
-	_stABWinGuildInfoDS m_stABWinGuildInfoDS[5];
-};
-
-/* 974 */
-struct _tagPMSG_ANS_AB_WIN_GUILD_INFO_DS
-{
-	PBMSG_HEAD2 h;
-	char btGuildCnt;
-	_stABWinGuildInfoDS m_stABWinGuildInfoDS[5];
-};
-
-/* 975 */
-struct _tagPMSG_REQ_AB_WIN_GUILD_INFO_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wNumber;
-};
-
-/* 976 */
-struct _tagPMSG_REQ_ARCA_BATTLE_ENTER_DS
-{
-	PBMSG_HEAD2 h;
-	char szCharName[11];
-	char btEnterSeq;
-	unsigned __int16 wNumber;
-};
-
-/* 977 */
-struct _tagPMSG_ANS_ARCA_BATTLE_ENTER_DS
-{
-	PBMSG_HEAD2 h;
-	char btResult;
-	char btEnterSeq;
-	unsigned __int16 wNumber;
-};
-
-/* 978 */
-struct _tagPMSG_REQ_ARCA_BATTLE_GROUP_NUM_DS
-{
-	PBMSG_HEAD2 h;
-	char szCharName[11];
-	unsigned __int16 wNumber;
-};
-
-/* 979 */
-struct _tagPMSG_ANS_ARCA_BATTLE_GROUP_NUM_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wGroupNum;
-	unsigned __int16 wNumber;
-};
-
-/* 980 */
-struct _tagPMSG_REQ_ARCA_BATTLE_INFO_DS
-{
-	PBMSG_HEAD2 h;
-};
-
-/* 981 */
-struct _tagPMSG_REQ_AB_PROC_INSERT_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wMapSvrNum;
-	char btProcState;
-};
-
-/* 982 */
-struct _tagPMSG_REQ_ARCA_BATTLE_PROC_STATE_DS
-{
-	PBMSG_HEAD2 h;
-};
-
-/* 983 */
-struct _tagPMSG_ANS_ARCA_BATTLE_PROC_STATE_DS
-{
-	PBMSG_HEAD2 h;
-	char btProcState;
-};
-
-/* 984 */
-struct _tagPMSG_REQ_AB_JOIN_MEMBER_UNDER_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wMapSvrNum;
-};
-
-/* 815 */
-struct _stGuildUnderMember
-{
-	char btGuildMemberCnt;
-	char szGuildNames[9];
-};
-
-/* 985 */
-struct _tagPMSG_ANS_AB_JOIN_MEMBER_UNDER_DS
-{
-	PBMSG_HEAD2 h;
-	char btGuildCnt;
-	_stGuildUnderMember GuildMemberCnt[6];
-};
-
-/* 986 */
-struct _tagPMSG_REQ_AB_JOIN_CANCEL_DS
-{
-	PBMSG_HEAD2 h;
-	char btMinGuildMemNum;
-	unsigned __int16 wMapSvrNum;
-};
-
-/* 987 */
-struct _tagPMSG_ANS_AB_JOIN_CANCEL_DS
-{
-	PBMSG_HEAD2 h;
-	char btGuildCnt;
-	_stCancelGuildNames CancelGuildNames[6];
-};
-
-/* 988 */
-struct _tagPMSG_REQ_AB_REG_MEMBER_CNT_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wNumber;
-	unsigned int dwGuild;
-};
-
-/* 989 */
-struct _tagPMSG_ANS_AB_REG_MEMBER_CNT_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wNumber;
-	char btRegMemCnt;
-};
-
-/* 990 */
-struct _tagPMSG_REQ_REMOVE_ALL_GUILD_BUFF_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wMapSvrNum;
-};
-
-/* 991 */
-struct _tagPMSG_REQ_REMOVE_GUILD_BUFF_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wMapSvrNum;
-	char szGuildName[9];
-};
-
-/* 1024 */
 struct _tagPMSG_REQ_SAVE_CHAOSCASTLE_KILLPOINT
 {
+	_tagPMSG_REQ_SAVE_CHAOSCASTLE_KILLPOINT()
+	{
+		memset(szCharName, 0, sizeof(szCharName));
+		nPoint = 0;
+	}
+
 	PBMSG_HEAD2 h;
-	char szCharName[11];
+	char szCharName[MAX_IDSTRING + 1];
 	int nPoint;
 	int nIndex;
 	int nCatleIndex;
 };
 
-/* 1015 */
 struct SDHP_SEND_CCF_INFO
 {
 	PBMSG_HEAD2 h;
 	int nMin;
 	int nType;
-	unsigned __int16 wMapSvrNum;
+	WORD wMapSvrNum;
 };
 
 /* 1016 */
@@ -5607,369 +4176,80 @@ struct PMSG_CCF_SEND_ALL_INFO
 	PBMSG_HEAD2 h;
 	int nMin;
 	int nType;
-	unsigned __int16 wMapSvrNum;
+	WORD wMapSvrNum;
 };
 
 /* 1017 */
 struct SDHP_REQ_CCF_RESULT
 {
+	SDHP_REQ_CCF_RESULT()
+	{
+		memset(szCharName, 0, sizeof(szCharName));
+		nPoint = 0;
+		byCCFType = CCF_TYPE_NONE;
+	}
 	PBMSG_HEAD2 h;
-	char szCharName[11];
+	char szCharName[MAX_IDSTRING + 1];
 	int nPoint;
-	char byCCFType;
+	BYTE byCCFType;
 };
 
 /* 1018 */
 struct SDHP_REQ_CCF_GETPERMISSION
 {
+	SDHP_REQ_CCF_GETPERMISSION()
+	{
+		memset(szCharName, 0, sizeof(szCharName));
+		byCCFType = CCF_TYPE_NONE;
+		nIndex = 0;
+	}
+
 	PBMSG_HEAD2 h;
-	char szCharName[11];
-	char byCCFType;
+	char szCharName[MAX_IDSTRING + 1];
+	BYTE byCCFType;
 	int nIndex;
 };
 
-/* 1019 */
-struct SDHP_ANS_CCF_GETPERMISSION
+typedef struct SDHP_ANS_CCF_GETPERMISSION
 {
 	PBMSG_HEAD2 h;
 	int nResult;
 	int nIndex;
-};
+} *LPSDHP_ANS_CCF_GETPERMISSION;
 
-/* 1020 */
+
 struct SDHP_REQ_CCF_RANKING_REQ
 {
 	PBMSG_HEAD2 h;
-	char byRankingType;
+	BYTE byRankingType;
 	int nServerCategory;
 };
 
 /* 1021 */
 struct _tagPMSG_ANS_CCF_RANKING
 {
+	_tagPMSG_ANS_CCF_RANKING()
+	{
+		this->byUserCnt = 0;
+	}
 	PWMSG_HEAD h;
-	char byUserCnt;
+	BYTE byUserCnt;
 };
-/* 1022 */
-struct SDHP_RENEW_RANKING
+
+
+typedef struct
 {
 	PBMSG_HEAD2 h;
-	char byCCFType;
-};
+	BYTE byCCFType;
+} SDHP_RENEW_RANKING, *LPSDHP_RENEW_RANKING;
 
-/* 1080 */
-struct PMSG_REQ_UBF_ACCOUNT_USERINFO
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char szAccountID[11];
-	char szName[11];
-	int iServerCode;
-	int IsUnityBattleFieldServer;
-	char btObserverMode;
-};
 
-/* 1081 */
-struct PMSG_UBF_REGISTER_ACCOUNT_USER
-{
-	PBMSG_HEAD2 h;
-	char btDummy;
-	char szAccountID[11];
-	char szName[11];
-	char szBattleFieldName[11];
-	int iUserIndex;
-	__int16 ServerCode;
-	char btRegisterState;
-	char btRegisterMonth;
-	char btRegisterDay;
-};
-
-/* 1082 */
-struct PMSG_UBF_REGISTER_ACCOUNT_USER_RESULT
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btResult;
-	unsigned __int16 nLeftSec;
-};
-
-/* 1083 */
-struct PMSG_UBF_ACCOUNT_USER_COPY
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char szAccountID[11];
-	char btDumy1;
-	char szName[11];
-	char btDumy2;
-	__int16 ServerCode;
-	char btPromotionMode;
-};
-
-/* 1084 */
-struct PMSG_UBF_ACCOUNT_USER_COPY_RESULT
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btResult;
-	char btSubResult;
-};
-
-/* 1085 */
-struct PMSG_REQ_UBF_SET_RECEIVED_REWARD
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	int iServerCode;
-	char szName[11];
-	char btReceivedReward;
-};
-
-/* 1086 */
-struct PMSG_ANS_UBF_SET_RECEIVED_REWARD
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btReturn;
-	char btSubReturn;
-};
-
-/* 1087 */
-struct PMSG_REQ_UBF_GET_REWARD
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	int iServerCode;
-	char btServerKind;
-	char btContentsType;
-	char szName[11];
-};
-
-/* 1088 */
-struct PMSG_UBF_REQ_CANCEL_REGISTER_USER
-{
-	PBMSG_HEAD2 h;
-	char btDummy;
-	char szAccountID[11];
-	char szName[11];
-	int iUserIndex;
-	__int16 ServerCode;
-	char btCanceled;
-};
-
-/* 1089 */
-struct PMSG_UBF_ANS_CANCEL_REGISTER_USER
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btCanceledResult;
-	char btDeletedResult;
-};
-
-/* 1090 */
-struct PMSG_REQ_GET_UBF_REAL_NAME
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char szUBFName[11];
-};
-
-/* 1091 */
-struct PMSG_REQ_UBF_SET_REWARD_INFORMATION
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btServerKind;
-	char szAccountID[11];
-	char szName[11];
-	__int16 ServerCode;
-	char btContentsType;
-	char btSubContentsType;
-	int iItemCode;
-	char btItemCount;
-	char btTookState;
-};
-
-/* 1092 */
-struct PMSG_ANS_UBF_SET_REWARD_INFORMATION
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btReturn;
-	char btContentsType;
-	char btSubContentsType;
-	int iItemCode;
-	char btItemCount;
-};
-
-/* 1093 */
-struct PMSG_REQ_DSF_CAN_PARTY_ENTER
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char szAccountID1[11];
-	char szUserName1[11];
-	char szAccountID2[11];
-	char szUserName2[11];
-	char btDSFType;
-	int iEnterYear;
-	char btEnterMonth;
-	char btEnterDay;
-};
-
-/* 1094 */
-struct PMSG_ANS_DSF_CAN_PARTY_ENTER
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btCount;
-	char btResult;
-};
-
-/* 1095 */
-struct PMSG_REQ_SAVE_DSF_USERPOINT
-{
-	PBMSG_HEAD2 h;
-	char UserName[11];
-	char GName[9];
-	int nPoint;
-	int Type;
-	int nEnterCount;
-	int nWin;
-};
-
-/* 1096 */
-struct PMSG_REQ_SAVE_DSF_PARTYPOINT
-{
-	PBMSG_HEAD2 h;
-	char szAccountID1[11];
-	char szUserName1[11];
-	int nUser1Level;
-	char szAccountID2[11];
-	char szUserName2[11];
-	int nUser2Level;
-	int nDSFType;
-	int nPoint;
-	char btEnterCnt;
-	int nEnterYear;
-	char btEnterMonth;
-	char btEnterDay;
-};
-
-/* 1097 */
-struct PMSG_REQ_DSF_PARTYRANKRENEW
-{
-	PBMSG_HEAD2 h;
-	char btDSFType;
-	int nEnterYear;
-	char btEnterMonth;
-	char btEnterDay;
-};
-
-/* 1098 */
-struct PMSG_ANS_DSF_PARTYRANKRENEW
-{
-	PBMSG_HEAD2 h;
-	char btResult;
-};
-
-/* 1099 */
-struct PMSG_REQ_DSF_TODAY_PARTYRANK
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btDSFType;
-	int nEnterYear;
-	char btEnterMonth;
-	char btEnterDay;
-};
-
-/* 1100 */
-struct PMSG_ANS_DSF_TODAY_PARTYRANK
-{
-	PWMSG_HEAD2 h;
-	int iUserIndex;
-	char btPartyCnt;
-};
-
-/* 1101 */
-struct PMSG_REQ_DSF_GO_FINAL_PARTY
-{
-	PBMSG_HEAD2 h;
-	char btDSFType;
-	int nEnterYear;
-	char btEnterMonth;
-	char btEnterDay;
-};
-
-/* 1102 */
-struct PMSG_ANS_DSF_GO_FINAL_PARTY
-{
-	PWMSG_HEAD2 h;
-	char btPartyCnt;
-	char btDSFType;
-};
-
-/* 1103 */
-struct PMSG_REQ_SAVE_DSF_REWARD_USER
-{
-	PBMSG_HEAD2 h;
-	char szAccountID[11];
-	char szUserName[11];
-	int iClass;
-	char btDSFType;
-	int nRewardYear;
-	char btRewardMonth;
-	char btRewardStartDay;
-	char btRewardEndDay;
-};
-
-/* 1104 */
-struct PMSG_REQ_GET_DSF_REWARD
-{
-	PBMSG_HEAD2 h;
-	char szAccountID[11];
-	char szUserName[11];
-	int nServerCode;
-	int nUserIndex;
-	int nRewardYear;
-	char btRewardMonth;
-	char btRewardDay;
-};
-
-/* 1105 */
-struct PMSG_ANS_GET_DSF_REWARD
-{
-	PBMSG_HEAD2 h;
-	int nUserIndex;
-	char btResult;
-};
-
-/* 1106 */
-struct _tagPMSG_ANS_DSF_REWARDLIST
-{
-	PWMSG_HEAD2 h;
-	char byCnt;
-};
-
-/* 1107 */
-struct _stDSFRewardList
-{
-	char byRank;
-	char szCharName[11];
-	char szGuildName[9];
-	char byEnterCount;
-	char byPoint;
-	char byGotReward;
-};
-
-/* 1122 */
 struct SDHP_SEND_EVENTMAP_INFO_ALL_SVR
 {
 	PBMSG_HEAD2 h;
-	char byBattleType;
-	char byBattleStatus;
-	unsigned __int16 wMapSvrNum;
+	BYTE byBattleType;
+	BYTE byBattleStatus;
+	WORD wMapSvrNum;
 };
 
 /* 1123 */
@@ -5977,475 +4257,134 @@ struct SDHP_GET_EVENTMAPENTERCOUNT
 {
 	PBMSG_HEAD2 h;
 	int userIndex;
-	char Name[11];
+	char Name[MAX_IDSTRING + 1];
 };
 
-/* 1124 */
-struct SDHP_SET_EVENTMAPENTERCOUNT
-{
-	PBMSG_HEAD2 h;
-	char Name[11];
-	int userIndex;
-	char BloodCastle;
-	char ChaosCastle;
-	char DevilSquare;
-	char DoppelGanger;
-	char ImperialGuardian;
-	char IllusionTempleRenewal;
-};
 
-/* 1004 */
-struct _tagPMSG_ANS_ARCA_BATTLE_MARK_CNT_DS
+typedef struct SDHP_SET_EVENTMAPENTERCOUNT
 {
 	PBMSG_HEAD2 h;
-	char btResult;
-	unsigned __int16 wNumber;
-	unsigned int dwMarkCnt;
-};
-/* 999 */
-struct PMSG_REQ_PERIODBUFF_INSERT
+	char Name[MAX_IDSTRING + 1];
+	int nUserIndex;
+	BYTE BloodCastle;
+	BYTE ChaosCastle;
+	BYTE DevilSquare;
+	BYTE DoppelGanger;
+	BYTE ImperialGuardian;
+	BYTE IllusionTempleRenewal;
+}; typedef SDHP_SET_EVENTMAPENTERCOUNT *LPSDHP_SET_EVENTMAPENTERCOUNT;
+
+typedef struct PMSG_REQ_PERIODBUFF_INSERT
 {
 	PBMSG_HEAD2 head;
 	WORD wUserIndex;
-	char szCharacterName[11];
+	char szCharacterName[MAX_IDSTRING + 1];
 	WORD wBuffIndex;
-	char btEffectType1;
-	char btEffectType2;
+	BYTE btEffectType1;
+	BYTE btEffectType2;
 	DWORD dwDuration;
-	int lExpireDate;
-};
+	long lExpireDate;
+}; typedef PMSG_REQ_PERIODBUFF_INSERT *LPPMSG_REQ_PERIODBUFF_INSERT;
 
-/* 1000 */
-struct PMSG_REQ_PERIODBUFF_DELETE
+typedef struct PMSG_REQ_PERIODBUFF_DELETE
 {
 	PBMSG_HEAD2 head;
-	unsigned __int16 wUserIndex;
-	unsigned __int16 wBuffIndex;
-	char szCharacterName[11];
-};
+	WORD wUserIndex;
+	WORD wBuffIndex;
+	char szCharacterName[MAX_IDSTRING + 1];
+}; typedef PMSG_REQ_PERIODBUFF_DELETE *LPPMSG_REQ_PERIODBUFF_DELETE;
 
 
-/* 1001 */
-struct PMSG_REQ_PERIODBUFF_SELECT
+typedef struct PMSG_REQ_PERIODBUFF_SELECT
 {
 	PBMSG_HEAD2 head;
-	unsigned __int16 wUserIndex;
-	char szCharacterName[11];
-};
+	WORD wUserIndex;
+	char szCharacterName[MAX_IDSTRING + 1];
+}; typedef PMSG_REQ_PERIODBUFF_SELECT *LPPMSG_REQ_PERIODBUFF_SELECT;
 
-/* 1002 */
-struct PMSG_ANS_PERIODBUFF_SELECT
+typedef struct PMSG_ANS_PERIODBUFF_SELECT
 {
 	PBMSG_HEAD2 head;
-	char btResultCode;
-	unsigned __int16 wUserIndex;
-	unsigned __int16 wBuffIndex;
-	char btEffectType1;
-	char btEffectType2;
-	int lExpireDate;
-};
-/* 822 */
-struct _tagPeriodBuffInfo
-{
-	unsigned __int16 wBuffIndex;
-	char btEffectType1;
-	char btEffectType2;
-	int lDuration;
-	int lExpireDate;
-};
+	BYTE btResultCode;
+	WORD wUserIndex;
+	WORD wBuffIndex;
+	BYTE btEffectType1;
+	BYTE btEffectType2;
+	long lExpireDate;
+}; typedef PMSG_ANS_PERIODBUFF_SELECT *LPPMSG_ANS_PERIODBUFF_SELECT;
 
-/* 1003 */
-struct _tagPMSG_REQ_ARCA_BATTLE_MARK_CNT_DS
+typedef struct _tagPeriodBuffInfo
 {
-	PBMSG_HEAD2 h;
-	unsigned __int16 wNumber;
-	unsigned int dwGuildNum;
-};
+	WORD wBuffIndex;
+	BYTE btEffectType1;
+	BYTE btEffectType2;
+	long lDuration;
+	long lExpireDate;
+}; typedef _tagPeriodBuffInfo *LPPERIODBUFFINFO;
 
-/* 1027 */
-struct _tagSDHP_ANS_DBEVENT_INVEN_LOAD
+typedef struct _tagSDHP_ANS_DBEVENT_INVEN_LOAD
 {
-	PWMSG_HEAD h;
-	char dbItems[512];
-	char DbVersion;
-	__int16 aIndex;
-};
+	PWMSG_HEAD h; // C2:E6 DS->GS
+	BYTE dbItems[MAX_DBEVENTINVENTORY];
+	BYTE DbVersion;
+	short aIndex;
+} *LPSDHP_ANS_DBEVENT_INVEN_LOAD;
 
-/* 995 */
-struct _tagPMSG_ANS_AB_ALL_JOIN_USER_DS
-{
-	PWMSG_HEAD h;
-	char btUserCnt;
-};
 
-/* 1117 */
-struct _tagANSCHAOS_CASTLE_USER_DS
-{
-	PBMSG_HEAD2 h;
-	int userIndex;
-	char AccountID[11];
-	char Name[11];
-	bool bPCBangFree;
-	char btEnterLevel;
-	char btCount;
-	unsigned __int16 wRemainTime;
-};
-
-/* 1023 */
-struct SDHP_ANS_KILLPOINT_RESULT
+typedef struct SDHP_ANS_KILLPOINT_RESULT
 {
 	PBMSG_HEAD2 h;
 	int nIndex;
 	int nResult;
 	int nCurrentPoint;
 	int nTotalPoint;
-};
-
-/* 827 */
-struct PMSG_ANS_UBF_ACCOUNT_USERINFO
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btResult;
-	char btRegisterState;
-	char btRegisterMonth;
-	char btRegisterDay;
-	char btObserverMode;
-};
-
-/* 829 */
-struct PMSG_ANS_GET_UBF_REAL_NAME
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char szUBFName[11];
-	char szRealName[11];
-	int iServerCode;
-	char btRetrun;
-};
+} *LPSDHP_ANS_KILLPOINT_RESULT;
 
 
-/* 671 */
 struct _stDSFPartyRankInfo
 {
-	char szUserName1[11];
-	char szUserName2[11];
-	char btRank;
-	char btDSFType;
+	_stDSFPartyRankInfo()
+	{
+		memset(szUserName1, 0, sizeof(szUserName1));
+		memset(szUserName2, 0, sizeof(szUserName2));
+		this->btRank = 0xFF;
+		this->btDSFType = 0xFF;
+		this->iPoint = 0xFFFFFFFF;
+	}
+	char szUserName1[MAX_IDSTRING + 1];
+	char szUserName2[MAX_IDSTRING + 1];
+	BYTE btRank;
+	BYTE btDSFType;
 	int iPoint;
 };
 
-/* 1125 */
 struct SDHP_ANS_EVENTMAPENTERCOUNT
 {
 	PBMSG_HEAD2 h;
-	char Name[11];
+	char Name[MAX_IDSTRING + 1];
 	int nUserIndex;
-	char BloodCastle;
-	char ChaosCastle;
-	char DevilSquare;
-	char DoppelGanger;
-	char ImperialGuardian;
-	char IllusionTempleRenewal;
-};
+	BYTE BloodCastle;
+	BYTE ChaosCastle;
+	BYTE DevilSquare;
+	BYTE DoppelGanger;
+	BYTE ImperialGuardian;
+	BYTE IllusionTempleRenewal;
+}; typedef SDHP_ANS_EVENTMAPENTERCOUNT *LPSDHP_ANS_EVENTMAPENTERCOUNT;
 
-
-/* 672 */
-struct _stDSFGoFinalPartyInfo
+typedef struct _tagPMSG_ANS_ALL_GUILD_MARK_CNT_DS
 {
-	char szUserName1[11];
-	char szUserName2[11];
-	unsigned __int16 wServerCode1;
-	unsigned __int16 wServerCode2;
-	char btRank;
-	char btDSFType;
-	int iPoint;
-	int nEnterYear;
-	char btEnterMonth;
-	char btEnterDay;
-};
+	PWMSG_HEAD2 h; // C1:F8:FC DS->GS
+	WORD wGuildCnt;
+} *LPPMSG_ANS_ALL_GUILD_MARK_CNT_DS;
 
-/* 817 */
-struct _stArcaBattleMarkTopRank
+typedef struct SDHP_ANS_ACCOUNTINFO
 {
-	_stArcaBattleMarkTopRank::_stArcaBattleMarkTopRank()
-	{
-		this->btRank = 0;
-		this->dwMarkCnt = 0;
-		memset(this->szGuildNames, 0, 9u);
-	}
-	char btRank;
-	char szGuildNames[9];
-	BYTE dwMarkCnt;
-};
-
-/* 818 */
-struct _stABAllGuildMark
-{
-	_stABAllGuildMark()
-	{
-		this->dwMarkCnt = 0;
-		memset(this->szGuildName, 0, 9);
-	}
-	char szGuildName[9];
-	DWORD dwMarkCnt;
-};
-
-/* 819 */
-struct _stABJoinUserInfoDS
-{
-	char szGuildName[9];
-	unsigned int dwGuild;
-	char szUserName[11];
-};
-
-
-/* 992 */
-struct _tagPMSG_ANS_REMOVE_GUILD_BUFF_DS
-{
-	PBMSG_HEAD2 h;
-	char szGuildName[9];
-};
-
-/* 1006 */
-struct _tagPMSG_ANS_ARCA_BATTLE_MARK_REG_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wNumber;
-	char btResult;
-};
-
-/* 1007 */
-struct _tagPMSG_REQ_ARCA_BATTLE_MARK_RANK_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wNumber;
-	unsigned int dwGuildNum;
-};
-
-/* 1005 */
-struct _tagPMSG_REQ_ARCA_BATTLE_MARK_REG_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wNumber;
-	char szGuildMaster[11];
-	char szGuildName[9];
-	unsigned int dwMarkCnt;
-	unsigned int dwGuildNum;
-};
-
-/* 1008 */
-struct _tagPMSG_ANS_ARCA_BATTLE_MARK_RANK_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wNumber;
-	char btRank;
-	unsigned int dwMarkCnt;
-	char btGuildCnt;
-	_stArcaBattleMarkTopRank ArcaBattleMarkTopRank[6];
-};
-
-/* 1009 */
-struct _tagPMSG_REQ_ARCA_BATTLE_MARK_REG_DEL_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wNumber;
-	unsigned int dwGuildNum;
-};
-
-/* 1010 */
-struct _tagPMSG_REQ_ARCA_BATTLE_IS_TOP_RANK
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wNumber;
-	unsigned int dwGuildNum;
-};
-
-/* 1011 */
-struct _tagPMSG_REQ_AB_MARK_REG_UPDATE_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned int dwGuildNum;
-	unsigned int dwMarkCnt;
-};
-
-/* 997 */
-struct _tagPMSG_ANS_AE_PLAY_DS
-{
-	PBMSG_HEAD2 h;
-	char btPlay;
-};
-
-/* 998 */
-struct PMSG_REQ_PENTAGRAMJEWEL
-{
-	PBMSG_HEAD h;
-	int iUserIndex;
-	BYTE btJewelPos;
-	int iUserGuid;
+	PBMSG_HEAD h; // C1:A1 DS->GS
 	char AccountId[MAX_IDSTRING + 1];
-	char szName[MAX_IDSTRING + 1];
-};
-
-/* 996 */
-struct _tagPMSG_REQ_AE_PLAY_DS
-{
-	PBMSG_HEAD2 h;
-	unsigned __int16 wMapSvrNum;
-	char btPlay;
-};
-
-/* 826 */
-struct _stCCFRankingInfo
-{
-	char szCharName[11];
-	char byRank;
-	int nPoint;
-};
-
-/* 828 */
-struct PMSG_ANS_UBF_GET_REWARD
-{
-	PBMSG_HEAD2 h;
-	int iUserIndex;
-	char btResult;
-	char btContentsType;
-	char btArrayCCF_Reward[4];
-	char btArrayDSF_Reward[4];
-	char btArrayCCN_Reward[2];
-	char btArrayDSN_Reward[14];
-};
-
-
-/* 1079 */
-struct _tagPMSG_ANS_ITL_USERCOUNTANS
-{
-	PBMSG_HEAD2 h;
-	int nUserIndex;
-	char byCount;
-};
-
-/* 836 */
-struct _stITLRewardList
-{
-	char byRank;
-	char szCharName[11];
-	char szGuildName[9];
-	char byEnterCount;
-	char byPoint;
-	char byGotReward;
-};
-
-/* 834 */
-struct _stITLRankingInfo
-{
-	char szGuildName[9];
-	char byRank;
-	char byITLType;
-	char byWin;
-	char byLose;
-};
-
-/* 1062 */
-struct _tagSDHP_ANS_GREMORY_CASE_SELECT
-{
-	PWMSG_HEAD2 h;
-	char btResult;
-	__int16 aIndex;
-	char btCnt;
-};
-
-/* 1064 */
-struct _tagSDHP_ANS_GC_UPDATE_INSERT
-{
-	PBMSG_HEAD2 h;
-	__int16 aIndex;
-	char btUpdate_GCType;
-	char btUpdate_ItemType;
-	unsigned __int16 wUpdate_ItemIndex;
-	char btUpdate_Level;
-	unsigned int dwUpdate_Serial;
-	int lUpdate_RecvDate;
-	char btUpdate_UsedInfo;
-	char btGCType;
-	char btGiveType;
-	char btItemType;
-	unsigned __int16 wItemIndex;
-	char btLevel;
-	char btDur;
-	char btSkill;
-	char btLuck;
-	char btOpt;
-	char btSetOpt;
-	unsigned __int16 wNewOpt;
-	char btBonusSocketOpt;
-	char btSocketOpt[5];
-	unsigned int dwSerial;
-	int lRecvDate;
-	int lRecvExpireDate;
-	int lItemExpireDate;
-};
-
-/* 993 */
-struct _tagPMSG_ANS_ALL_GUILD_MARK_CNT_DS
-{
-	PWMSG_HEAD2 h;
-	unsigned __int16 wGuildCnt;
-};
-/* 1115 */
-struct _tagREQCHAOS_CASTLE_USER_DS
-{
-	PBMSG_HEAD2 h;
-	int serverIndex;
-	int userIndex;
-	char AccountID[11];
-	char Name[11];
-	bool bPCBangFree;
-	char btEnterLevel;
-};
-
-/* 699 */
-struct _stGremoryCaseList
-{
-	char btGCType;
-	char btGiveType;
-	char btItemType;
-	unsigned __int16 wItemIndex;
-	char btLevel;
-	char btDur;
-	char btSkill;
-	char btLuck;
-	char btOpt;
-	char btSetOpt;
-	unsigned __int16 wNewOpt;
-	char btBonusSocketOpt;
-	char btSocketOpt[5];
-	unsigned int dwSerial;
-	int lRecvDate;
-	int lRecvExpireDate;
-	int lItemExpireDate;
-};
-
-/* 6308 */
-struct SDHP_REQ_LABYRINTH_END_UPDATE
-{
-	PWMSG_HEAD2 h;
-	char szAccountID[11];
-	char szName[11];
-	int nUserIndex;
-	int nClearCnt;
-	char btClearState;
-};
-
-/* 950 */
-struct SDHP_ANS_ACCOUNTINFO
-{
-	PBMSG_HEAD h;
-	char AccountId[11];
-	__int16 Number;
+	short Number;
 	BYTE Result;
 	BYTE bSummoner;
-};
+} *LPSDHP_ANS_ACCOUNTINFO;
 #endif // __SPRODEF_H__
 
 

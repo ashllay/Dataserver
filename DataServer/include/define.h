@@ -6,6 +6,7 @@
 
 #include "..\\Include\\Public.h"
 //----------------------------------------------------------------------------
+#define SQL_VALID_DATA(x) (( x == SQL_NO_DATA ) ? FALSE : ( x == SQL_NULL_DATA ) ? FALSE : TRUE)
 
 enum DB_CLASS_TYPE 
 {
@@ -3674,6 +3675,7 @@ enum
 //	시스템 기본 정보
 //
 //////////////////////////////////////////////////////////////////////////
+#define MAX_MACRO_DATA				511
 #define MAX_ROADPATH				15		// 사용자가 이동하는 PATH 최대 크기
 #define MAX_PATHDIR					8		// 이동에 사용되는 방향 개수
 #define MAX_IDSTRING				10		// 아이디 크기
@@ -3733,6 +3735,8 @@ enum
 #define MAX_DBINVENTORY				760		// (8x8x10)+120 데이터베이스 읽기&저장되는 인벤토리데이터 크기
 #endif
 
+#define MAX_DBEVENTINVENTORY		512		//s12+
+
 #ifdef ITEM_DBSIZE_EXTEND_20050706
 #define MAX_ITEMDBBYTE				16		// 아이템이 DB에 저장되는 바이트 수
 #define MAX_ITEMDBBYTE_V02			10		// 아이템이 DB에 저장되는 바이트 수
@@ -3776,16 +3780,22 @@ enum
 #define MAX_INVENTORYMAP			8*8
 #define MAX_INVENTORY				(MAX_EQUIPMENT + MAX_INVENTORYMAP)		// (8x8)+12 인벤토리 최대 개수
 #define MAX_TRADEITEM				32				// (8x4) 
-#define INVENTORY_EXT4_SIZE			204
 
 #ifdef PERSONAL_SHOP_20040113		
 #define MAX_PSHOPITEM				8*4		// (8x4) 개인상점창
 #define MAX_PSHOPITEMMAP			8*4		// (8x4) 개인상점창 맵
 									//76
 #define MAX_INVENTORY_EXTEND		(MAX_INVENTORY + MAX_PSHOPITEM)		// (8x8)+12+(8*4) DB저장 시 인벤토리 최대 개수
+
+#define INVENTORY_EXT4_SIZE 204
+
 #endif
 
 #define MAX_DBMAGIC					(MAX_MAGIC*3)	// 데이터베이스에 저장되는 마법 데이터 크기
+
+#define MAX_EXTENDINVENTORY			4
+#define MAX_EXTENDWAREHOUSE			1
+#define MAX_CHARSLOTCOUNT			5
 
 #ifdef ITEM_DBSIZE_EXTEND_20050706
 #define ITEM_BITSHIFT				9

@@ -14,21 +14,54 @@
 
 #include "DBConBase.h"
 
-//typedef struct
-//{
-//	PWMSG_HEAD h;
-//	BYTE btQuestCnt;
-//	char szCharName[MAX_IDSTRING+1];
-//}_PMSG_QUESTEXP_INFO, *LP_PMSG_QUESTEXP_INFO;
+#define MAX_QUESTEXP_ASK_INFO				5
+#define MAX_QUESTEXP_REWARD_INFO			5
+#define MAX_QUESTEXP_EPISODE				25
+#define MAX_QUESTEXP_SWITCH					255
+#define MAX_QUESTEXP_INFO					MAX_QUESTEXP_EPISODE
+#define MAX_QUESTEXP_USER_INFO				MAX_QUESTEXP_EPISODE
+#define MAX_QUESTEXP_REWARDKIND_RANDOM		5
+#define MAX_QUESTEXP_ACTIVE_QUEST			10
+#define MAX_QUESTEXP_JOURNAL_UI_INFO		8
 
-//#pragma pack(1)
-//typedef struct
-//{
-//	PWMSG_HEAD head;
-//	BYTE btQuestCnt;
-//	int iUserIndex;
-//}PMSG_ANS_QUESTEXP_INFO, *LPPMSG_ANS_QUESTEXP_INFO;
-//#pragma pack()
+typedef struct
+{
+	PWMSG_HEAD h;
+	BYTE btQuestCnt;
+	char szCharName[MAX_IDSTRING + 1];
+} _PMSG_QUESTEXP_INFO, *LPPMSG_QUESTEXP_INFO;
+
+
+#pragma pack(push, 1)
+typedef struct _QUESTEXP_INFO
+{
+	_QUESTEXP_INFO()
+	{
+		this->dwQuestIndexID = 0;
+		this->wProgState = 0;
+		this->lStartDate = 0;
+		this->lEndDate = 0;
+		memset(this->btAskIndex, 0, sizeof(btAskIndex));
+		memset(this->btAskValue, 0, sizeof(btAskValue));
+		memset(this->btAskState, 0, sizeof(btAskState));
+	}
+
+	DWORD dwQuestIndexID;
+	WORD wProgState;
+	BYTE btAskIndex[MAX_QUESTEXP_ASK_INFO];
+	BYTE btAskValue[MAX_QUESTEXP_ASK_INFO];
+	BYTE btAskState[MAX_QUESTEXP_ASK_INFO];
+	long lStartDate;
+	long lEndDate;
+} *LPQUESTEXP_INFO;
+
+typedef struct
+{
+	PWMSG_HEAD head;
+	BYTE btQuestCnt;
+	int iUserIndex;
+} PMSG_ANS_QUESTEXP_INFO, *LPPMSG_ANS_QUESTEXP_INFO;
+#pragma pack(pop)
 
 class CQuestExpDBSet  : public CDBConBase
 {

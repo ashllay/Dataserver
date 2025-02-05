@@ -17,7 +17,7 @@ BOOL IllusionTempleLeagueDBSet::Connect()
 	return 0;
 }
 
-void IllusionTempleLeagueDBSet::SaveITLGuildCount(char *GName, char byCount)
+void IllusionTempleLeagueDBSet::SaveITLGuildCount(char *GName, BYTE byCount)
 {
 	__int16 sqlReturn;
 	CString qSql;
@@ -28,7 +28,7 @@ void IllusionTempleLeagueDBSet::SaveITLGuildCount(char *GName, char byCount)
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		sqlReturn = this->m_DBQuery.Fetch();
-		if (sqlReturn != 100 || sqlReturn != -1)
+		if (sqlReturn != SQL_NO_DATA || sqlReturn != -1)
 		{
 			this->m_DBQuery.Clear();
 		}
@@ -48,7 +48,7 @@ void IllusionTempleLeagueDBSet::SaveITLGuildCount(char *GName, char byCount)
 }
 // 5CDC50: using guessed type int `IllusionTempleLeagueDBSet::SaveITLGuildCount'::`2'::__LINE__Var;
 
-void IllusionTempleLeagueDBSet::SaveITLGuildPoint(char *szGuildName, int nType, char byWin, char byLose, char byOccupiedCnt, char byEnterCount)
+void IllusionTempleLeagueDBSet::SaveITLGuildPoint(char *szGuildName, int nType, BYTE byWin, BYTE byLose, BYTE byOccupiedCnt, BYTE byEnterCount)
 {
 	__int16 sqlReturn;
 	CString qSql;
@@ -62,7 +62,7 @@ void IllusionTempleLeagueDBSet::SaveITLGuildPoint(char *szGuildName, int nType, 
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		sqlReturn = this->m_DBQuery.Fetch();
-		if (sqlReturn != 100 || sqlReturn != -1)
+		if (sqlReturn != SQL_NO_DATA || sqlReturn != -1)
 		{
 			this->m_DBQuery.Clear();
 		}
@@ -99,7 +99,7 @@ void IllusionTempleLeagueDBSet::UpdateITL_RewardReceived(char *CharName)
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		sqlReturn = this->m_DBQuery.Fetch();
-		if (sqlReturn != 100 || sqlReturn != -1)
+		if (sqlReturn != SQL_NO_DATA || sqlReturn != -1)
 		{
 			nRetrun = this->m_DBQuery.GetInt(1);
 			if (nRetrun)
@@ -143,7 +143,7 @@ void IllusionTempleLeagueDBSet::UpdateITLUserPoint(char *UserName, char *Gname, 
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		sqlReturn = this->m_DBQuery.Fetch();
-		if (sqlReturn != 100 || sqlReturn != -1)
+		if (sqlReturn != SQL_NO_DATA || sqlReturn != -1)
 		{
 			nRetrun = this->m_DBQuery.GetInt(1);
 			if (nRetrun)
@@ -193,7 +193,7 @@ void IllusionTempleLeagueDBSet::Renew_ITLRewardList()
 	}
 }
 
-void IllusionTempleLeagueDBSet::RenewITLGuildRank(char byITLType)
+void IllusionTempleLeagueDBSet::RenewITLGuildRank(BYTE byITLType)
 {
 	CString qSql;
 
@@ -209,7 +209,7 @@ void IllusionTempleLeagueDBSet::RenewITLGuildRank(char byITLType)
 	}
 }
 
-int IllusionTempleLeagueDBSet::LoadITLGuildRank(_stITLRankingInfo *ITLRankInfo, char *btGuildCount)
+int IllusionTempleLeagueDBSet::LoadITLGuildRank(_stITLRankingInfo *ITLRankInfo, int *btGuildCount)
 {
 	int result; // eax
 	__int16 sqlRetrun;
@@ -220,7 +220,7 @@ int IllusionTempleLeagueDBSet::LoadITLGuildRank(_stITLRankingInfo *ITLRankInfo, 
 	qSql.Format("WZ_ITL_GetGuildRank");
 	if (this->m_DBQuery.Exec(qSql))
 	{
-		for (sqlRetrun = this->m_DBQuery.Fetch(); sqlRetrun != 100; sqlRetrun = this->m_DBQuery.Fetch())
+		for (sqlRetrun = this->m_DBQuery.Fetch(); sqlRetrun != SQL_NO_DATA; sqlRetrun = this->m_DBQuery.Fetch())
 		{
 			if (sqlRetrun == -1)
 				break;
@@ -256,7 +256,7 @@ int IllusionTempleLeagueDBSet::LoadITLRewardList(_stITLRewardList *itlRewardList
 	qSql.Format("WZ_ITL_GetUserRewardList");
 	if (this->m_DBQuery.Exec(qSql))
 	{
-		for (sqlRetrun = this->m_DBQuery.Fetch(); sqlRetrun != 100; sqlRetrun = this->m_DBQuery.Fetch())
+		for (sqlRetrun = this->m_DBQuery.Fetch(); sqlRetrun != SQL_NO_DATA; sqlRetrun = this->m_DBQuery.Fetch())
 		{
 			if (sqlRetrun == -1)
 				break;
@@ -289,7 +289,7 @@ int IllusionTempleLeagueDBSet::LoadITLRewardList(_stITLRewardList *itlRewardList
 }
 // 5CDC64: using guessed type int `IllusionTempleLeagueDBSet::LoadITLRewardList'::`2'::__LINE__Var;
 
-int IllusionTempleLeagueDBSet::LoadITLTournament(_stITLRankingInfo *ITLRanking, char *btCount, char byITLType)
+int IllusionTempleLeagueDBSet::LoadITLTournament(_stITLRankingInfo *ITLRanking, char *btCount, BYTE byITLType)
 {
 	int result;
 	__int16 sqlRetrun;
@@ -300,7 +300,7 @@ int IllusionTempleLeagueDBSet::LoadITLTournament(_stITLRankingInfo *ITLRanking, 
 	qSql.Format("WZ_ITL_GetTournament %d", byITLType);
 	if (this->m_DBQuery.Exec(qSql))
 	{
-		for (sqlRetrun = this->m_DBQuery.Fetch(); sqlRetrun != 100; sqlRetrun = this->m_DBQuery.Fetch())
+		for (sqlRetrun = this->m_DBQuery.Fetch(); sqlRetrun != SQL_NO_DATA; sqlRetrun = this->m_DBQuery.Fetch())
 		{
 			if (sqlRetrun == -1)
 				break;
@@ -342,7 +342,7 @@ void IllusionTempleLeagueDBSet::ReqGuildCount(char *GuildName, int *nEnterCount)
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		sqlreturn = this->m_DBQuery.Fetch();
-		if (sqlreturn != 100 || sqlreturn != -1)
+		if (sqlreturn != SQL_NO_DATA || sqlreturn != -1)
 		{
 			*nEnterCount = this->m_DBQuery.GetInt("mEnterCount");
 			LogAddTD("[ ITL ] GuildName :%s, Count:%d", GuildName, *nEnterCount);

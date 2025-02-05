@@ -30,12 +30,12 @@ BOOL CPetDBSet::LoadPetInfo(DWORD number, int& Level, __int64& Exp)
 
 	qSQL.Format("SELECT Pet_Level, Pet_Exp FROM T_PetItem_Info WHERE ItemSerial=%u", number);
 
-	if(this->m_DBQuery.Exec(qSQL) == FALSE)
+	if (this->m_DBQuery.Exec(qSQL) == FALSE)
 	{
 		return FALSE;
 	}
 
-	if(this->m_DBQuery.Fetch() == SQL_NO_DATA)
+	if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 	{
 		this->m_DBQuery.Clear();
 		this->CreatePetItemInfo(number, 1, 0);
@@ -47,12 +47,12 @@ BOOL CPetDBSet::LoadPetInfo(DWORD number, int& Level, __int64& Exp)
 
 	this->m_DBQuery.Clear();
 
-	if(Level < 0)
+	if (Level < 0)
 	{
 		Level = 1;
 	}
 
-	if(Exp < 0)
+	if (Exp < 0)
 	{
 		Exp = 0;
 	}
@@ -60,13 +60,13 @@ BOOL CPetDBSet::LoadPetInfo(DWORD number, int& Level, __int64& Exp)
 	return TRUE;
 }
 
-BOOL CPetDBSet::SavePetInfo(DWORD number, int Level, __int64 Exp)
+BOOL CPetDBSet::SavePetInfo(DWORD number, int Level, INT64 Exp)
 {
 	CString qSQL;
 
 	qSQL.Format("UPDATE T_PetItem_Info SET Pet_Level=%d, Pet_Exp=%I64d WHERE ItemSerial=%u", Level, Exp, number);//changed to int64
 
-	if(this->m_DBQuery.Exec(qSQL) == FALSE)
+	if (this->m_DBQuery.Exec(qSQL) == FALSE)
 	{
 		return FALSE;
 	}
@@ -82,7 +82,7 @@ BOOL CPetDBSet::CreatePetItemInfo(DWORD serial, int Level, __int64 Exp)
 
 	qSQL.Format("INSERT INTO T_PetItem_Info (ItemSerial,Pet_Level,Pet_Exp) VALUES(%u,%d,%I64d)", serial, Level, Exp);
 
-	if(this->m_DBQuery.Exec(qSQL) == FALSE)
+	if (this->m_DBQuery.Exec(qSQL) == FALSE)
 	{
 		return FALSE;
 	}
@@ -115,10 +115,10 @@ BOOL CPetDBSet::UBFCopyPetInfo(unsigned int number, unsigned __int16 ServerCode)
 }
 
 //----- (00448F60) --------------------------------------------------------
-BOOL CPetDBSet::LoadPetInfoForUBF(unsigned int number, int *Level, __int64 *Exp, unsigned __int16 SeverCode)
+BOOL CPetDBSet::LoadPetInfoForUBF(unsigned int number, int* Level, INT64* Exp, unsigned __int16 SeverCode)
 {
 	int result;
-	__int64 *lExp;
+	INT64* lExp;
 	__int16 sqlReturn;
 	CString qSql;
 	bool v7;
@@ -149,7 +149,7 @@ BOOL CPetDBSet::LoadPetInfoForUBF(unsigned int number, int *Level, __int64 *Exp,
 		else
 		{
 			LogAddTD("Error-L3 [CPetDBSet][WZ_UnityBattleFieldPetInfoLoad_r] PetSerial:%d Return %d,%s,%d ",
-				number,sqlReturn, __FILE__, __LINE__);
+				number, sqlReturn, __FILE__, __LINE__);
 			this->m_DBQuery.Clear();
 			result = 0;
 		}
@@ -165,7 +165,7 @@ BOOL CPetDBSet::LoadPetInfoForUBF(unsigned int number, int *Level, __int64 *Exp,
 // 5CDFD4: using guessed type int `CPetDBSet::LoadPetInfoForUBF'::`2'::__LINE__Var;
 
 //----- (004491A0) --------------------------------------------------------
-BOOL CPetDBSet::SavePetInfoForUBF(unsigned int number, int Level, __int64 Exp, unsigned __int16 SeverCode)
+BOOL CPetDBSet::SavePetInfoForUBF(unsigned int number, int Level, INT64 Exp, unsigned __int16 SeverCode)
 {
 	int result;
 	CString qSql;

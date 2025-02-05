@@ -149,18 +149,6 @@ BOOL CQuestExpDBSet::DSDB_QueryQuestInfoSave(_PMSG_QUESTEXP_INFO *lpRecv)
 	return FALSE;
 }
 
-_QUESTEXP_INFO::_QUESTEXP_INFO()
-{
-	this->dwQuestIndexID = 0;
-	this->wProgState = 0;
-	this->lStartDate = 0;
-	this->lEndDate = 0;
-
-	memset(this->btAskIndex, 0, 5);
-	memset(this->btAskValue, 0, 5);
-	memset(this->btAskState, 0, 5);
-}
-
 BOOL CQuestExpDBSet::DSDB_QueryQuestInfoLoad(char* szCharName, _QUESTEXP_INFO *pQuestInfo, PMSG_ANS_QUESTEXP_INFO *pMsg)
 {
 	char szId[MAX_IDSTRING+1];

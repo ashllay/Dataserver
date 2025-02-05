@@ -250,7 +250,7 @@ BOOL CCharDBSet::DefaultCreateCharacterAllDelete()
 BOOL CCharDBSet::DefaultCreateCharacterInsert(LPCharacterInfo_Struct lpObj)
 {
 	CString qSql;
-
+	//			"INSERT INTO DefaultClassType (Level, Class, Strength, Dexterity, Vitality, Energy, Life, MaxLife, Mana, MaxMana, MapNumber, MapPosX, MapPosY, DbVersion, LevelUpPoint,Leadership)  VALUES (%d,%d,%d,%d,%d, %d, %f,%f,%f,%f, %d,%d,%d, %d, %d, %d)",
 	qSql.Format("INSERT INTO DefaultClassType (Level, Class, Strength, Dexterity, Vitality, Energy, Life, MaxLife, Mana, MaxMana, MapNumber, MapPosX, MapPosY, DbVersion, LevelUpPoint,Leadership)  VALUES (%d,%d,%d,%d,%d, %d, %f,%f,%f,%f, %d,%d,%d, %d, %d, %d)",
 		lpObj->Level, lpObj->Class, lpObj->Strength, lpObj->Dexterity, lpObj->Vitality, lpObj->Energy, lpObj->Life, lpObj->MaxLife, lpObj->Mana, lpObj->MaxMana, lpObj->MapNumber, lpObj->MapX, lpObj->MapY, 3, lpObj->LevelUpPoint, lpObj->Leadership);
 
@@ -652,7 +652,7 @@ int CCharDBSet::GetCharacter(char *szAccountID, char *Name, CharacterInfo_Struct
 		this->m_DBQuery.Clear();
 		return 0;
 	}
-	if (this->m_DBQuery.Fetch() == 100)
+	if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 	{
 		this->m_DBQuery.Clear();
 		return 0;
@@ -737,7 +737,7 @@ void CCharDBSet::SaveMacroInfo(char* szAccountID, char* Name, BYTE* lpMacroInfo)
 	CString qSql;
 
 	qSql.Format("EXEC WZ_MACROINFO_SAVE '%s', '%s', ?", szAccountID, Name);
-	m_DBQuery.WriteBlob(qSql, lpMacroInfo, 256);
+	m_DBQuery.WriteBlob(qSql, lpMacroInfo, MAX_MACRO_DATA);
 }
 
 BOOL CCharDBSet::LoadMacroInfo(char* szAccountID, char* Name, BYTE* lpMacroInfo)
@@ -747,16 +747,21 @@ BOOL CCharDBSet::LoadMacroInfo(char* szAccountID, char* Name, BYTE* lpMacroInfo)
 	qSql.Format("EXEC WZ_MACROINFO_LOAD '%s', '%s'", szAccountID, Name);
 	int nRet = m_DBQuery.ReadBlob(qSql, lpMacroInfo);
 
-	if(nRet == 0)
+
+	if (nRet)
 	{
-		for(int n = 0; n < 256; n++)
+		if (nRet == -1)
 		{
-			lpMacroInfo[n] = 0xFF;
+			m_DBQuery.Clear();
+			return 0;
 		}
 	}
-	else if(nRet == -1)
+	else
 	{
-		return FALSE;
+		for (int i = 0; i < MAX_MACRO_DATA; i++)
+		{
+			lpMacroInfo[i] = -1;
+		}
 	}
 
 	return TRUE;
@@ -917,13 +922,13 @@ void CCharDBSet::RuudToken_Update(char *AccountID, char *Name, unsigned int dwRu
 	int nRetrun;
 	__int16 sqlReturn;
 	CString sql;
-	char szCahrName[11]; // [esp+F8h] [ebp-40h]
-	char szId[MAX_IDSTRING + 1]; // [esp+10Ch] [ebp-2Ch]
+	char szCahrName[MAX_IDSTRING + 1];
+	char szId[MAX_IDSTRING + 1];
 
-	szId[10] = 0;
-	memcpy(szId, AccountID, 0xAu);
-	szCahrName[10] = 0;
-	memcpy(szCahrName, Name, 0xAu);
+	szId[MAX_IDSTRING] = 0;
+	memcpy(szId, AccountID, MAX_IDSTRING);
+	szCahrName[MAX_IDSTRING] = 0;
+	memcpy(szCahrName, Name, MAX_IDSTRING);
 
 	if (strlen(szCahrName) && (strlen(szCahrName) <= 0xA) &&
 		(strlen(szId)) && (strlen(szId) <= 0xA))
@@ -962,7 +967,7 @@ void CCharDBSet::RuudToken_Update(char *AccountID, char *Name, unsigned int dwRu
 	}
 	else
 	{
-		LogAddC(2,"%s] ؎֥ ߡׯ %s %d",szCahrName,__FILE__, __LINE__);
+		LogAddC(2,"%s] 로드 에러 %s %d",szCahrName,__FILE__, __LINE__);
 	}
 }
 
@@ -1088,7 +1093,7 @@ __int64 CCharDBSet::SaveEventInvenItem(char *Name, BYTE *ItemBuf, char *AccountI
 	return TRUE;
 }
 
-int CCharDBSet::LoadEventInvenItem(char *Name, char *ItemBuf, char *AccountId, int *DbVersion)
+int CCharDBSet::LoadEventInvenItem(char *Name, BYTE *ItemBuf, char *AccountId, int *DbVersion)
 {
 	int result;
 	CString qSql;
@@ -1105,7 +1110,7 @@ int CCharDBSet::LoadEventInvenItem(char *Name, char *ItemBuf, char *AccountId, i
 		qSql.Format("SELECT DbVersion from T_Event_Inventory where AccountID='%s'",AccountId);
 		if (this->m_DBQuery.Exec(qSql))
 		{
-			if (this->m_DBQuery.Fetch() == 100)
+			if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 			{
 				this->m_DBQuery.Clear();
 				result = 0;

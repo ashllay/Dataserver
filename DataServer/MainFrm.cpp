@@ -170,7 +170,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create status bar\n");
 		return -1;      // fail to create
 	}
-	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
+	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT));
 	LogInit(LOG_PRINT);
 
 	gDirPath.SetFirstPath("..\\data\\");
@@ -195,7 +195,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		gbIsJumpingServer = CWZSEncode.GetNumber();//season12
 	}
-		
+
 	if (strcmp(szDbConnectDsn, "") == 0)
 	{
 		strcpy(szDbConnectDsn, "MuOnline");
@@ -511,7 +511,7 @@ BOOL CMainFrame::ServerCreate()
 
 	gItemCount = gGSDbSet.GetCount();
 
-	//DbSet New
+	//DbSet New 
 #ifdef DARKLORD_WORK
 	if (!PetDBSet.Connect())
 	{
@@ -652,32 +652,10 @@ BOOL CMainFrame::ServerCreate()
 	{
 		return FALSE;
 	}
-	/*CMonsterKillInfoDbSet g_MonsterKillInfoDbSet;
-	CBlockChatUserDBSet g_BlockChatUserDBSet;
-	LabyrinthDBSet g_LabyrinthDBSet;
-	CRestoreItemDBSet g_CRestoreItemDBSet;
-	CPlayTimeEventDBSet g_PlayTimeEventDBSet;
-	CPCBangRenewalDBSet g_PCBangRenewalDBSet;
-	CMuunSystemDBSet g_CMuunSystemDBSet;
-	CMineSystemDBSet g_MineSystemDBSet;
-	CHuntingRecordDBSet g_HuntingRecordDBSet;
-	CPentagramDBSet g_PentagramDBSet;
-	CPentagramLogDBSet g_PentagramLogDBSet;
-	CArcaBattleDBSet gCArcaBattleDBSet;
-	CPeriodBuffDBSet g_PeriodBuffDBSet;
-	CMuRummyDBSet g_CMuRummyDBSet;
-	CBombHuntDBSet g_BombHuntDBSet;
-	CPShopSystemDBSet g_PShopSystemDBSet;
-	CSPServerDBSet g_SPServerDBSet;
-	IllusionTempleLeagueDBSet g_ITLDBset;
-	EventMapEnterCount g_EventMapEnterCount;
-	CRuudLogDbSet g_RuudLogDBSet;
-	CGremoryCaseDBSet g_CGremoryCaseDBSet;
-	CDevilSquareFinalDBSet g_DSFDBset;
-	ChaosCastleFinalDBSet g_CCFDbSet;*/
+
 	if (strcmp(szVersion, "4.1") == 0)
 	{
-		MsgBox("4.0 버젼에선 VER_CHATWINDOW_OPTION 이 추가될시 문제가 발생합니다");
+		MsgBox("In version 4.0, a problem occurs when VER_CHATWINDOW_OPTION is added.");
 	}
 
 	cAM.StartThread();
@@ -732,7 +710,7 @@ DWORD WINAPI GuildLoadThread(LPVOID p)
 	return 1;
 }
 
-void CMainFrame::DisplayStatusBar(char *szString)
+void CMainFrame::DisplayStatusBar(char* szString)
 {
 	this->m_wndStatusBar.SetWindowText(szString);
 }

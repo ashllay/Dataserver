@@ -20,18 +20,18 @@ BOOL CMonsterKillInfoDbSet::Connect()
 
 int CMonsterKillInfoDbSet::DSDB_SelectMonsterKillInfo(char *szAccountID, char *szCharName, _tagSDHP_ANS_EVENT_MONSTER_KILL_INFO *pMsgSend)
 {
-	int result;
+	int result; 
 	CString qSql;
-	
+
 	qSql.Format("EXEC WZ_EvolutionMonsterInfoLoad '%s', '%s'",szAccountID,szCharName);
 
 	if (m_DBQuery.Exec(qSql))
 	{
-		if (this->m_DBQuery.Fetch() == 100)
+		if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 		{
 			this->m_DBQuery.Clear();
 			pMsgSend->btResult = 2;
-			result = 0;
+			result = FALSE;
 		}
 		else
 		{
@@ -53,17 +53,16 @@ int CMonsterKillInfoDbSet::DSDB_SelectMonsterKillInfo(char *szAccountID, char *s
 			pMsgSend->DamageScore = this->m_DBQuery.GetInt64("AccumDmg");
 			pMsgSend->btResult = 0;
 			this->m_DBQuery.Clear();
-			result = 1;
+			result = TRUE;
 		}
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
 		LogAddTD("error-L3 : [EventMonster] DSDB_SelectMonsterKillInfo [%s][%s] %s %d",
-			szAccountID,
-			szCharName,__FILE__,__LINE__);
+			szAccountID,szCharName,__FILE__,__LINE__);
 		pMsgSend->btResult = 1;
-		result = 0;
+		result = FALSE;
 	}
 	return result;
 }
@@ -72,11 +71,8 @@ int CMonsterKillInfoDbSet::DSDB_SelectMonsterKillInfo(char *szAccountID, char *s
 int CMonsterKillInfoDbSet::DSDB_UpdateMonsterKillInfo(_tagSDHP_REQ_EVENT_MONSTER_KILL_INFO_SAVE *pMsgRecv)
 {
 	int result; 
-	int iUserIndex;
 	CString qSql;
 
-	iUserIndex = -1;
-	iUserIndex = pMsgRecv->iUserIndex;
 	qSql.Format("EXEC WZ_EvolutionMonsterInfoSave '%s', '%s' ,%d, %d, %d, %d, %d, %d,  %d, %d, %d, %d, %d, %d, %d, %d, %d, %I64d",
 		pMsgRecv->AccountID,
 		pMsgRecv->CharName,
@@ -95,19 +91,18 @@ int CMonsterKillInfoDbSet::DSDB_UpdateMonsterKillInfo(_tagSDHP_REQ_EVENT_MONSTER
 		pMsgRecv->MonsterIndex5,
 		pMsgRecv->MonsterLevel5,
 		pMsgRecv->KillCount5,
-		LODWORD(pMsgRecv->DamageScore),
-		HIDWORD(pMsgRecv->DamageScore));
+		pMsgRecv->DamageScore);
 	if (this->m_DBQuery.Exec(qSql))
 	{
 		this->m_DBQuery.Clear();
-		result = 1;
+		result = TRUE;
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
 		LogAddTD("error-L3 : [EventMonster] DSDB_SelectMonsterKillInfo [%s][%s] %s %d",
 			pMsgRecv->AccountID,pMsgRecv->CharName, __FILE__, __LINE__);
-		result = 0;
+		result = FALSE;
 	}
 	return result;
 }

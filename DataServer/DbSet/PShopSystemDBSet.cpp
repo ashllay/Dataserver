@@ -45,7 +45,7 @@ int CPShopSystemDBSet::LoadPShopItemValueInfo(char *szAccountID, char *Name, PMS
 
 			if (this->m_DBQuery.Exec(szQuery))
 			{
-				for (sqlRet = this->m_DBQuery.Fetch(); sqlRet != 100; sqlRet = this->m_DBQuery.Fetch())
+				for (sqlRet = this->m_DBQuery.Fetch(); sqlRet != SQL_NO_DATA; sqlRet = this->m_DBQuery.Fetch())
 				{
 					if (sqlRet == -1)
 						break;
@@ -71,13 +71,13 @@ int CPShopSystemDBSet::LoadPShopItemValueInfo(char *szAccountID, char *Name, PMS
 		}
 		else
 		{
-			LogAddC(2, "%s] ؎֥ ߡׯ %s %d", szName, __FILE__, __LINE__);
+			LogAddC(2, "%s] 로드 에러 %s %d", szName, __FILE__, __LINE__);
 			result = 1;
 		}
 	}
 	else
 	{
-		LogAddC(2, "%s] ؎֥ ߡׯ %s %d", szId, __FILE__, __LINE__);
+		LogAddC(2, "%s] 로드 에러 %s %d", szId, __FILE__, __LINE__);
 		result = 1;
 	}
 	return result;

@@ -39,9 +39,15 @@ short gSObjAdd(SOCKET socket, char *ip)
 
 short gSObjDel(int index)
 {
+	if (index < 0 || index > MAX_SERVEROBJECT)
+	{
+		LogAdd("(%s)(%d) = index error (%d)", __FILE__, __LINE__, index);
+		return 0;
+	}
+
 	gSObj[index].Connected = 0;	// 사용 안함
 	gSObjCount--;
-	//LogAdd(" %d server delete", index);//fuck this log on close database
+	LogAdd(" %d server delete", index);
 	return 1;
 }
 

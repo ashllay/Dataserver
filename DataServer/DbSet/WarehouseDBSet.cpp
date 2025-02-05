@@ -102,7 +102,7 @@ BOOL CWarehouseDBSet::Load(char *AccountID, BYTE* itembuf, int& money, BYTE& _db
 
 	if (this->m_DBQuery.Exec(qSql) == 1)
 	{
-		if (this->m_DBQuery.Fetch() == 100)
+		if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 		{
 			money = 0;
 			LogAdd("CWarehouseDBSet::Load : get money error %s", AccountID);

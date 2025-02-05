@@ -17,7 +17,7 @@ BOOL CRestoreItemDBSet::Connect()
 	return 0;
 }
 
-//----- (0044BCC0) --------------------------------------------------------
+
 int CRestoreItemDBSet::DSDB_SelectRestoreItem(char *AccountID, char *Name, int userIndex, _SDHP_ANS_RESTORE_ITEM_LIST *lpSendMsg)
 {
 	int result;
@@ -41,7 +41,7 @@ int CRestoreItemDBSet::DSDB_SelectRestoreItem(char *AccountID, char *Name, int u
 		QueryStr.Format("SELECT DbVersion FROM T_RestoreItem_Inventory WHERE AccountID='%s' AND [Name]='%s'",AccountID,Name);
 		if (this->m_DBQuery.Exec(QueryStr))
 		{
-			if (this->m_DBQuery.Fetch() == 100)
+			if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 			{
 				this->m_DBQuery.Clear();
 				LogAddTD("error-L3 : [RestoreItem] - SelectRestoreItem #5 [%s][%s] %s %d",AccountID,Name,__FILE__, __LINE__);lpSendMsg->result = 5;
@@ -66,8 +66,8 @@ int CRestoreItemDBSet::DSDB_SelectRestoreItem(char *AccountID, char *Name, int u
 	return result;
 }
 
-//----- (0044BF70) --------------------------------------------------------
-__int64 CRestoreItemDBSet::DSDB_UpdateRestoreItem(char *AccountID, char *Name, char *RestoreInventoryBuf)
+
+__int64 CRestoreItemDBSet::DSDB_UpdateRestoreItem(char *AccountID, char *Name, LPBYTE RestoreInventoryBuf)
 {
 	CString QueryStr;
 

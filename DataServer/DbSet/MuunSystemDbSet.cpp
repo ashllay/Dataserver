@@ -33,7 +33,7 @@ BOOL CMuunSystemDBSet::LoadMuunInvenItem(char *Name, BYTE *ItemBuf, char *Accoun
 		qSql.Format("EXEC WZ_GetMuunSubEquip '%s', '%s'",AccountId,Name);
 		if (this->m_DBQuery.Exec(qSql))
 		{
-			if (this->m_DBQuery.Fetch() == 100)
+			if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 			{
 				this->m_DBQuery.Clear();
 				result = 0;
@@ -58,11 +58,10 @@ BOOL CMuunSystemDBSet::LoadMuunInvenItem(char *Name, BYTE *ItemBuf, char *Accoun
 
 __int64 CMuunSystemDBSet::SaveMuunInvenItem(char *Name, BYTE *ItemBuf, char *AccountId)
 {
-
-	CString qSql; // [esp+E0h] [ebp-20h]
+	CString qSql;
 
 	qSql.Format("EXEC WZ_SetSaveMuunInventory '%s', '%s', ?",AccountId,Name);
-	this->m_DBQuery.WriteBlob(qSql, ItemBuf, 1632);
+	this->m_DBQuery.WriteBlob(qSql, ItemBuf, MAX_DBMUUNINVENTORY);
 	this->m_DBQuery.Clear();
 	return TRUE;
 }
@@ -92,7 +91,7 @@ BOOL CMuunSystemDBSet::MuunInvenSubEquipOpen(char *AccountId, char *Name)
 
 bool CMuunSystemDBSet::SelectMuunPeriodInfo(char *szName, _stMuunPeriodInfoList *MuunPeriodInfoList, BYTE *btListCnt)
 {
-	bool result;
+	int result;
 	__int16 sqlRetrun;
 	CString QueryStr; 
 
@@ -116,13 +115,13 @@ bool CMuunSystemDBSet::SelectMuunPeriodInfo(char *szName, _stMuunPeriodInfoList 
 		}
 		*btListCnt = iCnt;
 		this->m_DBQuery.Clear();
-		result = true;
+		result = 1;
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
 		LogAddTD("error-L3 : [MuunSystem] SelectMuunPeriodInfo #1 [%s] %s %d",szName, __FILE__, __LINE__);
-		result = false;
+		result = 0;
 	}
 	return result;
 }
@@ -136,7 +135,7 @@ BOOL CMuunSystemDBSet::InsertMuunPeriodInfo(char *szName, unsigned __int16 wItem
 	QueryStr.Format("EXEC WZ_MuunPeriodInsert '%s', %d, %u, %d, %u",szName,wItemType,dwSerial,dwItemDur,lExpireDate);
 	if (this->m_DBQuery.Exec(QueryStr))
 	{
-		if (this->m_DBQuery.Fetch() == 100)
+		if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 		{
 			this->m_DBQuery.Clear();
 			result = 2;
@@ -166,7 +165,7 @@ BOOL CMuunSystemDBSet::UpdateMuunPeriodInfo(char *szName, unsigned __int16 wItem
 
 	if (this->m_DBQuery.Exec(QueryStr))
 	{
-		if (this->m_DBQuery.Fetch() == 100)
+		if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 		{
 			this->m_DBQuery.Clear();
 			result = 2;

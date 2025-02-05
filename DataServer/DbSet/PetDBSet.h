@@ -19,12 +19,12 @@ public:
 	virtual ~CPetDBSet();
 
 	BOOL Connect();
-	BOOL LoadPetInfo(DWORD number, int& Level, __int64& Exp);
-	BOOL SavePetInfo(DWORD number, int Level, __int64 Exp);
-	BOOL CreatePetItemInfo(DWORD serial, int Level, __int64 Exp);
+	BOOL LoadPetInfo(DWORD number, int& Level, INT64& Exp);
+	BOOL SavePetInfo(DWORD number, int Level, INT64 Exp);
+	BOOL CreatePetItemInfo(DWORD serial, int Level, INT64 Exp);
 	BOOL UBFCopyPetInfo(unsigned int number, unsigned __int16 ServerCode); // idb
-	BOOL LoadPetInfoForUBF(unsigned int number, int *Level, __int64 *Exp, unsigned __int16 SeverCode); // idb
-	BOOL SavePetInfoForUBF(unsigned int number, int Level, __int64 Exp, unsigned __int16 SeverCode); // idb
+	BOOL LoadPetInfoForUBF(unsigned int number, int *Level, INT64 *Exp, unsigned __int16 SeverCode); // idb
+	BOOL SavePetInfoForUBF(unsigned int number, int Level, INT64 Exp, unsigned __int16 SeverCode); // idb
 };
 
 #endif // !defined(AFX_PETDBSET_H__7E383225_7C60_45A4_8748_60FDF2C22CC4__INCLUDED_)

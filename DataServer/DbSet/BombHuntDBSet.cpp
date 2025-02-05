@@ -17,7 +17,7 @@ BOOL CBombHuntDBSet::Connect()
 	return 0;
 }
 
-int CBombHuntDBSet::DBSelectBombHunt(char *szAccountID, char *szName, unsigned __int16 *wOutScore, char *btOutGameState, char *szOutTileState)
+int CBombHuntDBSet::DBSelectBombHunt(char *szAccountID, char *szName, BYTE *wOutScore, char *btOutGameState, char *szOutTileState)
 {
 	int result;
 	CString QueryStr;
@@ -30,7 +30,7 @@ int CBombHuntDBSet::DBSelectBombHunt(char *szAccountID, char *szName, unsigned _
 
 	if (this->m_DBQuery.Exec(QueryStr))
 	{
-		if (this->m_DBQuery.Fetch() == 100)
+		if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 		{
 			this->m_DBQuery.Clear();
 			result = 0;
@@ -53,12 +53,10 @@ int CBombHuntDBSet::DBSelectBombHunt(char *szAccountID, char *szName, unsigned _
 	return result;
 }
 
-int CBombHuntDBSet::DBInsertBombHunt(char *szAccountID, char *szName, unsigned __int16 wScore, unsigned __int16 wGameState, char *szTileState)
+int CBombHuntDBSet::DBInsertBombHunt(char *szAccountID, char *szName, BYTE wScore, BYTE wGameState, BYTE *szTileState)
 {
 	int result;
 	CString QueryStr;
-	int iItemCount = 0;
-	int iReturnCode = 0;
 
 	QueryStr.Format("EXEC WZ_BombHuntSetSave '%s', '%s', %d, %d, '%s'", szAccountID, szName, wGameState, wScore, szTileState);
 
@@ -102,7 +100,7 @@ int CBombHuntDBSet::DBDeleteBombHunt(char *szAccountID, char *szName)
 	return result;
 }
 
-int CBombHuntDBSet::DBInsertBombHuntLog(char *szAccountID, char *szName, unsigned __int16 wScore, char btClear)
+int CBombHuntDBSet::DBInsertBombHuntLog(char *szAccountID, char *szName, BYTE wScore, char btClear)
 {
 	int result;
 	CString QueryStr;

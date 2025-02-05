@@ -30,7 +30,7 @@ BOOL CCharPreviewDBSet::Conenect()
 
 	return TRUE;
 }
-int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int *_level, int *_class, BYTE *Inventory, BYTE *_ctlcode, BYTE *_dbverstion, BYTE *_pkLevel, BYTE *_btGuildStatus)
+int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int* _level, int* _class, BYTE *Inventory, BYTE* _ctlcode, BYTE* _dbverstion, BYTE*_pkLevel, BYTE* _btGuildStatus)
 {
 	int nRet;
 	int dbverstion;
@@ -47,7 +47,7 @@ int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int *_level, int *_c
 		this->m_DBQuery.Clear();
 		return 0;
 	}
-	if (this->m_DBQuery.Fetch() == 100)
+	if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 	{
 		this->m_DBQuery.Clear();
 		return 0;
@@ -56,26 +56,20 @@ int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int *_level, int *_c
 	*_level = this->m_DBQuery.GetInt("cLevel");
 	*_class = this->m_DBQuery.GetInt("Class");
 	*_pkLevel = this->m_DBQuery.GetInt("PkLevel");
-	//ctlcode = this->m_DBQuery.GetInt("CtlCode");
-	//if (ctlcode < 0)
-	//	LOBYTE(ctlcode) = 0;
-	//*_ctlcode = ctlcode;
 	ctlcode = m_DBQuery.GetInt("CtlCode");
 
 	if (ctlcode < 0)
 	{
 		ctlcode = 0;
 	}
-	/*dbverstion = this->m_DBQuery.GetInt("DbVersion");
-	if (dbverstion < 0)
-		LOBYTE(dbverstion) = 0;
-	*_dbverstion = dbverstion;*/
+	*_ctlcode = ctlcode;
 	dbverstion = m_DBQuery.GetInt("DbVersion");
 
 	if (dbverstion < 0)
 	{
 		dbverstion = 0;
 	}
+	*_dbverstion = dbverstion;
 	this->m_DBQuery.Clear();
 	qSql.Format("WZ_GetLoadInventory '%s', '%s'", AccountId, Name);
 	nRet = this->m_DBQuery.ReadBlob(qSql, Inventory);
@@ -107,7 +101,7 @@ int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int *_level, int *_c
 	}
 
 	m_DBQuery.Clear();
-	return 1;
+	return TRUE;
 }
 //BOOL CCharPreviewDBSet::GetChar(char* Name, /*char *AccountId, */int& _level, int& _class, BYTE* Inventory, BYTE& _ctlcode, BYTE& _dbverstion, BYTE& _btGuildStatus)
 //{
@@ -197,7 +191,7 @@ int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int *_level, int *_c
 //	return TRUE;
 //}
 
-BOOL CCharPreviewDBSet::GetRealNameAndServerCode(char *szUBFName, char *szRealName, WORD *ServerCode, int IsUBFServer)
+BOOL CCharPreviewDBSet::GetRealNameAndServerCode(char *szUBFName, char *szRealName, WORD*ServerCode, int IsUBFServer)
 {
 	int result;
 	__int16 sqlReturn;
@@ -239,7 +233,7 @@ BOOL CCharPreviewDBSet::GetRealNameAndServerCode(char *szUBFName, char *szRealNa
 		}
 		else
 		{
-			LogAddC(2,"%s] ؎֥ ߡׯ %s %d",szUBFName, __FILE__, __LINE__);
+			LogAddC(2,"%s] 로드 에러 %s %d",szUBFName, __FILE__, __LINE__);
 			result = 0;
 		}
 	}

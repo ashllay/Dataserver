@@ -15,18 +15,49 @@
 typedef struct
 {
 	int DBNumber;
-	char AccountId[MAX_IDSTRING+1];
-	char GameID1[MAX_IDSTRING+1];
-	char GameID2[MAX_IDSTRING+1];
-	char GameID3[MAX_IDSTRING+1];
-	char GameID4[MAX_IDSTRING+1];
-	char GameID5[MAX_IDSTRING+1];
+	char AccountId[MAX_IDSTRING + 1];
+	char GameID1[MAX_IDSTRING + 1];
+	char GameID2[MAX_IDSTRING + 1];
+	char GameID3[MAX_IDSTRING + 1];
+	char GameID4[MAX_IDSTRING + 1];
+	char GameID5[MAX_IDSTRING + 1];
 	BYTE CtlCode;
 	BYTE MoveCnt;
-}AccountCharacterInfo, *LPAccountCharacterInfo;
+}AccountCharacterInfo, * LPAccountCharacterInfo;
 
+struct SDHP_ANS_SETACCOUNTINFO
+{
+	PBMSG_HEAD h;
+	char AccountId[MAX_IDSTRING + 1];
+	short Number;
+	BYTE Result;
+};
 
-class CAccountCharDBSet  
+struct SDHP_ANS_SET_EXTENDEDINVEN_COUNT
+{
+	PBMSG_HEAD h;
+	WORD Number;
+	BYTE Result;
+	BYTE ExtendedInvenCount;
+	DWORD EventIndex;
+	int ItemPos;
+	BYTE BuyAtInGameShop;
+	BYTE IsReplace;
+};
+
+struct SDHP_ANS_SET_EXTENDEDWAREHOUSE_COUNT
+{
+	PBMSG_HEAD h;
+	WORD Number;
+	BYTE Result;
+	BYTE ExtendedWarehouseCount;
+	DWORD EventIndex;
+	int ItemPos;
+	BYTE BuyAtInGameShop;
+	BYTE IsReplace;
+};
+
+class CAccountCharDBSet
 {
 public:
 	CAccountCharDBSet();
@@ -42,18 +73,21 @@ public:
 	int GetAccountCharBlank(char* Id);
 	BOOL CurAccountCharacterSet(char* id, char* GameID);
 	BYTE GetAccountCharCtlCode(char* Id);
-	BOOL GetSummonerCardInfo(char* Id);
-	BOOL SetSummonerCardInfo(char* Id);
-	BOOL SetCharacterExGameServerCode(char* Name, short sExGameServerCode);
-	BOOL SetCharacterExtendedInvenCountAdd(char* Name, BYTE btAddExtendedInvenCount);
-	BOOL SetCharacterExtendedInvenCountReplace(char* Name, BYTE btReplaceExtendedInvenCount);
-	BOOL GetCharacterExtendedInvenCount(char* Name, char* btAddExtendedInvenCount);
-	BOOL SetCharacterExtendedWarehouseCountAdd(char* Name, BYTE btAddExtendedWarehouseCount);
-	BOOL SetCharacterExtendedWarehouseCountReplace(char* Name, BYTE btReplaceExtendedWarehouseCount);
-	BOOL GetCharacterExtendedWarehouseCount(char* Name, BYTE* btAddExtendedWarehouseCount);
-	//S12
-	BOOL SetCharacterSlotCount(char *Name, BYTE btAddSlotCount);
-	BOOL GetCharacterSlotCount(char *Name, BYTE *btSlotCount);
+
+	BYTE GetSummonerCardInfo(char* Id);
+	BYTE SetSummonerCardInfo(char* Id, int Value);
+
+	int GetCharacterExtendedInvenCount(char* id, BYTE& ExtendedInvenCount);
+	int SetCharacterExtendedInvenCountAdd(char* id, BYTE ExtendedInvenCount);
+	int SetCharacterExtendedInvenCountReplace(char* id, BYTE ExtendedInvenCount);
+
+	BOOL CAccountCharDBSet::GetCharacterExtendedWarehouseCount(char* Name, BYTE* btAddExtendedWarehouseCount);
+	int SetCharacterExtendedWarehouseCountAdd(char* id, BYTE& ExtendedWarehouseCount);
+	int SetCharacterExtendedWarehouseCountReplace(char* id, BYTE ExtendedWarehouseCount);
+
+	BOOL GetCharacterSlotCount(char* Name, BYTE* btSlotCount);
+	BOOL SetCharacterSlotCount(char* Name, BYTE btAddSlotCount);
+
 public:
 	CQuery m_DBQuery;
 };

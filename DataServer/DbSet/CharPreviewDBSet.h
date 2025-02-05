@@ -17,8 +17,8 @@ public:
 
 	BOOL Conenect();
 	//BOOL GetChar(char* Name, /*char *AccountId, */int& _level, int& _class, BYTE* Inventory, BYTE& _ctlcode, BYTE& _dbverstion, BYTE& _btGuildStatus);
-	BOOL GetChar(char *Name, char *AccountId, int *_level, int *_class, BYTE *Inventory, BYTE *_ctlcode, BYTE *_dbverstion, BYTE *_pkLevel, BYTE *_btGuildStatus); // idb
-	BOOL GetRealNameAndServerCode(char *szUBFName, char *szRealName, WORD *ServerCode, int IsUBFServer);//s12
+	BOOL GetChar(char* Name, char* AccountId, int* _level, int* _class, BYTE* Inventory, BYTE* _ctlcode, BYTE* _dbverstion, BYTE* _pkLevel, BYTE* _btGuildStatus); // idb
+	BOOL GetRealNameAndServerCode(char *szUBFName, char *szRealName, WORD*ServerCode, int IsUBFServer);//s12
 
 public:
 	CQuery m_DBQuery;

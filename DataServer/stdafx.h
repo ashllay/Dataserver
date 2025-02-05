@@ -8,6 +8,7 @@
 #ifndef VC_EXTRALEAN
 #define VC_EXTRALEAN            // Exclude rarely-used stuff from Windows headers
 #endif
+#include "targetver.h"
 
 #pragma warning ( disable : 4786 )
 #pragma warning ( disable :4566)
@@ -59,3 +60,4 @@ extern char szDbConnectDsn[];
 extern char g_szDBID_DESC[];
 
 //#define DEBUG_IOCP_LOG
+#define _SEASON12

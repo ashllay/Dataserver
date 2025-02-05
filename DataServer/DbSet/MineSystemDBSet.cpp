@@ -83,7 +83,7 @@ int CMineSystemDBSet::DSDB_QuerySelectUPTUserInfo(char *szCharName, SDHP_ANS_LOA
 	qSql.Format("exec WZ_MineSystem_Select_UPTUserInfo '%s'",szCharName);
 	if (this->m_DBQuery.Exec(qSql))
 	{
-		if (this->m_DBQuery.Fetch() == 100)
+		if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 		{
 			pMsgSend->byResult = 0;
 			this->m_DBQuery.Clear();
