@@ -202,7 +202,7 @@ BOOL CAccountCharDBSet::GetAccountInfo(char* Id, LPAccountCharacterInfo lpACInfo
 
 	if (strcmp(lpACInfo->AccountId, Id) != 0)
 	{
-		LogAddC(2, "error-L1:'%s' '%s' 아이디가 같지 않다.", lpACInfo->AccountId, Id);
+		LogAddC(LOGC_RED, "error-L1:'%s' '%s' 아이디가 같지 않다.", lpACInfo->AccountId, Id);
 		m_DBQuery.Clear();
 		return FALSE;
 	}

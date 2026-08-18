@@ -11,7 +11,6 @@ CMuRummyDBSet::~CMuRummyDBSet()
 
 BOOL CMuRummyDBSet::Connect()
 {
-	//return this->CDBConBase::Connect(szDbConnectID, szDbConnectPass);
 	if (m_DBQuery.Connect(3, szDbConnectDsn, szDbConnectID, szDbConnectPass))
 		return 1;
 	MsgBox("CMuRummyDBSet ODBC Connect Fail");
@@ -84,7 +83,6 @@ BOOL CMuRummyDBSet::DBSelectMuRummyCardInfo(char* szAccountID, char* szName, _ta
 }
 
 
-
 BOOL CMuRummyDBSet::DBInsertMuRummyCardInfo(char* szAccountID, char* szName, _tagMuRummyCardInfoDS* stMuRummyCardInfoDS, BYTE btGameType, BYTE btSpecialCardDeckCnt)
 {
 	int result;
@@ -130,7 +128,6 @@ BOOL CMuRummyDBSet::DBInsertMuRummyCardInfo(char* szAccountID, char* szName, _ta
 }
 
 
-
 BOOL CMuRummyDBSet::DBUpdateMuRummyCardInfo(char* szAccountID, char* szName, int iSlotNum, int iStatus, int iSequence)
 {
 	int result;
@@ -150,7 +147,6 @@ BOOL CMuRummyDBSet::DBUpdateMuRummyCardInfo(char* szAccountID, char* szName, int
 	}
 	return result;
 }
-
 
 
 BOOL CMuRummyDBSet::DBUpdateMuRummyScore(char* szAccountID, char* szName, WORD wScore, _tagMuRummyCardUpdateDS* stCardUpdateDS, BYTE btGameType, BYTE btSpecialCardDeckCnt, BYTE btMatchType)

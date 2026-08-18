@@ -27,30 +27,29 @@ BOOL CCharPreviewDBSet::Conenect()
 		MsgBox("CharPreviewDBSet ODBC Connect Fail");
 		return FALSE;
 	}
-
 	return TRUE;
 }
+
 int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int* _level, int* _class, BYTE *Inventory, BYTE* _ctlcode, BYTE* _dbverstion, BYTE*_pkLevel, BYTE* _btGuildStatus)
 {
-	int nRet;
 	int dbverstion;
 	int ctlcode;
 	CString qSql;
 
 	if (!SQLSyntexCheck(Name))
 	{
-		return 0;
+		return FALSE;
 	}
 	qSql.Format("SELECT Name, cLevel, Class, PkLevel, CtlCode, DbVersion FROM Character WHERE Name='%s'", Name);
 	if (!this->m_DBQuery.Exec(qSql))
 	{
 		this->m_DBQuery.Clear();
-		return 0;
+		return FALSE;
 	}
 	if (this->m_DBQuery.Fetch() == SQL_NO_DATA)
 	{
 		this->m_DBQuery.Clear();
-		return 0;
+		return FALSE;
 	}
 	this->m_DBQuery.GetStr("Name", Name);
 	*_level = this->m_DBQuery.GetInt("cLevel");
@@ -71,19 +70,21 @@ int CCharPreviewDBSet::GetChar(char *Name, char *AccountId, int* _level, int* _c
 	}
 	*_dbverstion = dbverstion;
 	this->m_DBQuery.Clear();
+
 	qSql.Format("WZ_GetLoadInventory '%s', '%s'", AccountId, Name);
-	nRet = this->m_DBQuery.ReadBlob(qSql, Inventory);
+	int nRet = this->m_DBQuery.ReadBlob(qSql, Inventory);
 	if (nRet)
 	{
-		if (nRet == -1)
+		if (nRet == SQL_NULL_DATA)
 		{
-			return 0;
+			return FALSE;
 		}
 	}
 	else
 	{
-		memset(Inventory, 255, 0x78u);
+		memset(Inventory, 0xFF, sizeof(MAX_DBEQUIPMENT));
 	}
+
 	this->m_DBQuery.Clear();
 	qSql.Format("SELECT G_Status FROM GuildMember WHERE Name='%s'", Name);
 
@@ -196,15 +197,15 @@ BOOL CCharPreviewDBSet::GetRealNameAndServerCode(char *szUBFName, char *szRealNa
 	int result;
 	__int16 sqlReturn;
 	CString qSql;
-	char szCahrUBFName[11];
+	char szCahrUBFName[MAX_IDSTRING+1];
 
 
 	if (this->m_DBQuery.IsConnected())
 	{
-		szCahrUBFName[10] = 0;
-		memcpy(szCahrUBFName, szUBFName, 0xAu);
+		szCahrUBFName[MAX_IDSTRING] = 0;
+		memcpy(szCahrUBFName, szUBFName, MAX_IDSTRING);
 		//strlen(szCahrUBFName);
-		if (strlen(szCahrUBFName) && (strlen(szCahrUBFName) <= 0xA))
+		if (strlen(szCahrUBFName) && (strlen(szCahrUBFName) <= MAX_IDSTRING))
 		{
 			qSql.Format("EXEC WZ_UnityBattleFieldGetRealName_r '%s'",szCahrUBFName);
 			if (this->m_DBQuery.Exec(qSql))
@@ -233,7 +234,7 @@ BOOL CCharPreviewDBSet::GetRealNameAndServerCode(char *szUBFName, char *szRealNa
 		}
 		else
 		{
-			LogAddC(2,"%s] 로드 에러 %s %d",szUBFName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED,"%s] 로드 에러 %s %d",szUBFName, __FILE__, __LINE__);
 			result = 0;
 		}
 	}

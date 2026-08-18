@@ -19,16 +19,11 @@ BOOL CRuudLogDbSet::Connect()
 
 int CRuudLogDbSet::setRuudTokenLog(char *AccoundID, char *Name, unsigned int dwRuudTotal, unsigned int dwRuudValue, char byFlag)
 {
-	int result; // eax
-	CString QueryStr; // [esp+ECh] [ebp-20h]
+	int result;
+	CString QueryStr;
 
-	QueryStr.Format(
-		"WZ_SET_RUUD_TOKEN_LOG '%s', '%s', %d, %d, %d ",
-		AccoundID,
-		Name,
-		dwRuudTotal,
-		dwRuudValue,
-		byFlag);
+	QueryStr.Format("WZ_SET_RUUD_TOKEN_LOG '%s', '%s', %d, %d, %d ",AccoundID,Name,dwRuudTotal,dwRuudValue,byFlag);
+
 	if (this->m_DBQuery.Exec(QueryStr))
 	{
 		this->m_DBQuery.Clear();

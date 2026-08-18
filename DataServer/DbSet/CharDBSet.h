@@ -15,7 +15,7 @@
 typedef struct
 {
 	/*int registry;
-	char AccountID[11];
+	char AccountID[MAX_IDSTRING + 1];
 	char Name[11];
 	char Class;
 	int Level;

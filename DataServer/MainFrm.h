@@ -157,6 +157,7 @@ public:
 
 protected:  // control bar embedded members
 	CStatusBar  m_wndStatusBar;
+	CToolBar    m_wndToolBar;
 	CChildView  m_wndView;
 
 // Generated message map functions
@@ -170,6 +171,7 @@ protected:
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg void OnClose();
 	afx_msg LONG OnAsyncSelectServerAccept(WPARAM wParam, LPARAM lParam);
+	afx_msg void ReconnectUnityDB();//new
 	// NOTE - the ClassWizard will add and remove member functions here.
 	//    DO NOT EDIT what you see in these blocks of generated code!
 	//}}AFX_MSG

@@ -19,13 +19,12 @@ BOOL EventMapEnterCount::Connect()
 
 int EventMapEnterCount::GetEventMapEnterCount(char *CharName, char *BloodCastle, char *ChaosCastle, char *DevilSquare, char *DoppelGanger, char *ImperialGuardian_Weekdays, char *IllusionTempleRenewal)
 {
-	int result; // eax
-	__int16 sqlReturn; // [esp+F8h] [ebp-2Ch]
-	CString QueryStr; // [esp+104h] [ebp-20h]
+	int result;
+	__int16 sqlReturn;
+	CString QueryStr;
 
-	QueryStr.Format(
-		"WZ_EventMapEnterCount_Get '%s'",
-		CharName);
+	QueryStr.Format("WZ_EventMapEnterCount_Get '%s'", CharName);
+
 	if (this->m_DBQuery.Exec(QueryStr))
 	{
 		sqlReturn = this->m_DBQuery.Fetch();
@@ -43,24 +42,20 @@ int EventMapEnterCount::GetEventMapEnterCount(char *CharName, char *BloodCastle,
 		else
 		{
 			this->m_DBQuery.Clear();
-			LogAddTD(
-				"error-L3 : [EventMapEnterCount] WZ_EventMapEnterCount_Get #2 %d %s %d",
-				sqlReturn, __FILE__, __LINE__);
+			LogAddTD("error-L3 : [EventMapEnterCount] WZ_EventMapEnterCount_Get #2 %d %s %d",sqlReturn, __FILE__, __LINE__);
 			result = -2;
 		}
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
-		LogAddTD(
-			"error-L3 : [EventMapEnterCount] WZ_EventMapEnterCount_Get #1 %s %d", __FILE__, __LINE__);
+		LogAddTD("error-L3 : [EventMapEnterCount] WZ_EventMapEnterCount_Get #1 %s %d", __FILE__, __LINE__);
 		result = -1;
 	}
 	return result;
 }
-// 5CDA8C: using guessed type int `EventMapEnterCount::GetEventMapEnterCount'::`2'::__LINE__Var;
 
-//----- (0043A8E0) --------------------------------------------------------
+
 int EventMapEnterCount::SetEventMapEnterCount(char *CharName, char BloodCastle, char ChaosCastle, char DevilSquare, char DoppelGanger, char ImperialGuardian_Weekdays, char IllusionTempleRenewal)
 {
 	int result;

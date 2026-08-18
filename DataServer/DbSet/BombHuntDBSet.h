@@ -22,6 +22,13 @@ typedef struct _tagPMSG_REQ_BOMB_HUNT_SELECT_DS
 /* 1038 */
 typedef struct _tagPMSG_ANS_BOMB_HUNT_SELECT_DS
 {
+	 _tagPMSG_ANS_BOMB_HUNT_SELECT_DS()
+	{
+		this->wScore = 0;
+		this->btGameState = 0;
+#pragma message("The decompilations size is 48 but the sizeof(szTileState) is 49 check here if BOMB_HUNT have any issues")
+		memset(this->szTileState, 0, sizeof(szTileState));
+	}
 	PBMSG_HEAD2 h; // C1:E8:20 DS->GS
 	WORD aIndex;
 	BYTE btResult;

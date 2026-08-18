@@ -9,6 +9,7 @@
 #include "ServerPrc.h"
 #include "WZIPCheck.h"
 #include "BadSyntaxChk.h"
+#include "DelayHandler.h"
 #include "MapServerManager_DS.h"
 
 #ifdef _DEBUG
@@ -17,7 +18,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-char szVersion[] = DATASERVER_VERSION;
+char szVersion[8] = DATASERVER_VERSION;
 
 CActiveMng cAM;
 
@@ -100,7 +101,7 @@ char szDbConnectDsn[52];
 
 #define WM_ASYNCSELECTMSG_CLIENT		(WM_USER+1001)
 
-#define WM_ASYNCSELECTMSG_SERVERACCEPT	(WM_USER+1002)	// ì„œë²„ì˜ ì ‘ì†ì„ ê¸°ë‹¤ë¦¬ëŠ” ë©”ì‹œì§€
+#define WM_ASYNCSELECTMSG_SERVERACCEPT	(WM_USER+1002)	// ¼­¹öÀÇ Á¢¼ÓÀ» ±â´Ù¸®´Â ¸Þ½ÃÁö
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
@@ -115,6 +116,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CLOSE()
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_ASYNCSELECTMSG_SERVERACCEPT, OnAsyncSelectServerAccept)
+	ON_COMMAND(ID_MANAGER_UNITYDBRECONNECT, ReconnectUnityDB)//new
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -156,12 +158,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	//
-	//if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
-	//	| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
-	//	!m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
-	//{
-	//	return -1;      // fail to create
-	//}
+	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
+		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
+		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
+	{
+		return -1;      // fail to create
+	}
 
 	if (!m_wndStatusBar.Create(this) ||
 		!m_wndStatusBar.SetIndicators(indicators,
@@ -170,7 +172,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create status bar\n");
 		return -1;      // fail to create
 	}
-	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT));
+
+	//
+	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
+	EnableDocking(CBRS_ALIGN_ANY);
+	DockControlBar(&m_wndToolBar);
+
+	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
 	LogInit(LOG_PRINT);
 
 	gDirPath.SetFirstPath("..\\data\\");
@@ -187,13 +195,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CWZSEncode.GetToken();	DCInfo.SetMabubBanjiOption(CWZSEncode.GetNumber());
 
 	iTokenType = CWZSEncode.GetToken();
-	if (iTokenType == T_END)
-		strcpy(szDbConnectDsn, "MuOnline");
-	else strcpy(szDbConnectDsn, CWZSEncode.GetString());
 
-	if (iTokenType != 2)
+	if (iTokenType == T_END)
 	{
-		gbIsJumpingServer = CWZSEncode.GetNumber();//season12
+		strcpy(szDbConnectDsn, "MuOnline");
+	}
+	else
+	{
+		strcpy(szDbConnectDsn, CWZSEncode.GetString());
 	}
 
 	if (strcmp(szDbConnectDsn, "") == 0)
@@ -201,7 +210,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		strcpy(szDbConnectDsn, "MuOnline");
 	}
 
-	LogAddTD("szDbConnectDsn %s ", __FILE__, __LINE__);
+	iTokenType = CWZSEncode.GetToken();
+
+	if (iTokenType != T_END)
+	{
+		gbIsJumpingServer = CWZSEncode.GetNumber();
+	}
+
+	LogAddTD("szDbConnectDsn %s ", szDbConnectDsn);// __FILE__, __LINE__);
 
 	CWZSEncode.Close();
 
@@ -275,7 +291,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	if (OpenItemScript(szKorItemTextFileName) == FALSE)
 	{
-		MsgBox("Item FIle Not Found. (íŒŒì¼ì´ ì¡´ìž¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.) %s", szKorItemTextFileName);
+		MsgBox("Item FIle Not Found. (ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.) %s", szKorItemTextFileName);
 	}
 
 	if (gLanguage == 0)
@@ -337,7 +353,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		mWin.right = GetSystemMetrics(SM_CXFULLSCREEN);
 	}
 
-	this->CWnd::MoveWindow((LPRECT)mWin);
+	//this->CWnd::MoveWindow((LPRECT)mWin);
+	this->CWnd::MoveWindow((LPCRECT)&mWin, TRUE);
 
 	this->CWnd::SetWindowText(szText);
 
@@ -400,7 +417,7 @@ BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO*
 }
 
 //----------------------------------------------------------------------------
-// ì„œë²„ì˜ ì ‘ì† ë©”ì‹œì§€ë¥¼ ì²˜ë¦¬
+// ¼­¹öÀÇ Á¢¼Ó ¸Þ½ÃÁö¸¦ Ã³¸®
 //----------------------------------------------------------------------------
 LONG CMainFrame::OnAsyncSelectServerAccept(WPARAM wParam, LPARAM lParam)
 {
@@ -418,11 +435,11 @@ LONG CMainFrame::OnAsyncSelectServerAccept(WPARAM wParam, LPARAM lParam)
 }
 
 //----------------------------------------------------------------------------
-// Join ì„œë²„ì— ì‚¬ìš©ìžê°€ ì ‘ì†í•´ ì™”ì„ë•Œ
+// Join ¼­¹ö¿¡ »ç¿ëÀÚ°¡ Á¢¼ÓÇØ ¿ÔÀ»¶§
 //----------------------------------------------------------------------------
 // type : 
-// CLINETACCEPTTYPE : í´ë¼ì´ì–¸íŠ¸ê°€(ìœ ì €) ì ‘ì†í–ˆì„ë•Œ 
-// SERVERACCEPTTYPE : ì„œë²„ê°€ ì ‘ì†í–ˆì„ë•Œ 
+// CLINETACCEPTTYPE : Å¬¶óÀÌ¾ðÆ®°¡(À¯Àú) Á¢¼ÓÇßÀ»¶§ 
+// SERVERACCEPTTYPE : ¼­¹ö°¡ Á¢¼ÓÇßÀ»¶§ 
 int CMainFrame::AcceptClient()
 {
 	LogAdd("port check accept");
@@ -495,7 +512,7 @@ BOOL CMainFrame::ServerCreate()
 
 	if (!gGSDbSet.CheckMuDBIdentification())
 	{
-		MsgBox("â˜† Unknow MuDB Id.");
+		MsgBox("¡Ù Unknow MuDB Id.");
 	}
 	else
 	{
@@ -504,7 +521,7 @@ BOOL CMainFrame::ServerCreate()
 
 		this->GetWindowText(szTitle);
 
-		szNewTitle.Format("%s - â˜† %s", szTitle, g_szDBID_DESC);
+		szNewTitle.Format("%s - ¡Ù %s", szTitle, g_szDBID_DESC);
 
 		this->SetWindowText(szNewTitle);
 	}
@@ -559,43 +576,7 @@ BOOL CMainFrame::ServerCreate()
 	{
 		return FALSE;
 	}
-	//season12+
-	if (!g_MonsterKillInfoDbSet.Connect())
-	{
-		return FALSE;
-	}
-	if (!g_BlockChatUserDBSet.Connect())
-	{
-		return FALSE;
-	}
-	if (!g_LabyrinthDBSet.Connect())
-	{
-		return FALSE;
-	}
-	if (!g_CRestoreItemDBSet.Connect())
-	{
-		return FALSE;
-	}
-	if (!g_PlayTimeEventDBSet.Connect())
-	{
-		return FALSE;
-	}
-	if (!g_PCBangRenewalDBSet.Connect())
-	{
-		return FALSE;
-	}
-	if (!g_CMuunSystemDBSet.Connect())
-	{
-		return FALSE;
-	}
-	if (!g_MineSystemDBSet.Connect())
-	{
-		return FALSE;
-	}
-	if (!g_HuntingRecordDBSet.Connect())
-	{
-		return FALSE;
-	}
+	//job_season11_part2
 	if (!g_PentagramDBSet.Connect())
 	{
 		return FALSE;
@@ -612,11 +593,15 @@ BOOL CMainFrame::ServerCreate()
 	{
 		return FALSE;
 	}
-	if (!g_CMuRummyDBSet.Connect())
+	if (!g_MineSystemDBSet.Connect())
 	{
 		return FALSE;
 	}
-	if (!g_BombHuntDBSet.Connect())
+	if (!g_CCFDbSet.Connect())
+	{
+		return FALSE;
+	}
+	if (!g_CMuRummyDBSet.Connect())
 	{
 		return FALSE;
 	}
@@ -624,19 +609,11 @@ BOOL CMainFrame::ServerCreate()
 	{
 		return FALSE;
 	}
-	if (!g_SPServerDBSet.Connect())
-	{
-		return FALSE;
-	}
 	if (!g_ITLDBset.Connect())
 	{
 		return FALSE;
 	}
-	if (!g_EventMapEnterCount.Connect())
-	{
-		return FALSE;
-	}
-	if (!g_RuudLogDBSet.Connect())
+	if (!g_CMuunSystemDBSet.Connect())
 	{
 		return FALSE;
 	}
@@ -648,14 +625,55 @@ BOOL CMainFrame::ServerCreate()
 	{
 		return FALSE;
 	}
-	if (!g_CCFDbSet.Connect())
+	if (!g_MonsterKillInfoDbSet.Connect())
 	{
 		return FALSE;
 	}
-
+	if (!g_CRestoreItemDBSet.Connect())
+	{
+		return FALSE;
+	}
+	if (!g_SPServerDBSet.Connect())
+	{
+		return FALSE;
+	}
+	if (!g_RuudLogDBSet.Connect())
+	{
+		return FALSE;
+	}
+	if (!g_BlockChatUserDBSet.Connect())
+	{
+		return FALSE;
+	}
+	if (!g_EventMapEnterCount.Connect())
+	{
+		return FALSE;
+	}
+	if (!g_PCBangRenewalDBSet.Connect())
+	{
+		return FALSE;
+	}
+	if (!g_PlayTimeEventDBSet.Connect())
+	{
+		return FALSE;
+	}
+	if (!g_HuntingRecordDBSet.Connect())
+	{
+		return FALSE;
+	}
+	if (!g_BombHuntDBSet.Connect())
+	{
+		return FALSE;
+	}
+	//job_season12_part1
+	if (!g_LabyrinthDBSet.Connect())
+	{
+		return FALSE;
+	}
+	//--
 	if (strcmp(szVersion, "4.1") == 0)
 	{
-		MsgBox("In version 4.0, a problem occurs when VER_CHATWINDOW_OPTION is added.");
+		MsgBox("4.0 ¹öÁ¯¿¡¼± VER_CHATWINDOW_OPTION ÀÌ Ãß°¡µÉ½Ã ¹®Á¦°¡ ¹ß»ýÇÕ´Ï´Ù");
 	}
 
 	cAM.StartThread();
@@ -688,11 +706,11 @@ void CMainFrame::OnClose()
 
 	if (count > 0)
 	{
-		wsprintf(szTemp, "%d Gameserver's are connected. Forced termination may result in data loss.", count);
+		wsprintf(szTemp, "%d °³ÀÇ °ÔÀÓ¼­¹ö°¡ Á¢¼Ó Áß ÀÔ´Ï´Ù. °­Á¦ Á¾·á¸¦ ÇÏ½Ç °æ¿ì¿£ µ¥ÀÌÅÍ ¼Õ½ÇÀÌ µÉ ¼ö ÀÖ½À´Ï´Ù.", count);
 		AfxMessageBox(szTemp, 16, 0);
 	}
 
-	if (AfxMessageBox("Are you sure you want to close the connection?", 36, 0) == 7)
+	if (AfxMessageBox("Á¢¼ÓÀ» Á¾·áÇÏ½Ã°Ú½À´Ï±î?", 36, 0) == 7)
 	{
 		return;
 	}
@@ -710,7 +728,20 @@ DWORD WINAPI GuildLoadThread(LPVOID p)
 	return 1;
 }
 
-void CMainFrame::DisplayStatusBar(char* szString)
+void CMainFrame::DisplayStatusBar(char *szString)
 {
 	this->m_wndStatusBar.SetWindowText(szString);
+}
+
+void CMainFrame::ReconnectUnityDB()
+{
+	if (g_CCFDbSet.m_DBQuery.DisConnectAndReConnect())
+	{
+		g_DelayHandler.IncreaseQuerySessionId();
+		LogAddTD("[UBF] ReConnect() Success ");
+	}
+	else
+	{
+		LogAddTD("[UBF] ReConnect() Fail ");
+	}
 }

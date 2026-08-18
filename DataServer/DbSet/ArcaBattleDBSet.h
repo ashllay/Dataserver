@@ -79,13 +79,6 @@ typedef struct _stABAllGuildMark
 	DWORD dwMarkCnt;
 };
 
-typedef struct _stArcaBattleMarkTopRank
-{
-	char btRank;
-	char szGuildNames[MAX_GUILDNAMESTRING + 1];
-	DWORD dwMarkCnt;
-};
-
 struct _tagPMSG_REQ_AB_GUILD_JOIN_SELECT_DS
 {
 	PBMSG_HEAD2 h;
@@ -166,13 +159,13 @@ struct _tagPMSG_REQ_AB_WIN_GUILD_INFO_INSERT_DS
 
 struct _tagPMSG_ANS_AB_WIN_GUILD_INFO_DS
 {
+	PBMSG_HEAD2 h;
+	char btGuildCnt;
+	_stABWinGuildInfoDS m_stABWinGuildInfoDS[5];
 	_tagPMSG_ANS_AB_WIN_GUILD_INFO_DS()
 	{
 		this->btGuildCnt = 0;
 	}
-	PBMSG_HEAD2 h;
-	char btGuildCnt;
-	_stABWinGuildInfoDS m_stABWinGuildInfoDS[5];
 };
 
 struct _tagPMSG_REQ_AB_WIN_GUILD_INFO_DS
@@ -186,6 +179,11 @@ struct _tagPMSG_REQ_ARCA_BATTLE_GROUP_NUM_DS
 	PBMSG_HEAD2 h;
 	char szCharName[MAX_IDSTRING + 1];
 	WORD wNumber;
+};
+
+struct _tagPMSG_REQ_ARCA_BATTLE_INFO_DS
+{
+	PBMSG_HEAD2 h;
 };
 
 struct _tagPMSG_ANS_ARCA_BATTLE_GROUP_NUM_DS
@@ -203,7 +201,7 @@ struct _tagPMSG_ANS_ARCA_BATTLE_GROUP_NUM_DS
 struct _tagPMSG_REQ_ARCA_BATTLE_PROC_STATE_DS
 {
 	PBMSG_HEAD2 h;
-	char btProcState;//#Eder Adicionado por Min
+	//char btProcState;//not on the original and not on the gameserver
 };
 
 struct _tagPMSG_ANS_ARCA_BATTLE_PROC_STATE_DS
@@ -352,8 +350,29 @@ struct _tagPMSG_REQ_ARCA_BATTLE_MARK_RANK_DS
 	DWORD dwGuildNum;
 };
 
+struct _stArcaBattleMarkTopRank
+{
+	BYTE  btRank;
+	DWORD dwMarkCnt;
+	char  szGuildNames[MAX_GUILDNAMESTRING + 1];
+
+	_stArcaBattleMarkTopRank()
+	{
+		btRank = 0;
+		dwMarkCnt = 0;
+		memset(szGuildNames, 0, sizeof(szGuildNames));
+	}
+};
+
 struct _tagPMSG_ANS_ARCA_BATTLE_MARK_RANK_DS
 {
+
+	PBMSG_HEAD2 h;
+	WORD wNumber;
+	char btRank;
+	DWORD dwMarkCnt;
+	char btGuildCnt;
+	_stArcaBattleMarkTopRank ArcaBattleMarkTopRank[6];
 	_tagPMSG_ANS_ARCA_BATTLE_MARK_RANK_DS()
 	{
 		this->wNumber = 0;
@@ -361,12 +380,6 @@ struct _tagPMSG_ANS_ARCA_BATTLE_MARK_RANK_DS
 		this->btRank = 0;
 		this->btGuildCnt = 0;
 	}
-	PBMSG_HEAD2 h;
-	WORD wNumber;
-	char btRank;
-	DWORD dwMarkCnt;
-	char btGuildCnt;
-	_stArcaBattleMarkTopRank ArcaBattleMarkTopRank[6];
 };
 
 struct _tagPMSG_REQ_ARCA_BATTLE_MARK_REG_DEL_DS
@@ -385,6 +398,10 @@ struct _tagPMSG_REQ_ARCA_BATTLE_IS_TOP_RANK
 
 typedef struct _tagPMSG_ANS_AB_ALL_JOIN_USER_DS
 {
+	_tagPMSG_ANS_AB_ALL_JOIN_USER_DS()
+	{
+		this->btUserCnt = 0;
+	}
 	PWMSG_HEAD h; // C1:E5 DS->GS
 	BYTE btUserCnt;
 } *LPPMSG_ANS_AB_ALL_JOIN_USER_DS;
@@ -398,25 +415,26 @@ public:
 	BOOL Connect();
 	void DBDeleteAllArcaBattleGuildReg();
 	int DBDeleteArcaBattleCancelGuild(_stCancelGuildNames GNames[20], int GCount);
-	int DBDeleteArcaBattleMarkReg(unsigned __int32 G_Number);
+	int DBDeleteArcaBattleMarkReg(DWORD G_Number);
 	void DBDeleteArcaBattleGuildReg();
 	int DBDeleteArcaBattleInfo();
-	int DBInsertArcaBattleGuildJoin(char* CharName, char* GName, unsigned __int32 Number, char* Result);
-	int DBInsertArcaBattleGuildMemberJoin(char* CharName, char* GName, unsigned __int32 Number, char* Result);
+	int DBInsertArcaBattleGuildJoin(char* CharName, char* GName, unsigned int Number, int* Result);
+	int DBInsertArcaBattleGuildMemberJoin(char* CharName, char* GName, DWORD Number, char* Result);
 	int DBInsertArcaBattleProc(int ProcState);
-	int DBInsertArcaBattleRegMark(char* GName, unsigned __int32 GNumber, char* GMaster, unsigned __int32 MarkCnt);
+	int DBInsertArcaBattleRegMark(char* GName, DWORD GNumber, char* GMaster, DWORD MarkCnt);
 	int DBInsertArcaBattleWinGuild(_stABWinGuildInfoDS a2[5], int a3);
 	int DBIsArcaBattleEnter(char* CharName, int* Result);
-	int DBSelectABAllJoinUser(_stABJoinUserInfoDS a2[200], int* GCount);
-	int DBSelectABRegisteredMemberCnt(unsigned __int32 G_Number, BYTE* Result);
+	int DBSelectABAllJoinUser(_stABJoinUserInfoDS pABJoinUserInfo[200], int* GCount);
+	int DBSelectABRegisteredMemberCnt(DWORD G_Number, BYTE* Result);
 	void DBSelectArcaBattleAllGuildMark(_stABAllGuildMark a2[250], int* GCount);
-	int DBSelectArcaBattleCancelGuild(struct _stCancelGuildNames GNames[6], int GuildMemCnt, unsigned __int8* GCount);
+	//int DBSelectArcaBattleCancelGuild(struct _stCancelGuildNames GNames[6], int GuildMemCnt, BYTE* GCount);
+	int DBSelectArcaBattleCancelGuild(_stCancelGuildNames* pstCancelGuildNames, int iMinGuildMemNum, BYTE* btGuildCnt);
 	int DBSelectArcaBattleGuildGroupNum(char* CharName, int* GroupNum);
 	int DBSelectArcaBattleGuildJoin(char* CharName, BYTE* GuildNum);
-	int DBSelectArcaBattleIsTopRank(unsigned __int32 G_Number);
-	int DBSelectArcaBattleJoinMemberUnder(_stGuildUnderMember G_Memb[6], unsigned __int8* MembCount);
-	int DBSelectArcaBattleMarkCnt(unsigned __int32 G_Number);
-	int DBSelectArcaBattleMyGuildRank(unsigned __int32 G_Number, unsigned __int8* mRank, unsigned __int32* mMarkCnt);
+	int DBSelectArcaBattleIsTopRank(DWORD G_Number);
+	int DBSelectArcaBattleJoinMemberUnder(_stGuildUnderMember G_Memb[6], BYTE* MembCount);
+	int DBSelectArcaBattleMarkCnt(DWORD G_Number);
+	int DBSelectArcaBattleMyGuildRank(DWORD G_Number, BYTE* mRank, DWORD* mMarkCnt);
 	int DBSelectArcaBattleProc(char* ProcState);
 	int DBSelectArcaBattleTopRank(_stArcaBattleMarkTopRank MarkTopRank[6], BYTE* MarkTopCount);
 	int DBSelectArcaBattleWinGuild(_stABWinGuildInfoDS GuildInfo[5], int* GuildInfoCount);

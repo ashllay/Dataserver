@@ -1,7 +1,6 @@
 #pragma once
 //#include "Include\ProDef.h"
 #include "..\Include\Sprodef.h"
-
 #include "DBConBase.h"
 
 #define MAX_HUNTING_RECORD_MAP_LIST 60
@@ -97,7 +96,7 @@ typedef struct SDHP_REQ_HUNTING_RECORD_INFO_USER_OPEN_SAVE
 	BYTE btOpen;
 } *LPSDHP_REQ_HUNTING_RECORD_INFO_USER_OPEN_SAVE;
 
-typedef struct SDHP_REQ_HUNTING_RECORD_INFO
+struct SDHP_REQ_HUNTING_RECORD_INFO
 {
 	PBMSG_HEAD2 h; // C1:BC:10 GS->DS
 	char AccountId[MAX_IDSTRING + 1];
@@ -106,12 +105,12 @@ typedef struct SDHP_REQ_HUNTING_RECORD_INFO
 	BYTE btMapIndex;
 	BYTE btCallType;
 	BYTE btAnotherUser;
-} *LPSDHP_REQ_HUNTING_RECORD_INFO;
+} ;
 
 struct SDHP_REQ_HUNTING_RECORD_INFO_USER_OPEN
 {
 	PBMSG_HEAD2 h;
-	char AccountId[11];
+	char AccountId[MAX_IDSTRING + 1];
 	char szName[11];
 	int iUserIndex;
 };

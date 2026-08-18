@@ -19,12 +19,11 @@ BOOL CPlayTimeEventDBSet::Connect()
 
 int CPlayTimeEventDBSet::getPlayTimeEventInfo(char *szAccountID, char *btGrade, unsigned int *dwPCBangPlayTime)
 {
-	int result; // eax
-	__int16 sqlReturn; // [esp+F8h] [ebp-2Ch]
-	CString QueryStr; // [esp+104h] [ebp-20h]
-	QueryStr.Format(
-		"WZ_PlayTimeEventLoad '%s'",
-		szAccountID);
+	int result;
+	__int16 sqlReturn;
+	CString QueryStr;
+	QueryStr.Format("WZ_PlayTimeEventLoad '%s'",szAccountID);
+
 	if (this->m_DBQuery.Exec(QueryStr))
 	{
 		sqlReturn = this->m_DBQuery.Fetch();
@@ -38,36 +37,26 @@ int CPlayTimeEventDBSet::getPlayTimeEventInfo(char *szAccountID, char *btGrade, 
 		else
 		{
 			this->m_DBQuery.Clear();
-			LogAddTD(
-				"error-L3 : [CPlayTimeEventDBSet] getPlayTimeEventInfo #2 %d %s %d",
-				sqlReturn, __FILE__, __LINE__);
-			
+			LogAddTD("error-L3 : [CPlayTimeEventDBSet] getPlayTimeEventInfo #2 %d %s %d",sqlReturn, __FILE__, __LINE__);
 			result = 0;
 		}
 	}
 	else
 	{
 		this->m_DBQuery.Clear();
-		LogAddTD(
-			"error-L3 : [CPlayTimeEventDBSet] getPlayTimeEventInfo #1 %s %d", __FILE__, __LINE__);
+		LogAddTD("error-L3 : [CPlayTimeEventDBSet] getPlayTimeEventInfo #1 %s %d", __FILE__, __LINE__);
 		result = 0;
 	}
 	return result;
 }
-// 5CDFFC: using guessed type int `CPlayTimeEventDBSet::getPlayTimeEventInfo'::`2'::__LINE__Var;
 
-//----- (004496F0) --------------------------------------------------------
+
 int CPlayTimeEventDBSet::setPlayTimeEventInfo(char *szAccountID, char btGrade, unsigned int dwPCBangPlayTime)
 {
-	int result; // eax
-	CString QueryStr; // [esp+ECh] [ebp-20h]
+	int result;
+	CString QueryStr;
 
-	QueryStr.Format(
-		
-		"WZ_PlayTimeEventSave '%s', %d, %d",
-		szAccountID,
-		btGrade,
-		dwPCBangPlayTime);
+	QueryStr.Format("WZ_PlayTimeEventSave '%s', %d, %d",szAccountID,btGrade,dwPCBangPlayTime);
 	
 	if (this->m_DBQuery.Exec(QueryStr))
 	{
@@ -77,8 +66,7 @@ int CPlayTimeEventDBSet::setPlayTimeEventInfo(char *szAccountID, char btGrade, u
 	else
 	{
 		this->m_DBQuery.Clear();
-		LogAddTD(
-			"error-L3 : [CPlayTimeEventDBSet] setPlayTimeEventInfo #1 %s %d", __FILE__, __LINE__);
+		LogAddTD("error-L3 : [CPlayTimeEventDBSet] setPlayTimeEventInfo #1 %s %d", __FILE__, __LINE__);
 		result = 0;
 	}
 	return result;

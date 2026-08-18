@@ -16,8 +16,6 @@ BOOL LabyrinthDBSet::Connect()
 	MsgBox("LabyrinthDBSet ODBC Connect Fail");
 	return 0;
 }
-
-
 int LabyrinthDBSet::LoadLabyrinthInfo(char *szAccountID, char *szName, int nUserIndex, char *Buffer, int *nBufferLen)
 {
 	MISSION_INFO stMissionInfo;
@@ -261,17 +259,14 @@ __int64 LabyrinthDBSet::UpdateLabyrinthInfo(SDHP_REQ_LABYRINTH_INFO_UPDATE *aRec
 		aRecv->wConfigNum,
 		aRecv->btCurrentZone,
 		aRecv->btVisitedCnt,
-		LODWORD(aRecv->nEntireExp),
-		HIDWORD(aRecv->nEntireExp),
-		LODWORD(aRecv->nEntireMonKillCnt),
-		HIDWORD(aRecv->nEntireMonKillCnt));
+		aRecv->nEntireExp,
+		aRecv->nEntireMonKillCnt);
 	this->m_DBQuery.WriteBlob(qSql,aRecv->btVisitedList, sizeof(aRecv->btVisitedList));
 	this->m_DBQuery.Clear();
 	
 	return TRUE;
 }
 
-//----- (004417E0) --------------------------------------------------------
 int LabyrinthDBSet::UpdateLabyrinthMission(SDHP_REQ_LABYRINTH_MISSION_UPDATE *aRecv)
 {
 	int result;
@@ -347,7 +342,6 @@ int LabyrinthDBSet::DeleteLabyrinthMission(char *szAccountID, char *szName)
 	}
 	return result;
 }
-// 5CDD20: using guessed type int `LabyrinthDBSet::DeleteLabyrinthMission'::`2'::__LINE__Var;
 
 
 int LabyrinthDBSet::EndUpdateLabyrinthInfo(char *szAccountID, char *szName, int nClearCnt, char btClearState)
@@ -377,7 +371,6 @@ int LabyrinthDBSet::EndUpdateLabyrinthInfo(char *szAccountID, char *szName, int 
 	return result;
 }
 
-//----- (00441CE0) --------------------------------------------------------
 int LabyrinthDBSet::UpdateLabyrinthRewardState(char *szAccountID, char *szName, char btIsMainMission, char btRewardCheckState)
 {
 	int result;

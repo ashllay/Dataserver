@@ -77,6 +77,7 @@ void CItem::Clear()
 	this->m_PetItem_Level = 1;
 	this->m_PetItem_Exp = 0;
 	this->m_Leadership = 0;
+	//static_assert(sizeof(CItem) == 0xA8, "Invalid CItem size");
 }
 
 //----------------------------------------------------------------------------
@@ -106,17 +107,17 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 
 	if ((DbVersion) == 0)
 	{
-		_type = (type / MAX_ITEM_TYPE * MAX_ITEM_INDEX) + (type%MAX_ITEM_TYPE);
+		_type = (type / 16 * MAX_ITEM_INDEX) + (type% 16);
 
 	}
 	else if (DbVersion <= 2)
 	{
-		_type = (type / 32 * MAX_ITEM_INDEX) + (type % 32);
+		_type = (type / MAX_ITEM_TYPE * MAX_ITEM_INDEX) + (type % MAX_ITEM_TYPE);
 	}
 
 	if (_type >MAX_ITEM - 1)
 	{
-		LogAddC(2, "error-L1 : ItemIndex error %d", _type);
+		LogAddC(LOGC_RED, "error-L1 : ItemIndex error %d", _type);
 	}
 
 	ITEM_ATTRIBUTE *p = &ItemAttribute[_type];
@@ -194,9 +195,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 	}
 	if (ItemGetDurability(this->m_Type, 0, 0, 0))
 	{
-		//v22 = ItemGetDurability(this->m_Type, this->m_Level, Attribute2 & 0x7F, this->m_SetOption);
-		this->m_BaseDurability = (double)ItemGetDurability(this->m_Type, this->m_Level, Attribute2 & 0x7F, this->m_SetOption);
-		//m_BaseDurability = (float)ItemGetDurability(m_Type, m_Level, Attribute2 & 0x7F, m_SetOption);
+		this->m_BaseDurability = (float)ItemGetDurability(this->m_Type, this->m_Level, Attribute2 & 0x7F, this->m_SetOption);
 	}
 	else
 	{
@@ -215,8 +214,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 	this->m_MagicDefense = p->MagicDefense;
 	this->m_WalkSpeed = p->WalkSpeed;
 	this->m_Magic = p->MagicPW;
-	//v22 = p->Durability;
-	this->m_Durability = (double)p->Durability;
+	this->m_Durability = (float)p->Durability;
 	this->m_serial = p->Serial;
 	this->m_QuestItem = p->QuestItem;
 	this->m_RequireLeaderShip = 0;
@@ -243,16 +241,15 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 	{
 		this->m_CurrentDurabilityState = 0.5;
 	}
-	memcpy(this->m_RequireClass, p->RequireClass, 8u);
+	memcpy(this->m_RequireClass, p->RequireClass, sizeof(this->m_RequireClass));
 	for (int i = 0; i < 7; ++i)
 		this->m_Resistance[i] = this->m_Level * p->Resistance[i];
 	ItemLevel = p->Level;
-	if ((Attribute2 & 0x3F) <= 0)
+	if ((Attribute2 & 0x3F) != 0)
 	{
-		if (this->m_SetOption)
-			ItemLevel = p->Level + 25;
+		ItemLevel = p->Level + 25;
 	}
-	else
+	else if (this->m_SetOption)
 	{
 		ItemLevel = p->Level + 25;
 	}
@@ -268,7 +265,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 		this->m_RequireEnergy = 4 * (ItemLevel + 3 * this->m_Level) * p->RequireEnergy / 100 + 20;
 	else
 		this->m_RequireEnergy = 0;
-	if (_type >= 0 && _type < 6144)
+	if ((unsigned int)_type < 6144)
 	{
 		if (p->RequireVitality)
 			this->m_RequireVitality = 3 * (ItemLevel + 3 * this->m_Level) * p->RequireVitality / 100 + 20;
@@ -291,7 +288,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 		{
 			if (_type < 6151 || _type > 6168)
 			{
-				if (_type < 0 || _type >= 6144)
+				if ((unsigned int)_type >= 6144)
 				{
 					this->m_RequireLevel = p->RequireLevel + 4 * this->m_Level;
 				}
@@ -321,12 +318,12 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 		else
 			this->m_RequireLevel = 20;
 	}
-	if ((Attribute2 & 0x3F) > 0 && (signed int)this->m_RequireLevel > 0 && (_type < 0 || _type >= 6144))
+	if ((Attribute2 & 0x3F) != 0 && this->m_RequireLevel && (unsigned int)_type >= 6144)
 		this->m_RequireLevel += 20;
 	if (this->m_SetOption)
 		ItemLevel = p->Level + 30;
 	this->m_Leadership = 0;
-	if ((signed int)this->m_DamageMax > 0)
+	if (this->m_DamageMax)
 	{
 		if (this->m_SetOption && ItemLevel)
 		{
@@ -347,10 +344,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 		this->m_DamageMax += 3 * this->m_Level;
 		if (this->m_Level >= 10)
 		{
-
-			/*v8 = (this->m_Level - 8) * (this->m_Level - 9);
-			this->m_DamageMax += ((signed int)v8 - HIDWORD(v8)) >> 1;*/
-			m_DamageMax += (m_Level - 9)*(m_Level - 9 + 1) / 2;
+			m_DamageMax += (this->m_Level - 8) * (this->m_Level - 9) / 2;
 		}
 	}
 	if ((signed int)this->m_DamageMin > 0)
@@ -374,9 +368,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 		this->m_DamageMin += 3 * this->m_Level;
 		if (this->m_Level >= 10)
 		{
-			/*v9 = (this->m_Level - 8) * (this->m_Level - 9);
-			this->m_DamageMin += ((signed int)v9 - HIDWORD(v9)) >> 1;*/
-			m_DamageMin += (m_Level - 9)*(m_Level - 9 + 1) / 2;
+			m_DamageMin += (this->m_Level - 8) * (this->m_Level - 9) / 2;
 		}
 	}
 	if ((signed int)this->m_Magic > 0)
@@ -400,9 +392,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 		this->m_Magic += 3 * this->m_Level;
 		if (this->m_Level >= 10)
 		{
-			/*v10 = (this->m_Level - 8) * (this->m_Level - 9);
-			this->m_Magic += ((signed int)v10 - HIDWORD(v10)) >> 1;*/
-			m_Magic += (m_Level - 9)*(m_Level - 9 + 1) / 2;
+			m_Magic += (this->m_Level - 8) * (this->m_Level - 9) / 2;
 		}
 	}
 	if (p->SuccessfulBlocking > 0)
@@ -419,9 +409,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 		this->m_SuccessfulBlocking += 3 * this->m_Level;
 		if (this->m_Level >= 10)
 		{
-			/*v11 = (this->m_Level - 8) * (this->m_Level - 9);
-			this->m_SuccessfulBlocking += ((signed int)v11 - HIDWORD(v11)) >> 1;*/
-			m_SuccessfulBlocking += (m_Level - 9)*(m_Level - 9 + 1) / 2;
+			m_SuccessfulBlocking += (this->m_Level - 8) * (this->m_Level - 9) / 2;
 		}
 	}
 	if (p->Defense > 0)
@@ -443,9 +431,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 				this->m_Defense += 2 * this->m_Level;
 			if (this->m_Level >= 10)
 			{
-				/*v12 = (this->m_Level - 8) * (this->m_Level - 9);
-				this->m_Defense += ((signed int)v12 - HIDWORD(v12)) >> 1;*/
-				m_Defense += (m_Level - 9)*(m_Level - 9 + 1) / 2;
+				m_Defense += (this->m_Level - 8) * (this->m_Level - 9) / 2;
 			}
 		}
 		else
@@ -460,9 +446,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 		this->m_Defense = 2 * this->m_Level + 15;
 		if (this->m_Level >= 10)
 		{
-			/*v13 = (this->m_Level - 8) * (this->m_Level - 9);
-			this->m_Defense += ((signed int)v13 - HIDWORD(v13)) >> 1;*/
-			m_Defense += (m_Level - 9)*(m_Level - 9 + 1) / 2;
+			m_Defense += (this->m_Level - 8) * (this->m_Level - 9) / 2;
 		}
 	}
 	if (p->MagicDefense > 0)
@@ -470,14 +454,12 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 		this->m_MagicDefense += 3 * this->m_Level;
 		if (this->m_Level >= 10)
 		{
-			/*v14 = (this->m_Level - 8) * (this->m_Level - 9);
-			this->m_MagicDefense += ((signed int)v14 - HIDWORD(v14)) >> 1;*/
-			m_MagicDefense += (m_Level - 9)*(m_Level - 9 + 1) / 2;
+			m_MagicDefense += (this->m_Level - 8) * (this->m_Level - 9) / 2;
 		}
 	}
 	this->m_Level &= 0xFu;
-	memset(this->m_Special, 0, 8u);
-	memset(this->m_SpecialValue, 0, 8u);
+	memset(this->m_Special, 0, sizeof(this->m_Special));
+	memset(this->m_SpecialValue, 0, sizeof(this->m_SpecialValue));
 	this->m_SpecialNum = 0;
 	this->m_Option1 = 0;
 	this->m_Option2 = 0;
@@ -515,7 +497,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 	++this->m_SpecialNum;
 	if (Option2)
 	{
-		if (_type >= 0 && _type < 6144)
+		if ((unsigned int)_type < 6144)
 		{
 			this->m_Special[this->m_SpecialNum] = 84;
 			this->m_Option2 = 1;
@@ -563,7 +545,7 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 			this->m_Option3 = Option3;
 			this->m_RequireStrength += 4 * (unsigned __int8)Option3;
 		}
-		if (_type >= 6664 && _type < 6670 || _type >= 6676 && _type <= 6684)
+		if (((_type >= 6664) && (_type < 6670)) || ((_type >= 6676) && (_type <= 6684)))
 		{
 			if (_type == 6680)
 			{
@@ -752,36 +734,24 @@ void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Att
 	{
 		this->m_DamageMinOrigin = this->m_DamageMin;
 		this->m_DefenseOrigin = this->m_Defense;
-		m_DamageMin -= (WORD)(m_DamageMin*m_CurrentDurabilityState);
-		m_DamageMax -= (WORD)(m_DamageMax*m_CurrentDurabilityState);
-		m_Defense -= (WORD)(m_Defense*m_CurrentDurabilityState);
-		m_SuccessfulBlocking -= (BYTE)(m_SuccessfulBlocking*m_CurrentDurabilityState);
-		/*v22 = this->m_DamageMin;
-		v15 = (double)v22 * this->m_CurrentDurabilityState;
-		v20 = v21 | 0xC00;
-		v19 = (signed int)v15;
-		this->m_DamageMin -= (signed int)v15;
-		v22 = this->m_DamageMax;
-		v16 = (double)v22 * this->m_CurrentDurabilityState;
-		v20 = v21 | 0xC00;
-		v19 = (signed int)v16;
-		this->m_DamageMax -= (signed int)v16;
-		v22 = this->m_Defense;
-		v17 = (double)v22 * this->m_CurrentDurabilityState;
-		v20 = v21 | 0xC00;
-		v19 = (signed int)v17;
-		this->m_Defense -= (signed int)v17;
-		v22 = this->m_SuccessfulBlocking;
-		v18 = (double)v22 * this->m_CurrentDurabilityState;
-		v20 = v21 | 0xC00;
-		v19 = (signed int)v18;
-		this->m_SuccessfulBlocking -= (signed int)v18;*/
+
+		this->m_DamageMin -= (int)((double)this->m_DamageMin * this->m_CurrentDurabilityState);
+		this->m_DamageMax -= (int)((double)this->m_DamageMax * this->m_CurrentDurabilityState);
+		this->m_Defense -= (int)((double)this->m_Defense * this->m_CurrentDurabilityState);
+		this->m_SuccessfulBlocking -= (int)((double)this->m_SuccessfulBlocking * this->m_CurrentDurabilityState);
+
 		if (this->m_Durability < 1.0)
+		{
 			this->m_AttackSpeed = 0;
+		}
 	}
+
 	if (this->m_Durability == 0.0)
-		memset(this->m_Resistance, 0, 7u);
+	{
+		memset(this->m_Resistance, 0, sizeof(this->m_Resistance));
+	}
 }
+
 //#ifdef ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
 //void CItem::Convert(int type, BYTE Option1, BYTE Option2, BYTE Option3, BYTE Attribute2, BYTE SetOption, BYTE ItemEffectEx, BYTE SocketOption[], BYTE SocketBonusOption, BYTE DbVersion)
 ////#else
@@ -5270,295 +5240,393 @@ void ItemByteConvert(LPBYTE buf, int type, BYTE Option1, BYTE Option2, BYTE Opti
 //----------------------------------------------------------------------------
 // 아이템 정보를 16 바이트 정보로 바꾼다.
 //----------------------------------------------------------------------------
-void ItemByteConvert16(LPBYTE buf, CItem item[], int maxitem)
-{
-	unsigned __int16 hiWord;
-	unsigned __int16 loWord;
-	BOOL v7;
-	BYTE btItemIndexEx;
-
-	int n = 0;
-
-	for (int index = 0; index < maxitem; ++index)
-	{
-		if (item[index].m_Type == 6675 && (item[index].m_Level >= 0 ? (v7 = item[index].m_Level <= 2) : (v7 = 0), v7))
-		{
-			buf[n] = -1;
-			buf[n + 1] = -1;
-			buf[n + 2] = -1;
-			buf[n + 3] = -1;
-			buf[n + 4] = -1;
-			buf[n + 5] = -1;
-			buf[n + 6] = -1;
-			buf[n + 7] = -1;
-			buf[n + 8] = -1;
-			buf[n + 9] = -1;
-			buf[n + 10] = -1;
-			buf[n + 11] = -1;
-			buf[n + 12] = -1;
-			buf[n + 13] = -1;
-			buf[n + 14] = -1;
-			buf[n + 15] = -1;
-			n += MAX_ITEMDBBYTE;
-		}
-		else if (item[index].m_Type >= 0)
-		{
-			memset(&buf[n], 0, 0x10u);
-			buf[n] = item[index].m_Type;
-			int v3 = n + 1;
-			buf[v3] = 0;
-			buf[v3] |= 8 * item[index].m_Level;
-			buf[v3] |= item[index].m_Option1 << 7;
-			buf[v3] |= 4 * item[index].m_Option2;
-			buf[v3] |= item[index].m_Option3 & 3;
-			buf[++v3] = item[index].m_Durability;
-			++v3;
-			hiWord = item[index].m_Number >> MAX_ITEMDBBYTE;
-			loWord = item[index].m_Number;
-			buf[v3++] = item[index].m_Number >> 24;
-			buf[v3++] = hiWord;
-			buf[v3++] = HIBYTE(loWord);
-			buf[v3] = loWord;
-			int na = v3 + 1;
-			buf[na] = 0;
-			btItemIndexEx = (item[index].m_Type & 0x1E00) >> 5;
-			buf[na] |= (item[index].m_Type & 0x100) >> 1;
-			if (item[index].m_Option3 > 3)
-				buf[na] |= 0x40u;
-			buf[na] |= item[index].m_NewOption;
-			int v6 = na + 1;
-			buf[v6++] = item[index].m_SetOption;
-			buf[v6] = 0;
-			buf[v6] |= btItemIndexEx;
-			buf[++v6] = 0;
-			buf[++v6] = -1;
-			buf[++v6] = -1;
-			buf[++v6] = -1;
-			buf[++v6] = -1;
-			buf[++v6] = -1;
-			n = v6 + 1;
-		}
-		else
-		{
-			buf[n] = -1;
-			buf[n + 1] = -1;
-			buf[n + 2] = -1;
-			buf[n + 3] = -1;
-			buf[n + 4] = -1;
-			buf[n + 5] = -1;
-			buf[n + 6] = -1;
-			buf[n + 7] = -1;
-			buf[n + 8] = -1;
-			buf[n + 9] = -1;
-			buf[n + 10] = -1;
-			buf[n + 11] = -1;
-			buf[n + 12] = -1;
-			buf[n + 13] = -1;
-			buf[n + 14] = -1;
-			buf[n + 15] = -1;
-			n += MAX_ITEMDBBYTE;
-		}
-	}
-}
-//void ItemByteConvert16(LPBYTE buf, CItem item[], int maxitem)
+//void ItemByteConvert16(BYTE* buf, CItem* item, int maxitem)
 //{
 //	int n = 0;
-//	WORD hiWord, loWord;
 //
-//	// type / index, Level, Dur, Special, Number, extension
-//	//   4  ,   4  ,   5,   3,    8        4Byte,   3Byte
-//	for (int index = 0; index<maxitem; index++)
+//	for (int index = 0; index < maxitem; ++index)
 //	{
-//#ifdef FOR_BLOODCASTLE
-//		if (item[index].m_Type == MAKE_ITEMNUM(13, 19))
+//		// Original special empty-slot handling
+//		if (
+//			(
+//				item[index].m_Type == ItemGetNumberMake(13, 19) &&
+//				item[index].m_Level >= 0 &&
+//				item[index].m_Level <= 2
+//				)
+//			||
+//			item[index].m_Type < 0
+//			)
 //		{
-//			// DB에 저장하기 전에 항상 대천사 시리즈를 확인하고 존재한다면 저장대상에서 재외함.
-//			if (CHECK_LIMIT(item[index].m_Level, 3))
-//			{
-//				buf[n] = 255;
-//				buf[n + 1] = 255;
-//				buf[n + 2] = 255;
-//				buf[n + 3] = 255;
-//				buf[n + 4] = 255;
-//				buf[n + 5] = 255;
-//				buf[n + 6] = 255;
-//				buf[n + 7] = 255;
-//				buf[n + 8] = 255;
-//				buf[n + 9] = 255;
-//				buf[n + 10] = 255;
-//				buf[n + 11] = 255;
-//				buf[n + 12] = 255;
-//				buf[n + 13] = 255;
-//				buf[n + 14] = 255;
-//				buf[n + 15] = 255;
-//				n += MAX_ITEMDBBYTE;
-//				continue;
-//			}
-//		}
-//#endif
-//
-//#ifdef MODIFY_ILLUSIONTEMPLE_BUGFIX_2_20070724	// DB에 저장하기 전에 성물이 있으면 저장대상에서 재외
-//		if (item[index].m_Type == MAKE_ITEMNUM(14, 64))
-//		{
-//			buf[n] = 255;
-//			buf[n + 1] = 255;
-//			buf[n + 2] = 255;
-//			buf[n + 3] = 255;
-//			buf[n + 4] = 255;
-//			buf[n + 5] = 255;
-//			buf[n + 6] = 255;
-//			buf[n + 7] = 255;
-//			buf[n + 8] = 255;
-//			buf[n + 9] = 255;
-//			buf[n + 10] = 255;
-//			buf[n + 11] = 255;
-//			buf[n + 12] = 255;
-//			buf[n + 13] = 255;
-//			buf[n + 14] = 255;
-//			buf[n + 15] = 255;
-//			n += MAX_ITEMDBBYTE;
-//			continue;
-//		}
-//#endif
-//
-//		if (item[index].m_Type < 0)
-//		{
-//			buf[n] = 255;
-//			buf[n + 1] = 255;
-//			buf[n + 2] = 255;
-//			buf[n + 3] = 255;
-//			buf[n + 4] = 255;
-//			buf[n + 5] = 255;
-//			buf[n + 6] = 255;
-//			buf[n + 7] = 255;
-//			buf[n + 8] = 255;
-//			buf[n + 9] = 255;
-//			buf[n + 10] = 255;
-//			buf[n + 11] = 255;
-//			buf[n + 12] = 255;
-//			buf[n + 13] = 255;
-//			buf[n + 14] = 255;
-//			buf[n + 15] = 255;
-//			n += MAX_ITEMDBBYTE;
+//			memset(&buf[n], 0xFF, MAX_ITEMDBBYTE);
+//			n += 16;
 //		}
 //		else
 //		{
-//#ifdef ITEM_INDEX_EXTEND_20050706
 //			memset(&buf[n], 0, MAX_ITEMDBBYTE);
-//#endif
 //
-//			buf[n] = (BYTE)item[index].m_Type % 256;	// [0]			
-//														// Type       : 4bit
+//			// Item Type
+//			buf[n] = (BYTE)item[index].m_Type;
 //
-//			n++;
+//			// Level / Options
+//			buf[n + 1] = 0;
+//			buf[n + 1] |= (item[index].m_Level * 8);
+//			buf[n + 1] |= (item[index].m_Option1 << 7);
+//			buf[n + 1] |= (item[index].m_Option2 * 4);
+//			buf[n + 1] |= (item[index].m_Option3 & 0x03);
 //
-//			buf[n] = 0;								// [1]
-//			buf[n] |= item[index].m_Level << 3;		// Level	: 5bit
-//			buf[n] |= item[index].m_Option1 << 7;		// Option 1 : 1bit
-//			buf[n] |= item[index].m_Option2 << 2;		// Option 2 : 1bit
-//			buf[n] |= (item[index].m_Option3 & 0x03);	// Option 3 : 2bit
+//			// Durability
+//			buf[n + 2] = (BYTE)item[index].m_Durability;
 //
-//			n++;
-//			buf[n] = (BYTE)item[index].m_Durability;// [2] 내구도		
-//													// Durability : 8bit
-//			n++;
+//			// Serial
+//			DWORD serial = item[index].m_Number;
 //
-//			hiWord = HIWORD(item[index].m_Number);	// [3] 아이템 시리얼 
-//			loWord = LOWORD(item[index].m_Number);
+//			buf[n + 3] = HIBYTE(HIWORD(serial));
+//			buf[n + 4] = LOBYTE(HIWORD(serial));
+//			buf[n + 5] = HIBYTE(LOWORD(serial));
+//			buf[n + 6] = LOBYTE(LOWORD(serial));
 //
-//			buf[n] = HIBYTE(hiWord);
-//			n++;
-//			buf[n] = LOBYTE(hiWord);				// [4] 아이템 시리얼
-//			n++;
-//			buf[n] = HIBYTE(loWord);				// [5] 아이템 시리얼
-//			n++;
-//			buf[n] = LOBYTE(loWord);				// [6] 아이템 시리얼
-//			n++;
+//			// Extended item info
+//			buf[n + 7] = 0;
 //
-//			buf[n] = 0;								// [7] 아이템 번호 : 9번째 bit
-//													// [7] 아이템 16옵션 처리
-//													// [7] 엑설런트 아이템 옵션
+//			// Type extension bit
+//			buf[n + 7] |= (item[index].m_Type & 0x100) >> 1;
 //
-//#ifdef ITEM_INDEX_EXTEND_20050706
-//			BYTE btItemIndexEx = 0;
-//			btItemIndexEx |= (BYTE)((item[index].m_Type & 0x1E00) >> 5);	// 신규 확장 4비트
-//			buf[n] |= (BYTE)((item[index].m_Type & 0x0100) >> 1);			// 기존 확장 1비트
-//#else
-//			if (item[index].m_Type > 255) buf[n] = 128;
-//#endif
-//			if (item[index].m_Option3 > 3) buf[n] |= 64;
-//			buf[n] |= item[index].m_NewOption;
-//			n++;
-//
-//			buf[n] = item[index].m_SetOption;		// [8] 세트아이템 옵션
-//
-//			n++;
-//
-//#ifdef ITEM_INDEX_EXTEND_20050706
-//			buf[n] = 0;								// [9] 아이템 번호 : 10 ~ 13번째 bit까지
-//			buf[n] |= btItemIndexEx;
-//#endif			
-//
-//#ifdef ADD_380ITEM_NEWOPTION_20060711
-//			BYTE btItemEffeftFor380 = 0;
-//			// 380 아이템 추가 옵션 : m_ItemOptionEx의 상위 1 bit 값
-//			// [9] 버퍼의 상위 5 번째 값에 설정
-//			btItemEffeftFor380 = (item[index].m_ItemOptionEx & 0x80) >> 4;   // 값이 8이됨.
-//			buf[n] |= btItemEffeftFor380;
-//#endif
-//
-//			n++;
-//
-//#ifdef ADD_JEWEL_OF_HARMONY_SYSTEM_20060530
-//#ifdef MODIFY_HARMONY_OPTION_INIT_VALUE_FIX_20061019
-//			if (item[index].m_JewelOfHarmonyOption == 0xFF)
+//			// Excellent option flag
+//			if (item[index].m_Option3 > 3)
 //			{
-//				// 조화의 보석 옵션이 0xFF(잘못된 초기값)일 경우 0x00으로 강제로 설정한다.
-//				item[index].m_JewelOfHarmonyOption = 0x00;
+//				buf[n + 7] |= 0x40;
 //			}
-//#endif // MODIFY_HARMONY_OPTION_INIT_VALUE_FIX_20061019
-//			buf[n] = item[index].m_JewelOfHarmonyOption;	// [10] 조화보석 옵셕 : 
-//															// 4 Bit : 0 ~ 15. 강화 옵션 타입
-//															// 4 Bit : 0 ~ 15.  강화 옵션 레벨
-//#ifndef CHARACTERDB_SERVER
-//#ifdef ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
-//															// 소켓 아이템인 경우 조화옵션 대신 보너스 소켓 옵션을 사용한다.
-//#ifdef MODIFY_ITEM_SOCKET_OPTION_BUGFIX_02_20080630
-//			if (g_SocketOptionSystem.IsSocketItem(&item[index]) == true)
-//#else
-//			if (g_SocketOptionSystem.IsEnableSocketItem(&item[index]) == true)
-//#endif // MODIFY_ITEM_SOCKET_OPTION_BUGFIX_02_20080630
-//			{
-//				buf[n] = item[index].m_BonusSocketOption;	// [10] 보너스 소켓 옵션 : 소켓 아이템일 경우만
-//			}
-//#endif // ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
-//#endif
-//			n++;
 //
-//#ifndef ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
-//			n += 5;											// 예약 바이트는 필요할때 마다 하나씩 사용하면 된다.
-//#endif // ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
-//#else
-//			n += 6;											// 예약 바이트는 필요할때 마다 하나씩 사용하면 된다.
-//#endif // ADD_JEWEL_OF_HARMONY_SYSTEM_20060530
+//			// New options
+//			buf[n + 7] |= item[index].m_NewOption;
 //
-//#ifdef ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
-//															// 예비 바이트 전부를 사용
-//															// 소켓 아이템 데이터를 입력한다.
-//			buf[n] = item[index].m_SocketOption[0];			// [11] : 소켓 옵션 1번째 슬롯
-//			n++;
-//			buf[n] = item[index].m_SocketOption[1];			// [12] : 소켓 옵션 2번째 슬롯
-//			n++;
-//			buf[n] = item[index].m_SocketOption[2];			// [13] : 소켓 옵션 3번째 슬롯
-//			n++;
-//			buf[n] = item[index].m_SocketOption[3];			// [14] : 소켓 옵션 4번째 슬롯
-//			n++;
-//			buf[n] = item[index].m_SocketOption[4];			// [15] : 소켓 옵션 5번째 슬롯
-//			n++;
-//#endif // ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
+//			// Set option
+//			buf[n + 8] = item[index].m_SetOption;
+//
+//			// Extended type bits
+//			buf[n + 9] = 0;
+//			buf[n + 9] |= (item[index].m_Type & 0x1E00) >> 5;
+//
+//			// Harmony / socket placeholder
+//			buf[n + 10] = 0;
+//
+//			// Socket bytes
+//			buf[n + 11] = 0xFF;
+//			buf[n + 12] = 0xFF;
+//			buf[n + 13] = 0xFF;
+//			buf[n + 14] = 0xFF;
+//			buf[n + 15] = 0xFF;
+//
+//			n += 16;
 //		}
 //	}
 //}
+//void ItemByteConvert16(LPBYTE buf, CItem item[], int maxitem)
+//{
+//	unsigned __int16 hiWord;
+//	unsigned __int16 loWord;
+//	BOOL v7;
+//	BYTE btItemIndexEx;
+//
+//	int n = 0;
+//
+//	for (int index = 0; index < maxitem; ++index)
+//	{
+//		if (item[index].m_Type == 6675 && (item[index].m_Level >= 0 ? (v7 = item[index].m_Level <= 2) : (v7 = 0), v7))
+//		{
+//			buf[n] = -1;
+//			buf[n + 1] = -1;
+//			buf[n + 2] = -1;
+//			buf[n + 3] = -1;
+//			buf[n + 4] = -1;
+//			buf[n + 5] = -1;
+//			buf[n + 6] = -1;
+//			buf[n + 7] = -1;
+//			buf[n + 8] = -1;
+//			buf[n + 9] = -1;
+//			buf[n + 10] = -1;
+//			buf[n + 11] = -1;
+//			buf[n + 12] = -1;
+//			buf[n + 13] = -1;
+//			buf[n + 14] = -1;
+//			buf[n + 15] = -1;
+//			n += MAX_ITEMDBBYTE;
+//		}
+//		else if (item[index].m_Type >= 0)
+//		{
+//			memset(&buf[n], 0, 0x10u);
+//			buf[n] = item[index].m_Type;
+//			int v3 = n + 1;
+//			buf[v3] = 0;
+//			buf[v3] |= 8 * item[index].m_Level;
+//			buf[v3] |= item[index].m_Option1 << 7;
+//			buf[v3] |= 4 * item[index].m_Option2;
+//			buf[v3] |= item[index].m_Option3 & 3;
+//			buf[++v3] = item[index].m_Durability;
+//			++v3;
+//			hiWord = item[index].m_Number >> MAX_ITEMDBBYTE;
+//			loWord = item[index].m_Number;
+//			buf[v3++] = item[index].m_Number >> 24;
+//			buf[v3++] = hiWord;
+//			buf[v3++] = HIBYTE(loWord);
+//			buf[v3] = loWord;
+//			int na = v3 + 1;
+//			buf[na] = 0;
+//			btItemIndexEx = (item[index].m_Type & 0x1E00) >> 5;
+//			buf[na] |= (item[index].m_Type & 0x100) >> 1;
+//			if (item[index].m_Option3 > 3)
+//				buf[na] |= 0x40u;
+//			buf[na] |= item[index].m_NewOption;
+//			int v6 = na + 1;
+//			buf[v6++] = item[index].m_SetOption;
+//			buf[v6] = 0;
+//			buf[v6] |= btItemIndexEx;
+//			buf[++v6] = 0;
+//			buf[++v6] = -1;
+//			buf[++v6] = -1;
+//			buf[++v6] = -1;
+//			buf[++v6] = -1;
+//			buf[++v6] = -1;
+//			n = v6 + 1;
+//		}
+//		else
+//		{
+//			buf[n] = -1;
+//			buf[n + 1] = -1;
+//			buf[n + 2] = -1;
+//			buf[n + 3] = -1;
+//			buf[n + 4] = -1;
+//			buf[n + 5] = -1;
+//			buf[n + 6] = -1;
+//			buf[n + 7] = -1;
+//			buf[n + 8] = -1;
+//			buf[n + 9] = -1;
+//			buf[n + 10] = -1;
+//			buf[n + 11] = -1;
+//			buf[n + 12] = -1;
+//			buf[n + 13] = -1;
+//			buf[n + 14] = -1;
+//			buf[n + 15] = -1;
+//			n += MAX_ITEMDBBYTE;
+//		}
+//	}
+//}
+void ItemByteConvert16(LPBYTE buf, CItem item[], int maxitem)
+{
+	int n = 0;
+	WORD hiWord, loWord;
+
+	// type / index, Level, Dur, Special, Number, extension
+	//   4  ,   4  ,   5,   3,    8        4Byte,   3Byte
+	for (int index = 0; index<maxitem; index++)
+	{
+#ifdef FOR_BLOODCASTLE
+		if (item[index].m_Type == MAKE_ITEMNUM(13, 19))
+		{
+			// DB에 저장하기 전에 항상 대천사 시리즈를 확인하고 존재한다면 저장대상에서 재외함.
+			if (CHECK_LIMIT(item[index].m_Level, 3))
+			{
+				buf[n] = 255;
+				buf[n + 1] = 255;
+				buf[n + 2] = 255;
+				buf[n + 3] = 255;
+				buf[n + 4] = 255;
+				buf[n + 5] = 255;
+				buf[n + 6] = 255;
+				buf[n + 7] = 255;
+				buf[n + 8] = 255;
+				buf[n + 9] = 255;
+				buf[n + 10] = 255;
+				buf[n + 11] = 255;
+				buf[n + 12] = 255;
+				buf[n + 13] = 255;
+				buf[n + 14] = 255;
+				buf[n + 15] = 255;
+				n += MAX_ITEMDBBYTE;
+				continue;
+			}
+		}
+#endif
+#ifndef CHARACTERDB_SERVER
+#ifdef MODIFY_ILLUSIONTEMPLE_BUGFIX_2_20070724	// DB에 저장하기 전에 성물이 있으면 저장대상에서 재외
+		if (item[index].m_Type == MAKE_ITEMNUM(14, 64))
+		{
+			buf[n] = 255;
+			buf[n + 1] = 255;
+			buf[n + 2] = 255;
+			buf[n + 3] = 255;
+			buf[n + 4] = 255;
+			buf[n + 5] = 255;
+			buf[n + 6] = 255;
+			buf[n + 7] = 255;
+			buf[n + 8] = 255;
+			buf[n + 9] = 255;
+			buf[n + 10] = 255;
+			buf[n + 11] = 255;
+			buf[n + 12] = 255;
+			buf[n + 13] = 255;
+			buf[n + 14] = 255;
+			buf[n + 15] = 255;
+			n += MAX_ITEMDBBYTE;
+			continue;
+		}
+#endif
+#endif
+		if (item[index].m_Type < 0)
+		{
+			buf[n] = 255;
+			buf[n + 1] = 255;
+			buf[n + 2] = 255;
+			buf[n + 3] = 255;
+			buf[n + 4] = 255;
+			buf[n + 5] = 255;
+			buf[n + 6] = 255;
+			buf[n + 7] = 255;
+			buf[n + 8] = 255;
+			buf[n + 9] = 255;
+			buf[n + 10] = 255;
+			buf[n + 11] = 255;
+			buf[n + 12] = 255;
+			buf[n + 13] = 255;
+			buf[n + 14] = 255;
+			buf[n + 15] = 255;
+			n += MAX_ITEMDBBYTE;
+		}
+		else
+		{
+#ifdef ITEM_INDEX_EXTEND_20050706
+			memset(&buf[n], 0, MAX_ITEMDBBYTE);
+#endif
+
+			buf[n] = (BYTE)item[index].m_Type % 256;	// [0]			
+														// Type       : 4bit
+
+			n++;
+
+			buf[n] = 0;								// [1]
+			buf[n] |= item[index].m_Level << 3;		// Level	: 5bit
+			buf[n] |= item[index].m_Option1 << 7;		// Option 1 : 1bit
+			buf[n] |= item[index].m_Option2 << 2;		// Option 2 : 1bit
+			buf[n] |= (item[index].m_Option3 & 0x03);	// Option 3 : 2bit
+
+			n++;
+			buf[n] = (BYTE)item[index].m_Durability;// [2] 내구도		
+													// Durability : 8bit
+			n++;
+
+			hiWord = HIWORD(item[index].m_Number);	// [3] 아이템 시리얼 
+			loWord = LOWORD(item[index].m_Number);
+
+			buf[n] = HIBYTE(hiWord);
+			n++;
+			buf[n] = LOBYTE(hiWord);				// [4] 아이템 시리얼
+			n++;
+			buf[n] = HIBYTE(loWord);				// [5] 아이템 시리얼
+			n++;
+			buf[n] = LOBYTE(loWord);				// [6] 아이템 시리얼
+			n++;
+
+			buf[n] = 0;								// [7] 아이템 번호 : 9번째 bit
+													// [7] 아이템 16옵션 처리
+													// [7] 엑설런트 아이템 옵션
+
+#ifdef ITEM_INDEX_EXTEND_20050706
+			BYTE btItemIndexEx = 0;
+			btItemIndexEx |= (BYTE)((item[index].m_Type & 0x1E00) >> 5);	// 신규 확장 4비트
+			buf[n] |= (BYTE)((item[index].m_Type & 0x0100) >> 1);			// 기존 확장 1비트
+#else
+			if (item[index].m_Type > 255) buf[n] = 128;
+#endif
+			if (item[index].m_Option3 > 3) buf[n] |= 64;
+			buf[n] |= item[index].m_NewOption;
+			n++;
+
+			buf[n] = item[index].m_SetOption;		// [8] 세트아이템 옵션
+
+			n++;
+
+#ifdef ITEM_INDEX_EXTEND_20050706
+			buf[n] = 0;								// [9] 아이템 번호 : 10 ~ 13번째 bit까지
+			buf[n] |= btItemIndexEx;
+#endif			
+
+#ifdef ADD_380ITEM_NEWOPTION_20060711
+			BYTE btItemEffeftFor380 = 0;
+			// 380 아이템 추가 옵션 : m_ItemOptionEx의 상위 1 bit 값
+			// [9] 버퍼의 상위 5 번째 값에 설정
+			btItemEffeftFor380 = (item[index].m_ItemOptionEx & 0x80) >> 4;   // 값이 8이됨.
+			buf[n] |= btItemEffeftFor380;
+#endif
+
+			n++;
+
+#ifdef ADD_JEWEL_OF_HARMONY_SYSTEM_20060530
+#ifdef MODIFY_HARMONY_OPTION_INIT_VALUE_FIX_20061019
+			if (item[index].m_JewelOfHarmonyOption == 0xFF)
+			{
+				// 조화의 보석 옵션이 0xFF(잘못된 초기값)일 경우 0x00으로 강제로 설정한다.
+				item[index].m_JewelOfHarmonyOption = 0x00;
+			}
+#endif // MODIFY_HARMONY_OPTION_INIT_VALUE_FIX_20061019
+			buf[n] = item[index].m_JewelOfHarmonyOption;	// [10] 조화보석 옵셕 : 
+															// 4 Bit : 0 ~ 15. 강화 옵션 타입
+															// 4 Bit : 0 ~ 15.  강화 옵션 레벨
+#ifndef CHARACTERDB_SERVER
+#ifdef ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
+															// 소켓 아이템인 경우 조화옵션 대신 보너스 소켓 옵션을 사용한다.
+#ifdef MODIFY_ITEM_SOCKET_OPTION_BUGFIX_02_20080630
+			if (g_SocketOptionSystem.IsSocketItem(&item[index]) == true)
+#else
+			if (g_SocketOptionSystem.IsEnableSocketItem(&item[index]) == true)
+#endif // MODIFY_ITEM_SOCKET_OPTION_BUGFIX_02_20080630
+			{
+				buf[n] = item[index].m_BonusSocketOption;	// [10] 보너스 소켓 옵션 : 소켓 아이템일 경우만
+			}
+#endif // ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
+#endif
+			n++;
+
+#ifndef ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
+			n += 5;											// 예약 바이트는 필요할때 마다 하나씩 사용하면 된다.
+#endif // ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
+#else
+#ifdef CHARACTERDB_SERVER
+			buf[n] = 0;
+			n++;
+#else
+			n += 6;											// 예약 바이트는 필요할때 마다 하나씩 사용하면 된다.
+#endif
+#endif // ADD_JEWEL_OF_HARMONY_SYSTEM_20060530
+
+#if ADD_ITEM_SOCKET_OPTION_EXTEND_20080422 
+															// 예비 바이트 전부를 사용
+															// 소켓 아이템 데이터를 입력한다.
+			buf[n] = item[index].m_SocketOption[0];			// [11] : 소켓 옵션 1번째 슬롯
+			n++;
+			buf[n] = item[index].m_SocketOption[1];			// [12] : 소켓 옵션 2번째 슬롯
+			n++;
+			buf[n] = item[index].m_SocketOption[2];			// [13] : 소켓 옵션 3번째 슬롯
+			n++;
+			buf[n] = item[index].m_SocketOption[3];			// [14] : 소켓 옵션 4번째 슬롯
+			n++;
+			buf[n] = item[index].m_SocketOption[4];			// [15] : 소켓 옵션 5번째 슬롯
+			n++;
+#endif // ADD_ITEM_SOCKET_OPTION_EXTEND_20080422
+#ifdef CHARACTERDB_SERVER
+			buf[n] = -1;// item[index].m_SocketOption[0];			// [11] : 소켓 옵션 1번째 슬롯
+			n++;
+			buf[n] = -1;//item[index].m_SocketOption[1];			// [12] : 소켓 옵션 2번째 슬롯
+			n++;
+			buf[n] = -1;//item[index].m_SocketOption[2];			// [13] : 소켓 옵션 3번째 슬롯
+			n++;
+			buf[n] = -1;//item[index].m_SocketOption[3];			// [14] : 소켓 옵션 4번째 슬롯
+			n++;
+			buf[n] = -1;//item[index].m_SocketOption[4];			// [15] : 소켓 옵션 5번째 슬롯
+			n++;
+#endif
+		}
+	}
+}
 
 #endif
 

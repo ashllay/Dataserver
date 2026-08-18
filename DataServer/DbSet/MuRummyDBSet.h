@@ -22,23 +22,6 @@
 #define MAX_MURUMMYCARDCOLOR 3
 #define MAX_MURUMMYCARDNUMBER 8
 
-struct _tagMuRummyCardInfoDS
-{
-	_tagMuRummyCardInfoDS()
-	{
-		btColor = -1;
-		btNumber = -1;
-		btSlotNum = -1;
-		btSeq = -1;
-		btStatus = -1;
-	}
-	BYTE btColor;
-	BYTE btNumber;
-	BYTE btSlotNum;
-	BYTE btSeq;
-	BYTE btStatus;
-};
-
 typedef struct _tagMuRummyCardUpdateDS
 {
 	_tagMuRummyCardUpdateDS()
@@ -61,6 +44,24 @@ struct _tagPMSG_REQ_MURUMMY_SELECT_DS
 	WORD aIndex;
 };
 
+struct _tagMuRummyCardInfoDS
+{
+	BYTE btColor;
+	BYTE btNumber;
+	BYTE btSlotNum;
+	BYTE btSeq;
+	BYTE btStatus;
+
+	_tagMuRummyCardInfoDS()
+	{
+		btColor = 0xFF;
+		btNumber = 0xFF;
+		btSlotNum = 0xFF;
+		btSeq = 0xFF;
+		btStatus = 0xFF;
+	}
+};
+
 struct _tagPMSG_ANS_MURUMMY_SELECT_DS
 {
 	PBMSG_HEAD2 h; // C1:E8:00 DS->GS
@@ -70,6 +71,21 @@ struct _tagPMSG_ANS_MURUMMY_SELECT_DS
 	BYTE btGameType;
 	BYTE btSpecialCardDeckCnt;
 	_tagMuRummyCardInfoDS stMuRummyCardInfoDS[MAX_MURUMMY_CARD_INFO + MAX_MURUMMY_SPECIALCARD_INFO];
+
+	_tagPMSG_ANS_MURUMMY_SELECT_DS()
+	{
+		// Important:
+		// do NOT memset(this,0,sizeof(*this))
+		// because original constructor does NOT do that.
+
+		aIndex = 0;
+		wScore = 0;
+		btResult = 0;
+		btGameType = 0;
+		btSpecialCardDeckCnt = 0;
+
+		// array auto-constructs
+	}
 };
 
 struct _tagPMSG_REQ_MURUMMY_INSERT_DS

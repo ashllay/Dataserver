@@ -68,7 +68,6 @@ int CGremoryCaseDBSet::InsertGremoryCase(char* szAccountID, char* szName, char b
 	LogAddTD("error-L3 : [GremoryCase] InsertGremoryCase #1 [%s][%s] %s %d", szAccountID, szName, __FILE__, __LINE__);
 	return 0;
 }
-// 5CDB04: using guessed type int `CGremoryCaseDBSet::InsertGremoryCase'::`2'::__LINE__Var;
 
 int CGremoryCaseDBSet::SelectGremoryCase(char* szAccountID, char* szName, _stGremoryCaseList* pGCList, char* btListCnt)
 {
@@ -127,6 +126,7 @@ int CGremoryCaseDBSet::SelectGremoryCase(char* szAccountID, char* szName, _stGre
 					pGCList[*btListCnt].lRecvExpireDate = this->m_DBQuery.GetInt("RecvExpireDateConvert");
 					pGCList[(*btListCnt)++].lItemExpireDate = this->m_DBQuery.GetInt("ItemExpireDateConvert");
 				}
+
 				this->m_DBQuery.Clear();
 
 				QueryStr.Format("EXEC WZ_GremoryCaseSelect '%s', '%s', %d", szAccountID, szName, 2);
@@ -193,7 +193,6 @@ int CGremoryCaseDBSet::SelectGremoryCase(char* szAccountID, char* szName, _stGre
 	LogAddTD("error-L3 : [GremoryCase] SelectGremoryCase #1 [%s][%s] %s %d", szAccountID, szName, __FILE__, __LINE__);
 	return 0;
 }
-// 5CDB08: using guessed type int `CGremoryCaseDBSet::SelectGremoryCase'::`2'::__LINE__Var;
 
 int CGremoryCaseDBSet::UpdateGremoryCase(char* szAccountID, char* szName, char btGCType, char btItemType, WORD wItemIndex, char btLevel, unsigned int dwSerial, int lRecvDate, char btUsedInfo)
 {
@@ -220,7 +219,6 @@ int CGremoryCaseDBSet::UpdateGremoryCase(char* szAccountID, char* szName, char b
 	LogAddTD("error-L3 : [GremoryCase] UpdateGremoryCase #1 [%s][%s] %s %d", szAccountID, szName, __FILE__, __LINE__);
 	return 0;
 }
-// 5CDB0C: using guessed type int `CGremoryCaseDBSet::UpdateGremoryCase'::`2'::__LINE__Var;
 
 int CGremoryCaseDBSet::UpdateGremoryCaseItemRecv(char* szAccountID, char* szName, char btGCType, char btItemType, WORD wItemIndex, char btLevel, unsigned int dwSerial, int lRecvDate, char btUsedInfo)
 {
@@ -270,12 +268,12 @@ int CGremoryCaseSerial::MakeSerial()
 	return 1;
 }
 
-//----- (0043B360) --------------------------------------------------------
 unsigned int CGremoryCaseSerial::GetSerial()
 {
 	unsigned int retserial;
 
 	EnterCriticalSection(&this->m_csGCItemSerial);
+
 	if (this->m_dwGCItemSerial >= this->m_dwGCLastSerial)
 	{
 		MakeSerial();

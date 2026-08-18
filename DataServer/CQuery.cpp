@@ -389,6 +389,15 @@ void CQuery::PrintDiag(bool &bReconnect)
 
 		bReconnect = true;
 	}
+	//strcmp(SqlState, "24000");
+	if (strcmp((LPCTSTR)SqlState, "24000") == 0)//new
+	{
+		LogAddTD("[UBF] ODBC SQLSTATE: 24000 Run CQuery::DisconnectAndReConnect() ");
+
+		if (DisConnectAndReConnect() == 1) g_DelayHandler.IncreaseQuerySessionId();
+
+		bReconnect = true;
+	}
 	// 복구 불가능한 에러가 발생한 경우 프로그램을 종료한다. 극단적 예외 처리가 불필요한
 	// 경우는 이 코드를 주석 처리하거나 적당하게 다른 루틴으로 바꿔야 한다.
 /*	if (ii > 1) {
@@ -525,9 +534,7 @@ BOOL CQuery::ReadInt64(LPCTSTR szSQL, INT64 &buf)
 void CQuery::WriteInt64(LPCTSTR szSQL, INT64 *buf)
 {
 	SQLINTEGER cbBlob;
-	char *p;
 	SQLPOINTER pToken;
-	int nPut;
 
 	LogAddTD("%s", szSQL);
 
@@ -550,29 +557,37 @@ void CQuery::WriteInt64(LPCTSTR szSQL, INT64 *buf)
 
 	Clear();
 }
-#pragma warning "Maybe need to check this"
-int CQuery::IsConnected()
+#pragma message("Maybe need to check this")
+BOOL CQuery::IsConnected( )
 {
-	int result;
-	//int v2;
-	int length = 0;
-	int isConnected; 
+	SQLINTEGER length = 0;
+	int isConnected = 0;
 
+	// Note: SQLFreeHandle with DBC handle is typically not the right way to check connection
+	// But preserving original logic
 	this->ret = SQLFreeHandle(2, this->hDbc);
-	if (this->ret == -1)
+	if (this->ret == -1) {
+		// SQLFreeHandle failed, assume connected? This is suspicious
 		return 1;
-	isConnected = 0;
-	ret = SQLGetConnectAttr(this->hDbc, SQL_ATTR_CONNECTION_DEAD, &isConnected, 0, NULL);
-	//SQLGetConnectAttr(hdbc, SQL_ATTR_CONNECTION_DEAD, &dead, 0, NULL);
-	//this->ret = v2;
-	if (this->ret && this->ret != 1)
-		goto LABEL_12;
-	if (isConnected == 1)
-		return 0;
-	if (isConnected)
-		LABEL_12:
-	result = 0;
-	else
-		result = 1;
-	return result;
+	}
+
+	// Check connection status
+	this->ret = SQLGetConnectAttr(this->hDbc, SQL_ATTR_CONNECTION_DEAD, &isConnected, 0, &length);
+
+	// SQLGetConnectAttr failed
+	if (this->ret != SQL_SUCCESS && this->ret != SQL_SUCCESS_WITH_INFO) {
+		return 0; // Can't determine status, assume disconnected
+	}
+
+	// SQL_ATTR_CONNECTION_DEAD returns:
+	// SQL_CD_TRUE (1) = connection is dead
+	// SQL_CD_FALSE (0) = connection is alive
+	return (isConnected == SQL_CD_FALSE);
+}
+
+int CQuery::DisConnectAndReConnect()
+{
+	LogAddTD("[UBF] Run CQuery::DisconnectAndReConnect() ");
+	SQLDisconnect(this->hDbc);
+	return Connect(this->m_Type, this->m_szConnect, this->m_Id, this->m_Pass);
 }

@@ -1358,13 +1358,19 @@ typedef struct
 								//int     	nSerial;		// 아이템 시리얼
 								//short		Level;			// 아이템 레벨
 								//int		Exp;			// 아이템 경험치
+#ifdef _S12_P1_KR
+	WORD ServerType;
+	WORD ServerCode;
+#else
 	BYTE ServerType;
 	BYTE ServerCode;
+#endif
 }SDHP_RECV_PETITEM_INFO, *LPSDHP_RECV_PETITEM_INFO;
 
 
 ///////////////////////////////////////////////////
 // GS->GS	0x57	펫 아이템 정보를 저장하라고 한다
+
 typedef struct
 {
 #ifdef MODIFY_ITEM_SERIAL_EXPAND_20080227
@@ -1385,9 +1391,15 @@ typedef struct
 							//int    		nSerial;	// 아이템 시리얼
 							//int			Exp;		// 아이템 경험
 							//short		Level;		// 아이템 레벨
+#ifdef _S12_P1_KR
+	WORD ServerType;
+	WORD ServerCode;
+#else
 	BYTE ServerType;
 	BYTE ServerCode;
+#endif
 }SDHP_SAVE_PETITEM_INFO, *LPSDHP_SAVE_PETITEM_INFO;
+
 #endif
 
 #ifdef GS_DS_LIVECHECK_20041008
@@ -3804,7 +3816,7 @@ typedef struct
 typedef struct
 {
 	PBMSG_HEAD h;
-	char AccountId[11];
+	char AccountId[MAX_IDSTRING + 1];
 	short Number;
 	BYTE Result;
 	BYTE bSummoner;
@@ -3846,7 +3858,7 @@ typedef struct
 struct SDHP_RUUDTOKENUPDATE
 {
 	PBMSG_HEAD h;
-	char AccountID[11];
+	char AccountID[MAX_IDSTRING + 1];
 	char CharName[11];
 	unsigned int dwRuud;
 };
@@ -3854,7 +3866,7 @@ struct  SDHP_SNSDATA
 {
 	PWMSG_HEAD h;
 	int aIndex;
-	char AccountID[11];
+	char AccountID[MAX_IDSTRING + 1];
 	char Name[11];
 	char btResult;
 	BYTE btSnsData[255];
@@ -3864,7 +3876,7 @@ struct SDHP_USERSETTING_SAVEDATA
 {
 	PWMSG_HEAD h;
 	int aIndex;
-	char AccountID[11];
+	char AccountID[MAX_IDSTRING + 1];
 	char btResult;
 	BYTE btSaveData[255];
 };
@@ -3874,7 +3886,7 @@ struct SDHP_REQ_GET_PCBANG_PLAYTIME_INFO
 {
 	PBMSG_HEAD2 h;
 	int userIndex;
-	char AccountID[11];
+	char AccountID[MAX_IDSTRING + 1];
 };
 
 /* 1129 */
@@ -3882,7 +3894,7 @@ struct SDHP_ANS_GET_PCBANG_PLAYTIME_INFO
 {
 	PBMSG_HEAD2 h;
 	int userIndex;
-	char AccountID[11];
+	char AccountID[MAX_IDSTRING + 1];
 	char btCompleteGrade;
 	char btRecvGrade;
 	unsigned int dwPCBangPlayTime;
@@ -3893,7 +3905,7 @@ struct SDHP_REQ_SET_PCBANG_PLAYTIME_INFO
 {
 	PBMSG_HEAD2 h;
 	int userIndex;
-	char AccountID[11];
+	char AccountID[MAX_IDSTRING + 1];
 	char btCompleteGrade;
 	char btRecvGrade;
 	unsigned int dwPCBangPlayTime;
@@ -3904,7 +3916,7 @@ struct SDHP_REQ_LOAD_PLAYTIME_EVENT_INFO
 {
 	PBMSG_HEAD2 h;
 	int userIndex;
-	char AccountID[11];
+	char AccountID[MAX_IDSTRING + 1];
 };
 
 /* 1132 */
@@ -3912,7 +3924,7 @@ struct SDHP_RES_LOAD_PLAYTIME_EVENT_INFO
 {
 	PBMSG_HEAD2 h;
 	int userIndex;
-	char AccountID[11];
+	char AccountID[MAX_IDSTRING + 1];
 	unsigned int dwPlayTime;
 	char btGrade;
 };
@@ -3922,7 +3934,7 @@ struct SDHP_REQ_SAVE_PLAYTIME_EVENT_INFO
 {
 	PBMSG_HEAD2 h;
 	int userIndex;
-	char AccountID[11];
+	char AccountID[MAX_IDSTRING + 1];
 	unsigned int dwPlayTime;
 	char btGrade;
 };
@@ -3933,7 +3945,7 @@ struct SDHP_REQ_LOAD_MINESYSTEM_UPT_USERINFO
 {
 	PBMSG_HEAD2 h;
 	unsigned __int16 wUserIndex;
-	char szCharName[11];
+	char szCharName[MAX_IDSTRING + 1];
 };
 
 /* 1012 */
@@ -3941,7 +3953,7 @@ struct __declspec(align(4)) SDHP_REQ_MINESYSTEM_UPT_USERINFO
 {
 	PBMSG_HEAD2 h;
 	WORD wUserIndex;
-	char szCharName[11];
+	char szCharName[MAX_IDSTRING + 1];
 	WORD wTwinkleType;
 	int iCurrentStage;
 	BYTE byRequestType;
@@ -3949,24 +3961,24 @@ struct __declspec(align(4)) SDHP_REQ_MINESYSTEM_UPT_USERINFO
 
 
 /* 824 */
-struct SDHP_ANS_LOAD_MINESYSTEM_UPT_USERINFO
+typedef struct
 {
 	PBMSG_HEAD2 h;
-	unsigned __int16 wUserIndex;
-	char byResult;
-	char szCharName[11];
-	unsigned __int16 wTwinkleType;
+	WORD wUserIndex;
+	BYTE byResult;
+	char szCharName[MAX_IDSTRING + 1];
+	WORD wTwinkleType;
 	int iCurrentStage;
-};
+} SDHP_ANS_LOAD_MINESYSTEM_UPT_USERINFO, * LPSDHP_ANS_LOAD_MINESYSTEM_UPT_USERINFO;
 
 /* 1013 */
-struct SDHP_ANS_MINESYSTEM_UPT_USERINFO
+typedef struct
 {
 	PBMSG_HEAD2 h;
-	unsigned __int16 wUserIndex;
-	char byRequestType;
-	char Result;
-};
+	WORD wUserIndex;
+	BYTE byRequestType;
+	BYTE Result;
+} SDHP_ANS_MINESYSTEM_UPT_USERINFO, *LPSDHP_ANS_MINESYSTEM_UPT_USERINFO;
 
 struct SDHP_ANS_DBMUUN_INVEN_SUB_EQUIP_OPEN
 {
@@ -3980,9 +3992,9 @@ struct SDHP_ANS_DBMUUN_INVEN_SUB_EQUIP_OPEN
 struct _tagSDHP_ANS_MUUN_PERIOD_INFO_SELECT
 {
 	PWMSG_HEAD2 h;
-	char btResult;
-	__int16 aIndex;
-	char btCnt;
+	BYTE btResult;
+	short aIndex;
+	BYTE btCnt;
 };
 
 
@@ -3990,10 +4002,10 @@ struct _tagSDHP_ANS_MUUN_PERIOD_INFO_SELECT
 struct SDHP_REQ_SET_CHARACTER_SLOT_COUNT
 {
 	PBMSG_HEAD h;
-	char AccountId[11];
-	unsigned __int16 Number;
-	char CharacterSlotCount;
-	unsigned int EventIndex;
+	char AccountId[MAX_IDSTRING + 1];
+	WORD Number;
+	BYTE CharacterSlotCount;
+	DWORD EventIndex;
 };
 
 /* 954 */
@@ -4065,51 +4077,52 @@ struct PMSG_ANS_USERID
 struct _tagPMSG_REQ_AB_ALL_JOIN_USER_DS
 {
 	PBMSG_HEAD2 h;
-	unsigned __int16 wMapSvrNum;
+	WORD wMapSvrNum;
 };
 
 /* 1026 */
 struct SDHP_REQ_DBEVENT_INVEN_LOAD
 {
 	PBMSG_HEAD h;
-	char AccountID[11];
-	char Name[11];
+	char AccountID[MAX_IDSTRING + 1];
+	char Name[MAX_IDSTRING + 1];
 	WORD aIndex;
 };
 /* 1025 */
 struct _tagSDHP_REQ_DBEVENT_INVEN_SAVE
 {
 	PWMSG_HEAD h;
-	char AccountID[11];
-	char Name[11];
-	BYTE dbInventory[512];
+	char AccountID[MAX_IDSTRING + 1];
+	char Name[MAX_IDSTRING + 1];
+	BYTE dbInventory[MAX_DBEVENTINVENTORY];
 };
 
 /* 1042 */
 struct PMSG_REQ_PSHOPITEMVALUE_INFO
 {
 	PBMSG_HEAD h;
-	char AccountId[11];
-	char szName[11];
+	char AccountId[MAX_IDSTRING + 1];
+	char szName[MAX_IDSTRING + 1];
 	int iUserIndex;
 };
 
 /* 839 */
+#pragma pack (1)
 struct PMSG_PSHOPITEMVALUE_INFO
 {
 	int nPShopItemInvenNum;
-	unsigned int wItemSerial;
+	DWORD wItemSerial;
 	int nMoney;
-	__int16 sBlessJewelValue;
-	__int16 sSoulJewelValue;
-	__int16 sChaosJewelValue;
+	short sBlessJewelValue;
+	short sSoulJewelValue;
+	short sChaosJewelValue;
 };
-
+#pragma pack ()
 /* 840 */
 struct PMSG_ANS_PSHOPITEMVALUE_INFO
 {
 	PWMSG_HEAD head;
-	char btItemCnt;
+	BYTE btItemCnt;
 	int iUserIndex;
 };
 
@@ -4170,7 +4183,7 @@ struct SDHP_SEND_CCF_INFO
 	WORD wMapSvrNum;
 };
 
-/* 1016 */
+
 struct PMSG_CCF_SEND_ALL_INFO
 {
 	PBMSG_HEAD2 h;
@@ -4179,7 +4192,7 @@ struct PMSG_CCF_SEND_ALL_INFO
 	WORD wMapSvrNum;
 };
 
-/* 1017 */
+
 struct SDHP_REQ_CCF_RESULT
 {
 	SDHP_REQ_CCF_RESULT()
@@ -4194,7 +4207,7 @@ struct SDHP_REQ_CCF_RESULT
 	BYTE byCCFType;
 };
 
-/* 1018 */
+
 struct SDHP_REQ_CCF_GETPERMISSION
 {
 	SDHP_REQ_CCF_GETPERMISSION()
@@ -4225,7 +4238,7 @@ struct SDHP_REQ_CCF_RANKING_REQ
 	int nServerCategory;
 };
 
-/* 1021 */
+
 struct _tagPMSG_ANS_CCF_RANKING
 {
 	_tagPMSG_ANS_CCF_RANKING()
@@ -4252,7 +4265,7 @@ struct SDHP_SEND_EVENTMAP_INFO_ALL_SVR
 	WORD wMapSvrNum;
 };
 
-/* 1123 */
+
 struct SDHP_GET_EVENTMAPENTERCOUNT
 {
 	PBMSG_HEAD2 h;
@@ -4261,7 +4274,7 @@ struct SDHP_GET_EVENTMAPENTERCOUNT
 };
 
 
-typedef struct SDHP_SET_EVENTMAPENTERCOUNT
+struct SDHP_SET_EVENTMAPENTERCOUNT
 {
 	PBMSG_HEAD2 h;
 	char Name[MAX_IDSTRING + 1];
@@ -4274,7 +4287,7 @@ typedef struct SDHP_SET_EVENTMAPENTERCOUNT
 	BYTE IllusionTempleRenewal;
 }; typedef SDHP_SET_EVENTMAPENTERCOUNT *LPSDHP_SET_EVENTMAPENTERCOUNT;
 
-typedef struct PMSG_REQ_PERIODBUFF_INSERT
+struct PMSG_REQ_PERIODBUFF_INSERT
 {
 	PBMSG_HEAD2 head;
 	WORD wUserIndex;
@@ -4286,7 +4299,7 @@ typedef struct PMSG_REQ_PERIODBUFF_INSERT
 	long lExpireDate;
 }; typedef PMSG_REQ_PERIODBUFF_INSERT *LPPMSG_REQ_PERIODBUFF_INSERT;
 
-typedef struct PMSG_REQ_PERIODBUFF_DELETE
+struct PMSG_REQ_PERIODBUFF_DELETE
 {
 	PBMSG_HEAD2 head;
 	WORD wUserIndex;
@@ -4295,14 +4308,14 @@ typedef struct PMSG_REQ_PERIODBUFF_DELETE
 }; typedef PMSG_REQ_PERIODBUFF_DELETE *LPPMSG_REQ_PERIODBUFF_DELETE;
 
 
-typedef struct PMSG_REQ_PERIODBUFF_SELECT
+struct PMSG_REQ_PERIODBUFF_SELECT
 {
 	PBMSG_HEAD2 head;
 	WORD wUserIndex;
 	char szCharacterName[MAX_IDSTRING + 1];
 }; typedef PMSG_REQ_PERIODBUFF_SELECT *LPPMSG_REQ_PERIODBUFF_SELECT;
 
-typedef struct PMSG_ANS_PERIODBUFF_SELECT
+struct PMSG_ANS_PERIODBUFF_SELECT
 {
 	PBMSG_HEAD2 head;
 	BYTE btResultCode;
@@ -4313,7 +4326,7 @@ typedef struct PMSG_ANS_PERIODBUFF_SELECT
 	long lExpireDate;
 }; typedef PMSG_ANS_PERIODBUFF_SELECT *LPPMSG_ANS_PERIODBUFF_SELECT;
 
-typedef struct _tagPeriodBuffInfo
+struct _tagPeriodBuffInfo
 {
 	WORD wBuffIndex;
 	BYTE btEffectType1;
@@ -4324,6 +4337,13 @@ typedef struct _tagPeriodBuffInfo
 
 typedef struct _tagSDHP_ANS_DBEVENT_INVEN_LOAD
 {
+	_tagSDHP_ANS_DBEVENT_INVEN_LOAD()
+	{
+		memset(this->dbItems, 0xFF, sizeof(this->dbItems));
+		this->DbVersion = 0;
+		this->aIndex = 0;
+	}
+
 	PWMSG_HEAD h; // C2:E6 DS->GS
 	BYTE dbItems[MAX_DBEVENTINVENTORY];
 	BYTE DbVersion;
@@ -4373,18 +4393,14 @@ struct SDHP_ANS_EVENTMAPENTERCOUNT
 
 typedef struct _tagPMSG_ANS_ALL_GUILD_MARK_CNT_DS
 {
+	_tagPMSG_ANS_ALL_GUILD_MARK_CNT_DS()
+	{
+		this->wGuildCnt = 0;
+	}
 	PWMSG_HEAD2 h; // C1:F8:FC DS->GS
 	WORD wGuildCnt;
 } *LPPMSG_ANS_ALL_GUILD_MARK_CNT_DS;
 
-typedef struct SDHP_ANS_ACCOUNTINFO
-{
-	PBMSG_HEAD h; // C1:A1 DS->GS
-	char AccountId[MAX_IDSTRING + 1];
-	short Number;
-	BYTE Result;
-	BYTE bSummoner;
-} *LPSDHP_ANS_ACCOUNTINFO;
 #endif // __SPRODEF_H__
 
 

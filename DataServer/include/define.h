@@ -64,9 +64,9 @@ G_V_S4_6, //S4.5.1
 #define G_V_S3_E2	8
 #define G_V_S4_5	9
 #define G_V_S4_6	10
-#define CHARACTERDB_SERVER
+//#define CHARACTERDB_SERVER
 #define GAME_VERSION	G_V_S4_6
-
+#define _S12_P1_KR
 //#define ADD_ANTI_HACK_01_20051027 //SpeedHack FIX! - BAD
 
 #if GAME_VERSION >= G_V_S4_6
@@ -86,18 +86,10 @@ G_V_S4_6, //S4.5.1
 #endif
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //#endif
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
 
 //#ifdef USA
 #if GAME_VERSION >= G_V_S4_6
@@ -1180,7 +1172,7 @@ G_V_S4_6, //S4.5.1
 #endif
 
 // [업데이트] 해외 부분유료화 on/off (hnine)
-//#define ADD_PARTIALY_CHARGE_ON
+#define ADD_PARTIALY_CHARGE_ON
 
 // [업데이트] 해외 부분유료화 디파인 정리 (hnine)
 #ifdef ADD_PARTIALY_CHARGE_ON
@@ -3726,7 +3718,7 @@ enum
 #define MAX_PSHOP_TEXT				36		// 개인상점 텍스트의 최대크기
 
 #ifdef ITEM_DBSIZE_EXTEND_20050706
-#define MAX_DBINVENTORY				3792//1728	// (8x8x10)+120+(8x4x10) 데이터베이스 읽기&저장되는 인벤토리데이터 크기
+#define MAX_DBINVENTORY				3792	// (8x8x10)+120+(8x4x10) 데이터베이스 읽기&저장되는 인벤토리데이터 크기
 #else
 #define MAX_DBINVENTORY				1080	// (8x8x10)+120+(8x4x10) 데이터베이스 읽기&저장되는 인벤토리데이터 크기
 #endif
@@ -3778,16 +3770,19 @@ enum
 
 #define MAX_EQUIPMENT				12
 #define MAX_INVENTORYMAP			8*8
-#define MAX_INVENTORY				(MAX_EQUIPMENT + MAX_INVENTORYMAP)		// (8x8)+12 인벤토리 최대 개수
+//#define MAX_INVENTORY				(MAX_EQUIPMENT + MAX_INVENTORYMAP)		// (8x8)+12 인벤토리 최대 개수
 #define MAX_TRADEITEM				32				// (8x4) 
+
+#define EXTRA_CREATE_ITEMS			3 //Season 12
 
 #ifdef PERSONAL_SHOP_20040113		
 #define MAX_PSHOPITEM				8*4		// (8x4) 개인상점창
 #define MAX_PSHOPITEMMAP			8*4		// (8x4) 개인상점창 맵
 									//76
-#define MAX_INVENTORY_EXTEND		(MAX_INVENTORY + MAX_PSHOPITEM)		// (8x8)+12+(8*4) DB저장 시 인벤토리 최대 개수
-
-#define INVENTORY_EXT4_SIZE 204
+//#define MAX_INVENTORY_EXTEND		(MAX_INVENTORY + MAX_PSHOPITEM)		// (8x8)+12+(8*4) DB저장 시 인벤토리 최대 개수
+#define MAX_INVENTORY				237 
+#define MAX_MAININVENTORY			204
+#define MAX_EVENTINVENTORY			32
 
 #endif
 

@@ -7,7 +7,7 @@
 
 typedef struct _tagSDHP_REQ_EVENT_MONSTER_KILL_INFO_SAVE
 {
-	_tagSDHP_REQ_EVENT_MONSTER_KILL_INFO_SAVE()
+	/*_tagSDHP_REQ_EVENT_MONSTER_KILL_INFO_SAVE()
 	{
 		iUserIndex = -1;
 		memset(AccountID, 0, sizeof(AccountID));
@@ -31,7 +31,7 @@ typedef struct _tagSDHP_REQ_EVENT_MONSTER_KILL_INFO_SAVE
 		MonsterLevel5 = 0;
 		KillCount5 = 0;
 		DamageScore = 0;
-	}
+	}*/
 
 	PBMSG_HEAD2 h; // C1:3E:02 GS->DS
 	int iUserIndex;
@@ -66,6 +66,30 @@ struct _tagSDHP_REQ_EVENT_MONSTER_KILL_INFO
 
 typedef struct _tagSDHP_ANS_EVENT_MONSTER_KILL_INFO
 {
+	_tagSDHP_ANS_EVENT_MONSTER_KILL_INFO()
+	{
+		this->iUserIndex = -1;
+		this->MonsterIndex1 = -1;
+		this->MonsterLevel1 = 0;
+		this->KillCount1 = 0;
+		this->MonsterIndex2 = -1;
+		this->MonsterLevel2 = 0;
+		this->KillCount2 = 0;
+		this->MonsterIndex3 = -1;
+		this->MonsterLevel3 = 0;
+		this->KillCount3 = 0;
+		this->MonsterIndex4 = -1;
+		this->MonsterLevel4 = 0;
+		this->KillCount4 = 0;
+		this->MonsterIndex4 = -1;
+		this->MonsterLevel4 = 0;
+		this->KillCount4 = 0;
+		this->MonsterIndex5 = -1;
+		this->MonsterLevel5 = 0;
+		this->KillCount5 = 0;
+		this->DamageScore = 0LL;
+		this->btResult = 0;
+	}
 	PBMSG_HEAD2 h; // C1:3E:01 DS->GS
 	int iUserIndex;
 	short MonsterIndex1;

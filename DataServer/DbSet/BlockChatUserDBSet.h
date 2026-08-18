@@ -8,7 +8,7 @@ typedef struct _ST_BLOCK_CHATTING_USER
 		btSlotNum = -1;
 		memset(szCharName, 0, MAX_IDSTRING + 1);
 	}
-
+#pragma message("this Clear() seems to be redundant or wrong")
 	void Clear()
 	{
 		bIsUsed = false;
@@ -25,7 +25,7 @@ struct SDHP_ANS_BLOCK_CHAT_USER_INFO
 {
 	PWMSG_HEAD2 h;
 	int nUserIndex;
-	char szCharName[11];
+	char szCharName[MAX_IDSTRING + 1];
 	char btUserCnt;
 	_ST_BLOCK_CHATTING_USER BlockCharList[20];
 };
@@ -34,7 +34,7 @@ struct SDHP_REQ_ADD_BLOCK_CHAT_USER_INFO
 {
 	PBMSG_HEAD2 h;
 	int nUserIndex;
-	char szCharName[11];
+	char szCharName[MAX_IDSTRING + 1];
 	_ST_BLOCK_CHATTING_USER szBlockChar;
 };
 
@@ -42,11 +42,11 @@ struct SDHP_REQ_DEL_BLOCK_CHAT_USER_INFO
 {
 	PBMSG_HEAD2 h;
 	int nUserIndex;
-	char szCharName[11];
+	char szCharName[MAX_IDSTRING + 1];
 	_ST_BLOCK_CHATTING_USER szBlockChar;
 };
 
-typedef struct SDHP_REQ_BLOCK_CHAT_USER_INFO
+struct SDHP_REQ_BLOCK_CHAT_USER_INFO
 {
 	PBMSG_HEAD h;
 	int iUserIndex;

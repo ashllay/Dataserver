@@ -96,7 +96,7 @@ DWORD CWarehouseDBSet::Save(char* AccountID, BYTE* itembuf, int money, int pw)
 
 BOOL CWarehouseDBSet::Load(char *AccountID, BYTE* itembuf, int& money, BYTE& _dbversion, short& pw)
 {
-	CString qSql; // [esp+11Ch] [ebp-20h]
+	CString qSql;
 	int dbversion = 0;
 	qSql.Format("SELECT Money, DbVersion, pw from T_WareHouseInfo where AccountID='%s'", AccountID);
 

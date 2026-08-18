@@ -52,20 +52,15 @@ void CDevilSquareFinalDBSet::ReqCanPartyEnter(char *AccountID1, char *UserName1,
 		else
 		{
 			this->m_DBQuery.Clear();
-			LogAddTD(
-				"Error-L3 [WZ_DSF_CanPartyEnter]  %d Return %s,%d ",
-				sqlreturn, __FILE__, __LINE__);
+			LogAddTD("Error-L3 [WZ_DSF_CanPartyEnter]  %d Return %s,%d ",sqlreturn, __FILE__, __LINE__);
 		}
 	}
 	else
 	{
-		LogAddC(
-			2,
-			"Error WZ_DSF_CanPartyEnter m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+		LogAddC(LOGC_RED,"Error WZ_DSF_CanPartyEnter m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 		this->m_DBQuery.Clear();
 	}
 }
-// 5CDA4C: using guessed type int `CDevilSquareFinalDBSet::ReqCanPartyEnter'::`2'::__LINE__Var;
 
 
 void CDevilSquareFinalDBSet::UpdateDSFUserPoint(char *UserName, char *Gname, int DSFtype, int nPoint, int nEnterCount, int nWin)
@@ -95,9 +90,7 @@ void CDevilSquareFinalDBSet::UpdateDSFUserPoint(char *UserName, char *Gname, int
 		this->m_DBQuery.Clear();
 	}
 }
-// 5CDA50: using guessed type int `CDevilSquareFinalDBSet::UpdateDSFUserPoint'::`2'::__LINE__Var;
 
-//----- (00439810) --------------------------------------------------------
 void CDevilSquareFinalDBSet::SaveDSFPartyPoint(char *szAccountID1, char *szUserName1, int nUser1Level, char *szAccountID2, char *szUserName2, int nUser2Level, int nType, int nPoint, char btEnterCount, int nEnterYear, char btEnterMonth, char btEnterDay)
 {
 	__int16 sqlReturn;
@@ -147,12 +140,11 @@ void CDevilSquareFinalDBSet::SaveDSFPartyPoint(char *szAccountID1, char *szUserN
 		this->m_DBQuery.Clear();
 	}
 }
-// 5CDA54: using guessed type int `CDevilSquareFinalDBSet::SaveDSFPartyPoint'::`2'::__LINE__Var;
 
 
 void CDevilSquareFinalDBSet::RenewDSFPartyRank(char btDSFType, int nYear, int nMonth, int nDay)
 {
-	CString qSql; // [esp+D4h] [ebp-20h]
+	CString qSql;
 
 	qSql.Format("WZ_DSF_RenewPartyRank %d, %d, %d, %d",btDSFType,nYear,nMonth,nDay);
 	if (this->m_DBQuery.Exec(qSql))
@@ -166,7 +158,7 @@ void CDevilSquareFinalDBSet::RenewDSFPartyRank(char btDSFType, int nYear, int nM
 	}
 }
 
-//----- (00439B40) --------------------------------------------------------
+
 int CDevilSquareFinalDBSet::TodayDSFPartyRank(_stDSFPartyRankInfo *DSFRank, char *btCount, char btDSFType, int nYear, int nMonth, int nDay)
 {
 	int result;
@@ -196,13 +188,12 @@ int CDevilSquareFinalDBSet::TodayDSFPartyRank(_stDSFPartyRankInfo *DSFRank, char
 	}
 	else
 	{
-		LogAddC(2,"Error WZ_DSF_GetTodayPartyRank m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+		LogAddC(LOGC_RED,"Error WZ_DSF_GetTodayPartyRank m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 		this->m_DBQuery.Clear();
 		result = -1;
 	}
 	return result;
 }
-// 5CDA58: using guessed type int `CDevilSquareFinalDBSet::TodayDSFPartyRank'::`2'::__LINE__Var;
 
 
 int CDevilSquareFinalDBSet::DSFGoFinalParty(_stDSFGoFinalPartyInfo* DSFRank, unsigned char& btCount, unsigned char btDSFType, int nYear, int nMonth, int nDay)
@@ -238,13 +229,12 @@ int CDevilSquareFinalDBSet::DSFGoFinalParty(_stDSFGoFinalPartyInfo* DSFRank, uns
 	}
 	else
 	{
-		LogAddC(2,"Error WZ_DSF_GetFinalPartyList m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+		LogAddC(LOGC_RED,"Error WZ_DSF_GetFinalPartyList m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 		this->m_DBQuery.Clear();
 		result = -1;
 	}
 	return result;
 }
-// 5CDA5C: using guessed type int `CDevilSquareFinalDBSet::DSFGoFinalParty'::`2'::__LINE__Var;
 
 
 void CDevilSquareFinalDBSet::InsertRewardUser(char *szAccountID, char *szUserName, int iClass, int nDSFType, int nRewardYear, char btRewardMonth, char btRewardStartDay, char btRewardEndDay)
@@ -287,9 +277,7 @@ void CDevilSquareFinalDBSet::InsertRewardUser(char *szAccountID, char *szUserNam
 		this->m_DBQuery.Clear();
 	}
 }
-// 5CDA60: using guessed type int `CDevilSquareFinalDBSet::InsertRewardUser'::`2'::__LINE__Var;
 
-//----- (0043A280) --------------------------------------------------------
 int CDevilSquareFinalDBSet::GetReward(char *szAccountID, char *szUserName, int nServerCode, int nRewardYear, char btRewardMonth, char btRewardDay)
 {
 	int result;
@@ -317,7 +305,7 @@ int CDevilSquareFinalDBSet::GetReward(char *szAccountID, char *szUserName, int n
 	}
 	else
 	{
-		LogAddC(2,"Error WZ_DSF_GetReward m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+		LogAddC(LOGC_RED,"Error WZ_DSF_GetReward m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 		this->m_DBQuery.Clear();
 		result = -1;
 	}

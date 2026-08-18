@@ -50,5 +50,6 @@ public:
 	int BindParameterBinaryOutput(int nCol, BYTE *nValue, int iSize, long *lLength);
 	BOOL ReadInt64(LPCTSTR szSQL, INT64 &buf);
 	void WriteInt64(LPCTSTR szSQL, INT64 *buf);
-	int IsConnected();//new
+	BOOL IsConnected();//new
+	int DisConnectAndReConnect();//new
 };

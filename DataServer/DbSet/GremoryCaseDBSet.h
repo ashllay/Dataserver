@@ -1,7 +1,5 @@
 #pragma once
-//#include "Include\ProDef.h"
 #include "..\Include\Sprodef.h"
-
 #include "DBConBase.h"
 
 typedef struct _stGremoryCaseList
@@ -178,6 +176,10 @@ struct _tagSDHP_REQ_GC_UPDATE_INSERT
 
 struct _tagSDHP_ANS_GC_UPDATE_INSERT
 {
+	_tagSDHP_ANS_GC_UPDATE_INSERT()
+	{
+		
+	}
 	PBMSG_HEAD2 h;
 	short aIndex;
 	char btUpdate_GCType;

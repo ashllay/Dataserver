@@ -19,75 +19,149 @@ BOOL CHuntingRecordDBSet::Connect()
 	return TRUE;
 }
 
-int CHuntingRecordDBSet::LoadHuntingRecordInfo(char* szAccountID, char* Name, HUNTING_RECORD_INFO* pHuntingRecordInfo, SDHP_ANS_HUNTING_RECORD_COUNT* pMsg, int iMapIndex)
+int CHuntingRecordDBSet::LoadHuntingRecordInfo(
+	char* szAccountID,
+	char* Name,
+	HUNTING_RECORD_INFO* pHuntingRecordInfo,
+	SDHP_ANS_HUNTING_RECORD_COUNT* pMsg,
+	int iMapIndex)
 {
-	__int16 sqlRet;
 	CString szQuery;
-	char szName[MAX_IDSTRING+1];
-	char szId[MAX_IDSTRING+1];
+	char szName[MAX_IDSTRING + 1];
+	char szId[MAX_IDSTRING + 1];
 
 	szId[MAX_IDSTRING] = 0;
 	memcpy(szId, szAccountID, MAX_IDSTRING);
 
-	if (strlen(szId) && (strlen(szId) <= MAX_IDSTRING))
+	if (strlen(szId) == 0 || strlen(szId) > MAX_IDSTRING)
 	{
-		szName[MAX_IDSTRING] = 0;
-		memcpy(szName, Name, MAX_IDSTRING);
-
-		if (strlen(szName) && (strlen(szName) <= MAX_IDSTRING))
-		{
-			int iCnt = 0;
-
-			szQuery.Format("WZ_HuntingRecordLoad '%s', '%s', %d", szAccountID, Name, iMapIndex);
-
-			if (this->m_DBQuery.Exec(szQuery))
-			{
-				for (sqlRet = this->m_DBQuery.Fetch(); sqlRet != SQL_NO_DATA; sqlRet = this->m_DBQuery.Fetch())
-				{
-					if (sqlRet == SQL_NULL_DATA)
-						break;
-					pHuntingRecordInfo[iCnt].btMapIndex = this->m_DBQuery.GetInt("MapIndex");
-					pHuntingRecordInfo[iCnt].iYear = this->m_DBQuery.GetInt("mYear");
-					pHuntingRecordInfo[iCnt].btMonth = this->m_DBQuery.GetInt("mMonth");
-					pHuntingRecordInfo[iCnt].btDay = this->m_DBQuery.GetInt("mDay");
-					pHuntingRecordInfo[iCnt].iCurrentLevel = this->m_DBQuery.GetInt("CurrentLevel");
-					pHuntingRecordInfo[iCnt].iHuntingAccrueSecond = this->m_DBQuery.GetInt("HuntingAccrueSecond");
-					pHuntingRecordInfo[iCnt].i64NormalAccrueDamage = this->m_DBQuery.GetInt64("NormalAccrueDamage");
-					pHuntingRecordInfo[iCnt].i64PentagramAccrueDamage = this->m_DBQuery.GetInt64("PentagramAccrueDamage");
-					pHuntingRecordInfo[iCnt].iHealAccrueValue = this->m_DBQuery.GetInt("HealAccrueValue");
-					pHuntingRecordInfo[iCnt].iMonsterKillCount = this->m_DBQuery.GetInt("MonsterKillCount");
-					pHuntingRecordInfo[iCnt].i64AccrueExp = this->m_DBQuery.GetInt64("AccrueExp");
-					pHuntingRecordInfo[iCnt].iClass = this->m_DBQuery.GetInt("Class");
-					pHuntingRecordInfo[iCnt].iMaxNormalDamage = this->m_DBQuery.GetInt("MaxNormalDamage");
-					pHuntingRecordInfo[iCnt].iMinNormalDamage = this->m_DBQuery.GetInt("MinNormalDamage");
-					pHuntingRecordInfo[iCnt].iMaxPentagramDamage = this->m_DBQuery.GetInt("MaxPentagramDamage");
-					pHuntingRecordInfo[iCnt].iMinPentagramDamage = this->m_DBQuery.GetInt("MinPentagramDamage");
-					pHuntingRecordInfo[iCnt].iGetNormalAccrueDamage = this->m_DBQuery.GetInt("GetNormalAccrueDamage");
-					pHuntingRecordInfo[iCnt].iGetPentagramAccrueDamage = this->m_DBQuery.GetInt("GetPentagramAccrueDamage");
-
-					if (++iCnt >= MAX_HUNTING_RECORD_MAP_LIST)
-						break;
-				}
-				pMsg->btListCnt = iCnt;
-				this->m_DBQuery.Clear();
-				return 0;
-			}
-			else
-			{
-				LogAddC(2, "LoadHuntingRecordInfo Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
-				this->m_DBQuery.Clear();
-				return 1;
-			}
-		}
-		else
-		{
-			LogAddC(2, "%s] ?มี +ํภ?%s %d", szName, __FILE__, __LINE__);
-			return 1;
-		}
+		LogAddC(LOGC_RED, "%s Invalid Account %s %d", szId, __FILE__, __LINE__);
+		return 1;
 	}
-	LogAddC(2, "%s] ?มี +ํภ?%s %d", szId, __FILE__, __LINE__);
-	return 1;
+
+	szName[MAX_IDSTRING] = 0;
+	memcpy(szName, Name, MAX_IDSTRING);
+
+	if (strlen(szName) == 0 || strlen(szName) > MAX_IDSTRING)
+	{
+		LogAddC(LOGC_RED, "%s Invalid Name %s %d", szName, __FILE__, __LINE__);
+		return 1;
+	}
+
+	int iCnt = 0;
+
+	szQuery.Format("WZ_HuntingRecordLoad '%s', '%s', %d", szId, szName, iMapIndex);
+
+	if (!m_DBQuery.Exec(szQuery))
+	{
+		LogAddC(LOGC_RED, "LoadHuntingRecordInfo Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+		m_DBQuery.Clear();
+		return 1;
+	}
+
+	__int16 sqlRet;
+	do
+	{
+		sqlRet = m_DBQuery.Fetch();
+		if (sqlRet == SQL_NO_DATA || sqlRet == SQL_NULL_DATA)
+			break;
+
+		pHuntingRecordInfo[iCnt].btMapIndex = m_DBQuery.GetInt("MapIndex");
+		pHuntingRecordInfo[iCnt].iYear = m_DBQuery.GetInt("mYear");
+		pHuntingRecordInfo[iCnt].btMonth = m_DBQuery.GetInt("mMonth");
+		pHuntingRecordInfo[iCnt].btDay = m_DBQuery.GetInt("mDay");
+		pHuntingRecordInfo[iCnt].iCurrentLevel = m_DBQuery.GetInt("CurrentLevel");
+		pHuntingRecordInfo[iCnt].iHuntingAccrueSecond = m_DBQuery.GetInt("HuntingAccrueSecond");
+		pHuntingRecordInfo[iCnt].i64NormalAccrueDamage = m_DBQuery.GetInt64("NormalAccrueDamage");
+		pHuntingRecordInfo[iCnt].i64PentagramAccrueDamage = m_DBQuery.GetInt64("PentagramAccrueDamage");
+		pHuntingRecordInfo[iCnt].iHealAccrueValue = m_DBQuery.GetInt("HealAccrueValue");
+		pHuntingRecordInfo[iCnt].iMonsterKillCount = m_DBQuery.GetInt("MonsterKillCount");
+		pHuntingRecordInfo[iCnt].i64AccrueExp = m_DBQuery.GetInt64("AccrueExp");
+		pHuntingRecordInfo[iCnt].iClass = m_DBQuery.GetInt("Class");
+		pHuntingRecordInfo[iCnt].iMaxNormalDamage = m_DBQuery.GetInt("MaxNormalDamage");
+		pHuntingRecordInfo[iCnt].iMinNormalDamage = m_DBQuery.GetInt("MinNormalDamage");
+		pHuntingRecordInfo[iCnt].iMaxPentagramDamage = m_DBQuery.GetInt("MaxPentagramDamage");
+		pHuntingRecordInfo[iCnt].iMinPentagramDamage = m_DBQuery.GetInt("MinPentagramDamage");
+		pHuntingRecordInfo[iCnt].iGetNormalAccrueDamage = m_DBQuery.GetInt("GetNormalAccrueDamage");
+		pHuntingRecordInfo[iCnt].iGetPentagramAccrueDamage = m_DBQuery.GetInt("GetPentagramAccrueDamage");
+
+		iCnt++;
+	} while (iCnt < MAX_HUNTING_RECORD_MAP_LIST);  // 60
+
+	pMsg->btListCnt = iCnt;
+	m_DBQuery.Clear();
+	return 0;
 }
+//int CHuntingRecordDBSet::LoadHuntingRecordInfo(char* szAccountID, char* Name, HUNTING_RECORD_INFO* pHuntingRecordInfo, SDHP_ANS_HUNTING_RECORD_COUNT* pMsg, int iMapIndex)
+//{
+//	__int16 sqlRet;
+//	CString szQuery;
+//	char szName[MAX_IDSTRING+1];
+//	char szId[MAX_IDSTRING+1];
+//
+//	szId[MAX_IDSTRING] = 0;
+//	memcpy(szId, szAccountID, MAX_IDSTRING);
+//
+//	if (strlen(szId) && (strlen(szId) <= MAX_IDSTRING))
+//	{
+//		szName[MAX_IDSTRING] = 0;
+//		memcpy(szName, Name, MAX_IDSTRING);
+//
+//		if (strlen(szName) && (strlen(szName) <= MAX_IDSTRING))
+//		{
+//			int iCnt = 0;
+//
+//			szQuery.Format("WZ_HuntingRecordLoad '%s', '%s', %d", szAccountID, Name, iMapIndex);
+//
+//			if (this->m_DBQuery.Exec(szQuery))
+//			{
+//				for (sqlRet = this->m_DBQuery.Fetch(); sqlRet != SQL_NO_DATA; sqlRet = this->m_DBQuery.Fetch())
+//				{
+//					if (sqlRet == SQL_NULL_DATA)
+//						break;
+//
+//					pHuntingRecordInfo[iCnt].btMapIndex = this->m_DBQuery.GetInt("MapIndex");
+//					pHuntingRecordInfo[iCnt].iYear = this->m_DBQuery.GetInt("mYear");
+//					pHuntingRecordInfo[iCnt].btMonth = this->m_DBQuery.GetInt("mMonth");
+//					pHuntingRecordInfo[iCnt].btDay = this->m_DBQuery.GetInt("mDay");
+//					pHuntingRecordInfo[iCnt].iCurrentLevel = this->m_DBQuery.GetInt("CurrentLevel");
+//					pHuntingRecordInfo[iCnt].iHuntingAccrueSecond = this->m_DBQuery.GetInt("HuntingAccrueSecond");
+//					pHuntingRecordInfo[iCnt].i64NormalAccrueDamage = this->m_DBQuery.GetInt64("NormalAccrueDamage");
+//					pHuntingRecordInfo[iCnt].i64PentagramAccrueDamage = this->m_DBQuery.GetInt64("PentagramAccrueDamage");
+//					pHuntingRecordInfo[iCnt].iHealAccrueValue = this->m_DBQuery.GetInt("HealAccrueValue");
+//					pHuntingRecordInfo[iCnt].iMonsterKillCount = this->m_DBQuery.GetInt("MonsterKillCount");
+//					pHuntingRecordInfo[iCnt].i64AccrueExp = this->m_DBQuery.GetInt64("AccrueExp");
+//					pHuntingRecordInfo[iCnt].iClass = this->m_DBQuery.GetInt("Class");
+//					pHuntingRecordInfo[iCnt].iMaxNormalDamage = this->m_DBQuery.GetInt("MaxNormalDamage");
+//					pHuntingRecordInfo[iCnt].iMinNormalDamage = this->m_DBQuery.GetInt("MinNormalDamage");
+//					pHuntingRecordInfo[iCnt].iMaxPentagramDamage = this->m_DBQuery.GetInt("MaxPentagramDamage");
+//					pHuntingRecordInfo[iCnt].iMinPentagramDamage = this->m_DBQuery.GetInt("MinPentagramDamage");
+//					pHuntingRecordInfo[iCnt].iGetNormalAccrueDamage = this->m_DBQuery.GetInt("GetNormalAccrueDamage");
+//					pHuntingRecordInfo[iCnt].iGetPentagramAccrueDamage = this->m_DBQuery.GetInt("GetPentagramAccrueDamage");
+//
+//					if (++iCnt >= MAX_HUNTING_RECORD_MAP_LIST)
+//						break;
+//				}
+//				pMsg->btListCnt = iCnt;
+//				this->m_DBQuery.Clear();
+//				return 0;
+//			}
+//			else
+//			{
+//				LogAddC(LOGC_RED, "LoadHuntingRecordInfo Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+//				this->m_DBQuery.Clear();
+//				return 1;
+//			}
+//		}
+//		else
+//		{
+//			LogAddC(LOGC_RED, "%s] ?มี +ํภ?%s %d", szName, __FILE__, __LINE__);
+//			return 1;
+//		}
+//	}
+//	LogAddC(LOGC_RED, "%s] ?มี +ํภ?%s %d", szId, __FILE__, __LINE__);
+//	return 1;
+//}
 
 
 int CHuntingRecordDBSet::HuntingRecordInfoSave(SDHP_REQ_HUNTING_RECORD_INFO_SAVE *lpRecv)
@@ -98,7 +172,7 @@ int CHuntingRecordDBSet::HuntingRecordInfoSave(SDHP_REQ_HUNTING_RECORD_INFO_SAVE
 
 	if (strlen(lpRecv->AccountId) > MAX_IDSTRING || strlen(lpRecv->szName) > MAX_IDSTRING)
 	{
-		LogAddC(2, "Invalid AccountId or Name length");
+		LogAddC(LOGC_RED, "Invalid AccountId or Name length");
 		return 1;
 	}
 
@@ -107,7 +181,7 @@ int CHuntingRecordDBSet::HuntingRecordInfoSave(SDHP_REQ_HUNTING_RECORD_INFO_SAVE
 
 	if (lpRecv->btListCnt <= 0 || lpRecv->btListCnt > MAX_HUNTING_RECORD_MAP_LIST)
 	{
-		LogAddC(2, "Invalid btListCnt=%d for AccountId=%s, Name=%s", lpRecv->btListCnt, szId, szName);
+		LogAddC(LOGC_RED, "Invalid btListCnt=%d for AccountId=%s, Name=%s", lpRecv->btListCnt, szId, szName);
 		return 1;
 	}
 
@@ -131,7 +205,7 @@ int CHuntingRecordDBSet::HuntingRecordInfoSave(SDHP_REQ_HUNTING_RECORD_INFO_SAVE
 
 		if (!this->m_DBQuery.Exec(szQuery))
 		{
-			LogAddC(2, "SQL Query Failed: %s", szQuery);
+			LogAddC(LOGC_RED, "SQL Query Failed: %s", szQuery);
 			this->m_DBQuery.Clear();
 			return 1;
 		}
@@ -140,7 +214,6 @@ int CHuntingRecordDBSet::HuntingRecordInfoSave(SDHP_REQ_HUNTING_RECORD_INFO_SAVE
 
 	return 0;
 }
-// 5CDC14: using guessed type int `CHuntingRecordDBSet::HuntingRecordInfoSave'::`2'::__LINE__Var;
 
 
 int CHuntingRecordDBSet::LoadHuntingRecordInfoUserOpen(char* szAccountID, char* Name, SDHP_ANS_HUNTING_RECORD_INFO_USER_OPEN* pMsg)
@@ -184,14 +257,13 @@ int CHuntingRecordDBSet::LoadHuntingRecordInfoUserOpen(char* szAccountID, char* 
 		}
 		else
 		{
-			LogAddC(2, "%s] ?มี +ํภ?%s %d", szName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] ?มี +ํภ?%s %d", szName, __FILE__, __LINE__);
 			return 1;
 		}
 	}
-	LogAddC(2, "%s] ?มี +ํภ?%s %d", szId, __FILE__, __LINE__);
+	LogAddC(LOGC_RED, "%s] ?มี +ํภ?%s %d", szId, __FILE__, __LINE__);
 	return 1;
 }
-// 5CDC18: using guessed type int `CHuntingRecordDBSet::LoadHuntingRecordInfoUserOpen'::`2'::__LINE__Var;
 
 int CHuntingRecordDBSet::HuntingRecordInfoUserOpenSave(SDHP_REQ_HUNTING_RECORD_INFO_USER_OPEN_SAVE* lpRecv)
 {
@@ -214,7 +286,7 @@ int CHuntingRecordDBSet::HuntingRecordInfoUserOpenSave(SDHP_REQ_HUNTING_RECORD_I
 			szQuery.Format("WZ_HuntingRecordInfoUserOpenSave '%s', '%s', %d", szId, szName, lpRecv->btOpen);
 			if (!this->m_DBQuery.Exec(szQuery))
 			{
-				LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				this->m_DBQuery.Clear();
 				iReturnValue = 1;
 			}
@@ -223,14 +295,13 @@ int CHuntingRecordDBSet::HuntingRecordInfoUserOpenSave(SDHP_REQ_HUNTING_RECORD_I
 		}
 		else
 		{
-			LogAddC(2, "%s] +??+ํภ?%s %d", szName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] +??+ํภ?%s %d", szName, __FILE__, __LINE__);
 			return 1;
 		}
 	}
-	LogAddC(2, "%s] +??+ํภ?%s %d", szId, __FILE__, __LINE__);
+	LogAddC(LOGC_RED, "%s] +??+ํภ?%s %d", szId, __FILE__, __LINE__);
 	return 1;
 }
-// 5CDC1C: using guessed type int `CHuntingRecordDBSet::HuntingRecordInfoUserOpenSave'::`2'::__LINE__Var;
 
 int CHuntingRecordDBSet::LoadHuntingRecordInfo_Current(char* szAccountID, char* Name, SDHP_ANS_HUNTING_RECORD_INFO_CURRENT* pMsg, int iMapIndex, int iYear, char btMonth, char btDay)
 {
@@ -290,21 +361,20 @@ int CHuntingRecordDBSet::LoadHuntingRecordInfo_Current(char* szAccountID, char* 
 			}
 			else
 			{
-				LogAddC(2, "LoadHuntingRecordInfo_Current Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "LoadHuntingRecordInfo_Current Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				this->m_DBQuery.Clear();
 				return 1;
 			}
 		}
 		else
 		{
-			LogAddC(2, "%s] ?มี +ํภ?%s %d", szName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] ?มี +ํภ?%s %d", szName, __FILE__, __LINE__);
 			return 1;
 		}
 	}
-	LogAddC(2, "%s] ?มี +ํภ?%s %d", szId, __FILE__, __LINE__);
+	LogAddC(LOGC_RED, "%s] ?มี +ํภ?%s %d", szId, __FILE__, __LINE__);
 	return 1;
 }
-// 5CDC20: using guessed type int `CHuntingRecordDBSet::LoadHuntingRecordInfo_Current'::`2'::__LINE__Var;
 
 int CHuntingRecordDBSet::DeleteHuntingRecordInfo(char* szAccountID, char* Name, int iMapIndex, int iYear, char btMonth, char btDay)
 {
@@ -339,17 +409,17 @@ int CHuntingRecordDBSet::DeleteHuntingRecordInfo(char* szAccountID, char* Name, 
 			}
 			else
 			{
-				LogAddC(2, "DeleteHuntingRecordInfo Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "DeleteHuntingRecordInfo Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				this->m_DBQuery.Clear();
 				return 1;
 			}
 		}
 		else
 		{
-			LogAddC(2, "%s] ?มี +ํภ?%s %d", szName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] ?มี +ํภ?%s %d", szName, __FILE__, __LINE__);
 			return 1;
 		}
 	}
-	LogAddC(2, "%s] ?มี +ํภ?%s %d", szId, __FILE__, __LINE__);
+	LogAddC(LOGC_RED, "%s] ?มี +ํภ?%s %d", szId, __FILE__, __LINE__);
 	return 1;
 }

@@ -11,7 +11,6 @@ CPShopSystemDBSet::~CPShopSystemDBSet()
 
 BOOL CPShopSystemDBSet::Connect()
 {
-	//return this->CDBConBase::Connect(szDbConnectID, szDbConnectPass);
 	if (m_DBQuery.Connect(3, szDbConnectDsn, szDbConnectID, szDbConnectPass))
 		return 1;
 	MsgBox("CPShopSystemDBSet ODBC Connect Fail");
@@ -21,25 +20,23 @@ BOOL CPShopSystemDBSet::Connect()
 int CPShopSystemDBSet::LoadPShopItemValueInfo(char *szAccountID, char *Name, PMSG_PSHOPITEMVALUE_INFO *pPShopItemValueInfo, PMSG_ANS_PSHOPITEMVALUE_INFO *pMsg)
 {
 	int result;
-	unsigned int v9;
 	__int16 sqlRet;
 	char szTemp[2048];
 	CString szQuery;
-	char szName[11];
-	char szId[11];
+	char szName[MAX_IDSTRING+1];
+	char szId[MAX_IDSTRING + 1];
 
-
-	szId[10] = 0;
-	memcpy(szId, szAccountID, 0xAu);
-	if (strlen(szId) && (strlen(szId) <= 0xA))
+	szId[MAX_IDSTRING] = 0;
+	memcpy(szId, szAccountID, MAX_IDSTRING);
+	if (strlen(szId) && (strlen(szId) <= MAX_IDSTRING))
 	{
-		szName[10] = 0;
-		memcpy(szName, Name, 0xAu);
-		if (strlen(szName) && (strlen(szName)<= 0xA))
+		szName[MAX_IDSTRING] = 0;
+		memcpy(szName, Name, MAX_IDSTRING);
+		if (strlen(szName) && (strlen(szName)<= MAX_IDSTRING))
 		{
 			int iCnt = 0;
 			szTemp[0] = 0;
-			memset(&szTemp[1], 0, 0x7FFu);
+			memset(&szTemp[1], 0, sizeof(szTemp));
 
 			szQuery.Format("WZ_PShopItemValueInfoLoad '%s', '%s'", szAccountID, Name);
 
@@ -55,7 +52,7 @@ int CPShopSystemDBSet::LoadPShopItemValueInfo(char *szAccountID, char *Name, PMS
 					pPShopItemValueInfo[iCnt].sBlessJewelValue = this->m_DBQuery.GetInt("BlessJewelValue");
 					pPShopItemValueInfo[iCnt].sSoulJewelValue = this->m_DBQuery.GetInt("SoulJewelValue");
 					pPShopItemValueInfo[iCnt++].sChaosJewelValue = this->m_DBQuery.GetInt("ChaosJewelValue");
-					if (iCnt >= 32)
+					if (iCnt >= MAX_PSHOPITEM)
 						break;
 				}
 				pMsg->btItemCnt = iCnt;
@@ -64,20 +61,20 @@ int CPShopSystemDBSet::LoadPShopItemValueInfo(char *szAccountID, char *Name, PMS
 			}
 			else
 			{
-				LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				this->m_DBQuery.Clear();
 				result = 1;
 			}
 		}
 		else
 		{
-			LogAddC(2, "%s] 로드 에러 %s %d", szName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", szName, __FILE__, __LINE__);
 			result = 1;
 		}
 	}
 	else
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", szId, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", szId, __FILE__, __LINE__);
 		result = 1;
 	}
 	return result;
@@ -87,7 +84,7 @@ int CPShopSystemDBSet::LoadPShopItemValueInfo(char *szAccountID, char *Name, PMS
 int CPShopSystemDBSet::SavePShopItemValueInfo(PMSG_UPDATE_PSHOPITEMVALUE_INFO *lpRecv)
 {
 	int result;
-	BOOL v8;
+	//BOOL v8;
 	int sChaosJewelValue;
 	int sSoulJewelValue;
 	int sBlessJewelValue;
@@ -96,25 +93,25 @@ int CPShopSystemDBSet::SavePShopItemValueInfo(PMSG_UPDATE_PSHOPITEMVALUE_INFO *l
 	CString szQuery;
 	PMSG_PSHOPITEMVALUE_INFO PShopItemValueInfo[32];
 	int iItemCnt;
-	char szName[11];
-	char szId[11];
+	char szName[MAX_IDSTRING + 1];
+	char szId[MAX_IDSTRING + 1];
 
-	szId[10] = 0;
-	memcpy(szId, lpRecv->AccountId, 0xAu);
+	szId[MAX_IDSTRING] = 0;
+	memcpy(szId, lpRecv->AccountId, MAX_IDSTRING);
 	
-	if (strlen(szId) && (strlen(szId) <= 0xA))
+	if (strlen(szId) && (strlen(szId) <= MAX_IDSTRING))
 	{
-		szName[10] = 0;
-		memcpy(szName, lpRecv->szName, 0xAu);
+		szName[MAX_IDSTRING] = 0;
+		memcpy(szName, lpRecv->szName, MAX_IDSTRING);
 		//strlen(szName);
-		if (strlen(szId) && (strlen(szName) <= 0xA))
+		if (strlen(szId) && (strlen(szName) <= MAX_IDSTRING))
 		{
 			iItemCnt = lpRecv->btItemCnt;
-			if (iItemCnt > 0)
-				v8 = iItemCnt <= 32;
-			else
-				v8 = 0;
-			if (v8)
+			//if (iItemCnt > 0)
+			//	v8 = iItemCnt <= 32;
+			//else
+			//	v8 = 0;
+			if (iItemCnt > 0 && iItemCnt <= MAX_PSHOPITEM)
 			{
 				memcpy(PShopItemValueInfo, &lpRecv[1].h, 18 * iItemCnt);
 				int iReturnValue = 0;
@@ -139,7 +136,7 @@ int CPShopSystemDBSet::SavePShopItemValueInfo(PMSG_UPDATE_PSHOPITEMVALUE_INFO *l
 							sChaosJewelValue);
 						if (!this->m_DBQuery.Exec(szQuery))
 						{
-							LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+							LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 							this->m_DBQuery.Clear();
 							iReturnValue = 1;
 							break;
@@ -155,19 +152,19 @@ int CPShopSystemDBSet::SavePShopItemValueInfo(PMSG_UPDATE_PSHOPITEMVALUE_INFO *l
 			}
 			else
 			{
-				LogAddC(2, "%s] ze ߡׯ(гNܳa ߆Lƛ) %s %d", szId, __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "%s] 저장 에러(개인상점 아이템) %s %d", szId, __FILE__, __LINE__);
 				result = 1;
 			}
 		}
 		else
 		{
-			LogAddC(2, "%s] ze ߡׯ %s %d", szName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] 저장 에러 %s %d", szName, __FILE__, __LINE__);
 			result = 1;
 		}
 	}
 	else
 	{
-		LogAddC(2, "%s] ze ߡׯ %s %d", szId, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 저장 에러 %s %d", szId, __FILE__, __LINE__);
 		result = 1;
 	}
 	return result;
@@ -179,19 +176,19 @@ int CPShopSystemDBSet::DelPShopItemValueInfo(PMSG_DEL_PSHOPITEM *lpRecv)
 	int result;
 	int iReturnValue;
 	CString szQuery;
-	char szName[11];
-	char szId[11];
+	char szName[MAX_IDSTRING+1];
+	char szId[MAX_IDSTRING+1];
 
 
-	szId[10] = 0;
-	memcpy(szId, lpRecv->AccountId, 0xAu);
+	szId[MAX_IDSTRING] = 0;
+	memcpy(szId, lpRecv->AccountId, MAX_IDSTRING);
 	//strlen(szId);
-	if (strlen(szId) && (strlen(szId) <= 0xA))
+	if (strlen(szId) && (strlen(szId) <= MAX_IDSTRING))
 	{
-		szName[10] = 0;
-		memcpy(szName, lpRecv->szName, 0xAu);
+		szName[MAX_IDSTRING] = 0;
+		memcpy(szName, lpRecv->szName, MAX_IDSTRING);
 		//strlen(szName);
-		if (strlen(szName) && (strlen(szName) <= 0xA))
+		if (strlen(szName) && (strlen(szName) <= MAX_IDSTRING))
 		{
 			iReturnValue = 0;
 			szQuery.Format("WZ_PShopItemValueInfoDel '%s', '%s', %d",
@@ -200,7 +197,7 @@ int CPShopSystemDBSet::DelPShopItemValueInfo(PMSG_DEL_PSHOPITEM *lpRecv)
 				lpRecv->nPShopItemInvenNum);
 			if (!this->m_DBQuery.Exec(szQuery))
 			{
-				LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				this->m_DBQuery.Clear();
 				iReturnValue = 1;
 			}
@@ -209,13 +206,13 @@ int CPShopSystemDBSet::DelPShopItemValueInfo(PMSG_DEL_PSHOPITEM *lpRecv)
 		}
 		else
 		{
-			LogAddC(2, "%s] ze ߡׯ %s %d", szName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] 저장 에러 %s %d", szName, __FILE__, __LINE__);
 			result = 1;
 		}
 	}
 	else
 	{
-		LogAddC(2, "%s] ze ߡׯ %s %d", szId, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 저장 에러 %s %d", szId, __FILE__, __LINE__);
 		result = 1;
 	}
 	return result;
@@ -227,27 +224,25 @@ int CPShopSystemDBSet::MovePShopItem(PMSG_MOVE_PSHOPITEM *lpRecv)
 	int result;
 	int iReturnValue;
 	CString szQuery;
-	char szName[11];
-	char szId[11]; 
-	int v14;
+	char szName[MAX_IDSTRING+1];
+	char szId[MAX_IDSTRING+1];
 
-
-	szId[10] = 0;
-	memcpy(szId, lpRecv->AccountId, 0xAu);
+	szId[MAX_IDSTRING] = 0;
+	memcpy(szId, lpRecv->AccountId, MAX_IDSTRING);
 	/*strlen(szId);*/
-	if (strlen(szId) && (strlen(szId) <= 0xA))
+	if (strlen(szId) && (strlen(szId) <= MAX_IDSTRING))
 	{
-		szName[10] = 0;
-		memcpy(szName, lpRecv->szName, 0xAu);
+		szName[MAX_IDSTRING] = 0;
+		memcpy(szName, lpRecv->szName, MAX_IDSTRING);
 		/*strlen(szName)*/;
-		if (strlen(szName) && (strlen(szName) <= 0xA))
+		if (strlen(szName) && (strlen(szName) <= MAX_IDSTRING))
 		{
 			iReturnValue = 0;
 			szQuery.Format("WZ_PShopItemMove '%s', '%s', %d, %d",
 				szId,szName,lpRecv->nOldPShopItemInvenNum,lpRecv->nNewPShopItemInvenNum);
 			if (!this->m_DBQuery.Exec(szQuery))
 			{
-				LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				this->m_DBQuery.Clear();
 				iReturnValue = 1;
 			}
@@ -256,13 +251,13 @@ int CPShopSystemDBSet::MovePShopItem(PMSG_MOVE_PSHOPITEM *lpRecv)
 		}
 		else
 		{
-			LogAddC(2, "%s] ze ߡׯ %s %d", szName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] 저장 에러 %s %d", szName, __FILE__, __LINE__);
 			result = 1;
 		}
 	}
 	else
 	{
-		LogAddC(2, "%s] ze ߡׯ %s %d", szId, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 저장 에러 %s %d", szId, __FILE__, __LINE__);
 		result = 1;
 	}
 	return result;

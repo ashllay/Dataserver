@@ -193,7 +193,7 @@ public:
 	void Renew_ITLRewardList(); // idb
 	void RenewITLGuildRank(BYTE byITLType); // idb
 	int LoadITLGuildRank(_stITLRankingInfo *ITLRankInfo, int *btGuildCount); // idb
-	int LoadITLRewardList(_stITLRewardList *itlRewardList, char*byCount); // idb
+	int LoadITLRewardList(_stITLRewardList* itlRewardList, BYTE* byCount);
 	int LoadITLTournament(_stITLRankingInfo *ITLRanking, char *btCount, BYTE byITLType); // idb
 	void ReqGuildCount(char *GuildName, int *nEnterCount); // idb
 	void ReqUserItlEnterCount(char *UserName, int *nEnterCount); // idb

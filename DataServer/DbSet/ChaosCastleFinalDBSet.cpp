@@ -21,7 +21,6 @@ int ChaosCastleFinalDBSet::ReqCCFRanking(_stCCFRankingInfo RankingInfo[50], int 
 {
 	CString qSql;
 	int Count = 0;
-	//int nRet = 0;
 
 	if (RankType == 1)
 	{
@@ -36,7 +35,7 @@ int ChaosCastleFinalDBSet::ReqCCFRanking(_stCCFRankingInfo RankingInfo[50], int 
 	{
 		bool bReConnect = false;
 		m_DBQuery.PrintDiag(bReConnect);
-		LogAddC(2, "Error WZ_CCF_GET_RANKLIST m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "Error WZ_CCF_GET_RANKLIST m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 		m_DBQuery.Clear();
 		return -1;
 	}
@@ -60,7 +59,7 @@ int ChaosCastleFinalDBSet::ReqCCFRanking(_stCCFRankingInfo RankingInfo[50], int 
 	return 0;
 }
 
-void ChaosCastleFinalDBSet::Save_CCF_Point(char* Name, int nPoint, int nCCFType)
+void ChaosCastleFinalDBSet::Save_CCF_Point(char *Name, int nPoint, int nCCFType)
 {
 	CString qSql;
 
@@ -102,7 +101,7 @@ int ChaosCastleFinalDBSet::CCFRankRenew(char byCCFType)
 }
 
 
-void ChaosCastleFinalDBSet::GetPermission(char* Name, int nCCFType, int* nReturn)
+void ChaosCastleFinalDBSet::GetPermission(char *Name, int nCCFType, int *nReturn)
 {
 	CString qSql;
 
@@ -143,7 +142,7 @@ int ChaosCastleFinalDBSet::Save_ChaosCastle_KillPoint(char* CharName, int nPoint
 	memcpy(mCharName, CharName, MAX_IDSTRING);
 	if (strlen(mCharName) <= 0 || strlen(mCharName) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", mCharName, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", mCharName, __FILE__, __LINE__);
 		return 0;
 	}
 
@@ -183,14 +182,14 @@ int ChaosCastleFinalDBSet::GetUBFAccountUserInfo(char* mAccountID, char* mCharNa
 	memcpy(AccountID, mAccountID, MAX_IDSTRING);
 	if (strlen(AccountID) <= 0 || strlen(AccountID) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
 		return 0;
 	}
 
 	memcpy(CharName, mCharName, MAX_IDSTRING);
 	if (strlen(CharName) <= 0 || strlen(CharName) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", CharName, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", CharName, __FILE__, __LINE__);
 		return 0;
 	}
 
@@ -230,8 +229,6 @@ int ChaosCastleFinalDBSet::GetUBFAccountUserInfo(char* mAccountID, char* mCharNa
 	return 1;
 }
 
-
-
 int ChaosCastleFinalDBSet::RegisterUBFAccountUser(char* mAccountID, char* mCharName, char* mUBFName, int ServerCode, int RegisterState, int RegisterMonth, int RegisterDay, BYTE* Result, WORD* LeftSecond)
 {
 	char UBFName[MAX_IDSTRING + 1] = { 0 };
@@ -243,21 +240,21 @@ int ChaosCastleFinalDBSet::RegisterUBFAccountUser(char* mAccountID, char* mCharN
 	memcpy(AccountID, mAccountID, MAX_IDSTRING);
 	if (strlen(AccountID) <= 0 || strlen(AccountID) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
 		return 0;
 	}
 
 	memcpy(CharName, mCharName, MAX_IDSTRING);
 	if (strlen(CharName) <= 0 || strlen(CharName) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", __FILE__, __LINE__);
 		return 0;
 	}
 
 	memcpy(UBFName, mUBFName, MAX_IDSTRING);
 	if (strlen(UBFName) <= 0 || strlen(UBFName) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", UBFName, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", UBFName, __FILE__, __LINE__);
 		return 0;
 	}
 
@@ -295,7 +292,7 @@ int ChaosCastleFinalDBSet::RegisterUBFAccountUser(char* mAccountID, char* mCharN
 }
 
 
-int ChaosCastleFinalDBSet::CopyUBFAccountUser(char* szAccountID, char* szName, short GameServerCode, BYTE* subResult)
+int ChaosCastleFinalDBSet::CopyUBFAccountUser(char *szAccountID, char *szName, short GameServerCode, BYTE*subResult)
 {
 	char CharName[MAX_IDSTRING + 1] = { 0 };
 	char AccountID[MAX_IDSTRING + 1] = { 0 };
@@ -305,14 +302,14 @@ int ChaosCastleFinalDBSet::CopyUBFAccountUser(char* szAccountID, char* szName, s
 	memcpy(AccountID, szAccountID, MAX_IDSTRING);
 	if (strlen(AccountID) <= 0 || strlen(AccountID) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
 		return 0;
 	}
 
 	memcpy(CharName, szAccountID, MAX_IDSTRING);
 	if (strlen(CharName) <= 0 || strlen(CharName) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", CharName, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", CharName, __FILE__, __LINE__);
 		return 0;
 	}
 
@@ -339,8 +336,7 @@ int ChaosCastleFinalDBSet::CopyUBFAccountUser(char* szAccountID, char* szName, s
 	return 1;
 }
 
-
-int ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode(char* szAccountID, char* szName, short GameServerCode, BYTE* subResult)
+int ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode(char *szAccountID, char *szName, short GameServerCode, BYTE*subResult)
 {
 	char CharName[MAX_IDSTRING + 1] = { 0 };
 	char AccountID[MAX_IDSTRING + 1] = { 0 };
@@ -350,14 +346,14 @@ int ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode(char* szAccountID, ch
 	memcpy(AccountID, szAccountID, MAX_IDSTRING);
 	if (strlen(AccountID) <= 0 || strlen(AccountID) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
 		return 0;
 	}
 
 	memcpy(CharName, szName, MAX_IDSTRING);
 	if (strlen(CharName) <= 0 || strlen(CharName) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", CharName, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", CharName, __FILE__, __LINE__);
 		return 0;
 	}
 
@@ -387,19 +383,18 @@ int ChaosCastleFinalDBSet::CopyUBFAccountUserPromotionMode(char* szAccountID, ch
 	return 1;
 }
 
-
-int ChaosCastleFinalDBSet::GetWinAllRewardInfoOfUBF(char* szCharName, int nServerCode, char btServerKind, char btContentsType, PMSG_ANS_UBF_GET_REWARD* pMsg)
+int ChaosCastleFinalDBSet::GetWinAllRewardInfoOfUBF(char *szCharName, int nServerCode, char btServerKind, char btContentsType, PMSG_ANS_UBF_GET_REWARD *pMsg)
 {
-	int result;
+	int result; 
 	short sqlReturn;
-	CString qSql;
+	CString qSql; 
 	char szName[MAX_IDSTRING + 1] = { 0 };
 
 	memcpy(szName, szCharName, MAX_IDSTRING);
 
 	if (strlen(szName) && (strlen(szName) <= MAX_IDSTRING))
 	{
-		qSql.Format("EXEC WZ_All_GetAndUpdate_RewardInfoOfUnityBattleField %d, '%s', %d, %d ", btServerKind, szName, nServerCode, btContentsType);
+		qSql.Format("EXEC WZ_All_GetAndUpdate_RewardInfoOfUnityBattleField %d, '%s', %d, %d ",btServerKind,szName,nServerCode,btContentsType);
 		if (this->m_DBQuery.Exec(qSql))
 		{
 			sqlReturn = this->m_DBQuery.Fetch();
@@ -437,7 +432,7 @@ int ChaosCastleFinalDBSet::GetWinAllRewardInfoOfUBF(char* szCharName, int nServe
 			else
 			{
 				LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_All_GetAndUpdate_RewardInfoOfUnityBattleField] [%s][%d] Return %d,%s,%d ",
-					szName, nServerCode, sqlReturn, __FILE__, __LINE__);
+				szName,nServerCode,sqlReturn, __FILE__, __LINE__);
 				this->m_DBQuery.Clear();
 				result = 0;
 			}
@@ -445,24 +440,24 @@ int ChaosCastleFinalDBSet::GetWinAllRewardInfoOfUBF(char* szCharName, int nServe
 		else
 		{
 			LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_All_GetAndUpdate_RewardInfoOfUnityBattleField] [ServerKind:%d][%s][%d][%d]",
-				btServerKind, szName, nServerCode, btContentsType);
+				btServerKind,szName,nServerCode,btContentsType);
 			this->m_DBQuery.Clear();
 			result = 0;
 		}
 	}
 	else
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", szName, __FILE__, __LINE__);
+		LogAddC(LOGC_RED,"%s] 로드 에러 %s %d",szName, __FILE__, __LINE__);
 		result = 0;
 	}
 	return result;
 }
 
 
-int ChaosCastleFinalDBSet::SetReceivedWinnerItemOfUBF(char* szCharName, int nServerCode, char btReceived, char* SubResult)
+int ChaosCastleFinalDBSet::SetReceivedWinnerItemOfUBF(char *szCharName, int nServerCode, char btReceived, char *SubResult)
 {
 	int result; // eax
-	short sqlReturn;
+	short sqlReturn; 
 	CString qSql;
 	char szName[MAX_IDSTRING + 1] = { 0 };
 
@@ -471,7 +466,7 @@ int ChaosCastleFinalDBSet::SetReceivedWinnerItemOfUBF(char* szCharName, int nSer
 		memcpy(szName, szCharName, MAX_IDSTRING);
 		if (strlen(szName) && (strlen(szName) <= MAX_IDSTRING))
 		{
-			qSql.Format("EXEC WZ_UnityBattleField_SetReceivedWinnerItem_r '%s', %d, %d", szName, nServerCode, btReceived);
+			qSql.Format("EXEC WZ_UnityBattleField_SetReceivedWinnerItem_r '%s', %d, %d",szName,nServerCode,btReceived);
 			if (this->m_DBQuery.Exec(qSql))
 			{
 				sqlReturn = this->m_DBQuery.Fetch();
@@ -484,21 +479,21 @@ int ChaosCastleFinalDBSet::SetReceivedWinnerItemOfUBF(char* szCharName, int nSer
 				else
 				{
 					LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleField_SetReceivedWinnerItem_r] [%s][%d] Return %d,%s,%d ",
-						szName, nServerCode, sqlReturn, __FILE__, __LINE__);
+						szName,nServerCode,sqlReturn, __FILE__, __LINE__);
 					this->m_DBQuery.Clear();
 					result = 0;
 				}
 			}
 			else
 			{
-				LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleField_SetReceivedWinnerItem_r] [%s][%d][%d]", szName, nServerCode, btReceived);
+				LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleField_SetReceivedWinnerItem_r] [%s][%d][%d]",szName,nServerCode,btReceived);
 				this->m_DBQuery.Clear();
 				result = 0;
 			}
 		}
 		else
 		{
-			LogAddC(2, "%s] 로드 에러 %s %d", szName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED,"%s] 로드 에러 %s %d",szName, __FILE__, __LINE__);
 			result = 0;
 		}
 	}
@@ -512,11 +507,11 @@ int ChaosCastleFinalDBSet::SetReceivedWinnerItemOfUBF(char* szCharName, int nSer
 }
 
 
-int ChaosCastleFinalDBSet::SetCancelToJionUnityBattlefiled(char* szAccountID, char* szName, short GameServerCode, char* subResult)
+int ChaosCastleFinalDBSet::SetCancelToJionUnityBattlefiled(char *szAccountID, char *szName, short GameServerCode, char *subResult)
 {
 	int result;
-	short sqlReturn;
-	CString qSql;
+	short sqlReturn; 
+	CString qSql; 
 	char szCharName[MAX_IDSTRING + 1] = { 0 };
 	char szId[MAX_IDSTRING + 1] = { 0 };
 
@@ -530,7 +525,7 @@ int ChaosCastleFinalDBSet::SetCancelToJionUnityBattlefiled(char* szAccountID, ch
 		{
 			if (strlen(szCharName) && (strlen(szCharName) <= 0xA))
 			{
-				qSql.Format("EXEC WZ_UnityBattleFieldCancelToJoin_r '%s','%s',%d", szId, szCharName, GameServerCode);
+				qSql.Format("EXEC WZ_UnityBattleFieldCancelToJoin_r '%s','%s',%d",szId,szCharName,GameServerCode);
 				if (this->m_DBQuery.Exec(qSql))
 				{
 					sqlReturn = this->m_DBQuery.Fetch();
@@ -543,7 +538,7 @@ int ChaosCastleFinalDBSet::SetCancelToJionUnityBattlefiled(char* szAccountID, ch
 					else
 					{
 						LogAddTD("Error-L3 [ChaosCastleFinalDBSet][SetCancelToJionUnityBattlefiled] [%s][%d] Return %d,%s,%d ",
-							szName, GameServerCode, sqlReturn, __FILE__, __LINE__);
+							szName,GameServerCode,sqlReturn, __FILE__, __LINE__);
 						this->m_DBQuery.Clear();
 						result = 0;
 					}
@@ -557,13 +552,13 @@ int ChaosCastleFinalDBSet::SetCancelToJionUnityBattlefiled(char* szAccountID, ch
 			}
 			else
 			{
-				LogAddC(2, "%s] 로드 에러 %s %d", szId, __FILE__, __LINE__);
+				LogAddC(LOGC_RED,"%s] 로드 에러 %s %d",szId, __FILE__, __LINE__);
 				result = 0;
 			}
 		}
 		else
 		{
-			LogAddC(2, "%s] 로드 에러 %s %d", szId, __FILE__, __LINE__);
+			LogAddC(LOGC_RED,"%s] 로드 에러 %s %d",szId, __FILE__, __LINE__);
 			result = 0;
 		}
 	}
@@ -577,7 +572,7 @@ int ChaosCastleFinalDBSet::SetCancelToJionUnityBattlefiled(char* szAccountID, ch
 }
 
 
-char ChaosCastleFinalDBSet::DeleteCharacterUnityBattlefiled(char* szAccountID, char* szName, short GameServerCode)
+char ChaosCastleFinalDBSet::DeleteCharacterUnityBattlefiled(char *szAccountID, char *szName, short GameServerCode)
 {
 	char CharName[MAX_IDSTRING + 1] = { 0 };
 	char AccountID[MAX_IDSTRING + 1] = { 0 };
@@ -587,14 +582,14 @@ char ChaosCastleFinalDBSet::DeleteCharacterUnityBattlefiled(char* szAccountID, c
 	memcpy(AccountID, szAccountID, MAX_IDSTRING);
 	if (strlen(AccountID) <= 0 || strlen(AccountID) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
 		return 0;
 	}
 
 	memcpy(CharName, szName, MAX_IDSTRING);
 	if (strlen(CharName) <= 0 || strlen(CharName) > MAX_IDSTRING)
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", AccountID, __FILE__, __LINE__);
 		return 0;
 	}
 
@@ -621,11 +616,11 @@ char ChaosCastleFinalDBSet::DeleteCharacterUnityBattlefiled(char* szAccountID, c
 	return Result;
 }
 
-int ChaosCastleFinalDBSet::GetRealNameAndServerCode(char* szUBFName, PMSG_ANS_GET_UBF_REAL_NAME* pMsg)
+int ChaosCastleFinalDBSet::GetRealNameAndServerCode(char *szUBFName, PMSG_ANS_GET_UBF_REAL_NAME *pMsg)
 {
-	int result;
-	short sqlReturn;
-	CString qSql;
+	int result; 
+	short sqlReturn; 
+	CString qSql; 
 	char szCahrUBFName[MAX_IDSTRING + 1] = { 0 };
 
 	if (this->m_DBQuery.IsConnected())
@@ -648,7 +643,7 @@ int ChaosCastleFinalDBSet::GetRealNameAndServerCode(char* szUBFName, PMSG_ANS_GE
 				}
 				else
 				{
-					LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldGetRealName_r] [%s] Return %d,%s,%d ", szCahrUBFName, sqlReturn, __FILE__, __LINE__);
+					LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldGetRealName_r] [%s] Return %d,%s,%d ",szCahrUBFName,sqlReturn, __FILE__, __LINE__);
 					this->m_DBQuery.Clear();
 					result = 0;
 				}
@@ -662,7 +657,7 @@ int ChaosCastleFinalDBSet::GetRealNameAndServerCode(char* szUBFName, PMSG_ANS_GE
 		}
 		else
 		{
-			LogAddC(2, "%s] 로드 에러 %s %d", szUBFName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED,"%s] 로드 에러 %s %d",szUBFName, __FILE__, __LINE__);
 			result = 0;
 		}
 	}
@@ -674,9 +669,9 @@ int ChaosCastleFinalDBSet::GetRealNameAndServerCode(char* szUBFName, PMSG_ANS_GE
 	return result;
 }
 
-int ChaosCastleFinalDBSet::GetRealNameAndServerCode(char* szUBFName, char* szRealName, int* ServerCode, int IsUBFServer)
+int ChaosCastleFinalDBSet::GetRealNameAndServerCode(char *szUBFName, char *szRealName, int *ServerCode, int IsUBFServer)
 {
-	int result;
+	int result; 
 	short sqlReturn;
 	CString qSql;
 	char szCahrUBFName[MAX_IDSTRING + 1] = { 0 };
@@ -702,7 +697,7 @@ int ChaosCastleFinalDBSet::GetRealNameAndServerCode(char* szUBFName, char* szRea
 				else
 				{
 					LogAddTD("Error-L3 [ChaosCastleFinalDBSet][WZ_UnityBattleFieldGetRealName_r] [%s] Return %d,%s,%d ",
-						szCahrUBFName, sqlReturn, __FILE__, __LINE__);
+						szCahrUBFName,sqlReturn, __FILE__, __LINE__);
 					this->m_DBQuery.Clear();
 					result = 0;
 				}
@@ -716,7 +711,7 @@ int ChaosCastleFinalDBSet::GetRealNameAndServerCode(char* szUBFName, char* szRea
 		}
 		else
 		{
-			LogAddC(2, "%s] 로드 에러 %s %d", szUBFName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED,"%s] 로드 에러 %s %d",szUBFName, __FILE__, __LINE__);
 			result = 0;
 		}
 	}
@@ -729,7 +724,7 @@ int ChaosCastleFinalDBSet::GetRealNameAndServerCode(char* szUBFName, char* szRea
 }
 
 
-int ChaosCastleFinalDBSet::SetRewardInfoOfUnityBattleField(char* btResult, char btServerKind, char* szAccountID, char* szName, short wServerCode, char btContentsType, char btSubContentsType, int iItemCode, char btItemCount, char btTakeState)
+int ChaosCastleFinalDBSet::SetRewardInfoOfUnityBattleField(char *btResult, char btServerKind, char *szAccountID, char *szName, short wServerCode, char btContentsType, char btSubContentsType, int iItemCode, char btItemCount, char btTakeState)
 {
 	__int16 sqlReturn;
 	CString qSql;
@@ -780,6 +775,6 @@ int ChaosCastleFinalDBSet::SetRewardInfoOfUnityBattleField(char* btResult, char 
 			return 0;
 		}
 	}
-	LogAddC(2, "%s] 로드 에러 %s %d", szCahrName, __FILE__, __LINE__);
+	LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", szCahrName, __FILE__, __LINE__);
 	return 0;
 }

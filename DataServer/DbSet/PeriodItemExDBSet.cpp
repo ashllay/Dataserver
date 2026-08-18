@@ -322,11 +322,8 @@ int CPeriodBuffDBSet::Insert(char *szCharacterName, unsigned __int16 wBuffIndex,
 {
 	int result;
 	CString QuerySql;
-	int iReturnCode;
-	int v13;
+	int iReturnCode = 0;
 
-	iReturnCode = 0;
-	v13 = 0;
 	QuerySql.Format("EXEC WZ_PeriodBuffInsert '%s', %d, %d, %d, %d, %d",
 		szCharacterName,
 		wBuffIndex,
@@ -339,39 +336,31 @@ int CPeriodBuffDBSet::Insert(char *szCharacterName, unsigned __int16 wBuffIndex,
 		if (this->m_Query.Fetch() == 100)
 		{
 			this->m_Query.Clear();
-			v13 = -1;
-			result = -1;
+			result = SQL_NULL_DATA;
 		}
 		else
 		{
 			iReturnCode = this->m_Query.GetInt(1);
 			this->m_Query.Clear();
-			v13 = -1;
 			result = iReturnCode;
 		}
 	}
 	else
 	{
 		this->m_Query.Clear();
-		v13 = -1;
-		result = -1;
+		result = SQL_NULL_DATA;
 	}
 	return result;
 }
 
-//----- (00448490) --------------------------------------------------------
+
 int CPeriodBuffDBSet::Delete(char *szCharacterName, unsigned __int16 wBuffIndex)
 {
 	
-	int result; // eax
-	CString QuerySql; // [esp+F8h] [ebp-2Ch]
-	int iReturnCode; // [esp+104h] [ebp-20h]
-	int v9;
+	int result;
+	CString QuerySql;
+	int iReturnCode = 0;
 
-	
-	iReturnCode = 0;
-
-	v9 = 0;
 	QuerySql.Format("WZ_PeriodBuffDelete '%s', %d",
 		szCharacterName,
 		wBuffIndex);
@@ -381,81 +370,79 @@ int CPeriodBuffDBSet::Delete(char *szCharacterName, unsigned __int16 wBuffIndex)
 		if (this->m_Query.Fetch() == 100)
 		{
 			this->m_Query.Clear();
-			v9 = -1;
-			result = -1;
+			result = SQL_NULL_DATA;
 		}
 		else
 		{
 			iReturnCode = this->m_Query.GetInt(1);
 			this->m_Query.Clear();
-			v9 = -1;
 			result = iReturnCode;
 		}
 	}
 	else
 	{
 		this->m_Query.Clear();
-		v9 = -1;
-		
-		result = -1;
+		result = SQL_NULL_DATA;
 	}
 	return result;
 }
 
-//----- (00448610) --------------------------------------------------------
-int CPeriodBuffDBSet::Select(char *szCharacterName, _tagPeriodBuffInfo *lpPeriodBuff, int *iBuffCnt)
+int CPeriodBuffDBSet::Select(char* szCharacterName, _tagPeriodBuffInfo* lpPeriodBuff, int* iBuffCnt)
 {
-	int result; // eax
-	__int16 sqlReturn;
-	CString QueryStr;
-	int iBuffCount;
-	int iReturnCode;
-	int v16;
-	iReturnCode = 0;
-	iBuffCount = 0;
-	
-	v16 = 0;
-	QueryStr.Format("EXEC WZ_PeriodBuffSelect '%s'",szCharacterName);
-	if (this->m_Query.Exec(QueryStr))
-	{
-		sqlReturn = this->m_Query.Fetch();
-		if (sqlReturn == 100)
-		{
-			this->m_Query.Clear();
-			v16 = -1;
-			result = -2;
-		}
-		else
-		{
-			while (sqlReturn != 100)
-			{
-				if (sqlReturn == -1)
-					break;
-				iReturnCode = this->m_Query.GetInt(1);
-				if (iReturnCode < 0)
-					break;
-				lpPeriodBuff[iBuffCount].wBuffIndex = this->m_Query.GetInt("BuffIndex");
-				lpPeriodBuff[iBuffCount].btEffectType1 = this->m_Query.GetInt("EffectType1");
-				lpPeriodBuff[iBuffCount].btEffectType2 = this->m_Query.GetInt("EffectType2");
-				lpPeriodBuff[iBuffCount++].lExpireDate = this->m_Query.GetInt("ExpireDateConvert");
-				if (iBuffCount >= 10)
-				{
-					LogAddTD("[CPeriodBuff][Select] Period Item List Count Over %d, User Id : %s", 10, szCharacterName);
-					break;
-				}
-				sqlReturn = this->m_Query.Fetch();
-			}
-			*iBuffCnt = iBuffCount;
-			this->m_Query.Clear();
-			v16 = -1;
-			result = iReturnCode;
-		}
-	}
-	else
+	if (!iBuffCnt)
+		return -3;
+
+	*iBuffCnt = 0;
+
+	CString query;
+	query.Format("EXEC WZ_PeriodBuffSelect '%s'", szCharacterName);
+
+	if (!this->m_Query.Exec(query))
 	{
 		this->m_Query.Clear();
-		v16 = -1;
-		result = -3;
+		return -3; // DB error
 	}
-	return result;
+
+	int sqlReturn = this->m_Query.Fetch();
+
+	if (sqlReturn == SQL_NO_DATA) // no data
+	{
+		this->m_Query.Clear();
+		return -2;
+	}
+
+	int iReturnCode = 0;
+	int iBuffCount = 0;
+
+	while (sqlReturn != SQL_NO_DATA && sqlReturn != SQL_NULL_DATA)
+	{
+		int rowReturn = this->m_Query.GetInt(1);
+		if (rowReturn < 0)
+		{
+			iReturnCode = rowReturn;
+			break;
+		}
+
+		iReturnCode = rowReturn;
+
+		lpPeriodBuff[iBuffCount].wBuffIndex = this->m_Query.GetInt("BuffIndex");
+		lpPeriodBuff[iBuffCount].btEffectType1 = this->m_Query.GetInt("EffectType1");
+		lpPeriodBuff[iBuffCount].btEffectType2 = this->m_Query.GetInt("EffectType2");
+		lpPeriodBuff[iBuffCount].lExpireDate = this->m_Query.GetInt("ExpireDateConvert");
+
+		iBuffCount++;
+
+		if (iBuffCount >= 10)
+		{
+			LogAddTD("[CPeriodBuff][Select] Period Item List Count Over %d, User Id : %s", 10, szCharacterName);
+			break;
+		}
+
+		sqlReturn = this->m_Query.Fetch();
+	}
+
+	*iBuffCnt = iBuffCount;
+
+	this->m_Query.Clear();
+	return iReturnCode;
 }

@@ -45,8 +45,8 @@ struct _tagSDHP_ANS_MUUN_CONDITION_INFO_LOAD
 struct _tagSDHP_REQ_DBMUUN_INVEN_SAVE
 {
 	PWMSG_HEAD h;
-	char AccountID[11];
-	char Name[11];
+	char AccountID[MAX_IDSTRING + 1];
+	char Name[MAX_IDSTRING + 1];
 	BYTE dbInventory[MAX_DBMUUNINVENTORY];
 };
 
@@ -54,8 +54,8 @@ struct _tagSDHP_REQ_DBMUUN_INVEN_SAVE
 struct SDHP_REQ_DBMUUN_INVEN_LOAD
 {
 	PBMSG_HEAD h;
-	char AccountID[11];
-	char Name[11];
+	char AccountID[MAX_IDSTRING + 1];
+	char Name[MAX_IDSTRING + 1];
 	__int16 aIndex;
 };
 
@@ -79,8 +79,8 @@ struct _tagSDHP_ANS_DBMUUN_INVEN_LOAD
 struct SDHP_REQ_DBMUUN_INVEN_SUB_EQUIP_OPEN
 {
 	PBMSG_HEAD2 h;
-	char AccountID[11];
-	char Name[11];
+	char AccountID[MAX_IDSTRING + 1];
+	char Name[MAX_IDSTRING + 1];
 	short aIndex;
 };
 
@@ -88,7 +88,7 @@ struct SDHP_REQ_DBMUUN_INVEN_SUB_EQUIP_OPEN
 struct _tagSDHP_REQ_MUUN_PERIOD_INFO_SELECT
 {
 	PBMSG_HEAD2 h;
-	char Name[11];
+	char Name[MAX_IDSTRING + 1];
 	short aIndex;
 };
 /* 1072 */
@@ -96,7 +96,7 @@ struct _tagSDHP_REQ_MUUN_PERIOD_INFO_INSERT
 {
 	PBMSG_HEAD2 h;
 	__int16 aIndex;
-	char Name[11];
+	char Name[MAX_IDSTRING + 1];
 	unsigned __int16 wItemType;
 	unsigned int dwSerial;
 	unsigned int dwItemDuration;
@@ -107,7 +107,7 @@ struct _tagSDHP_REQ_MUUN_PERIOD_INFO_INSERT
 struct _tagSDHP_REQ_MUUN_PERIOD_INFO_UPDATE
 {
 	PBMSG_HEAD2 h;
-	char Name[11];
+	char Name[MAX_IDSTRING + 1];
 	__int16 aIndex;
 	unsigned __int16 wItemType;
 	DWORD dwSerial;
@@ -117,14 +117,14 @@ struct _tagSDHP_REQ_MUUN_PERIOD_INFO_UPDATE
 struct _tagSDHP_REQ_MUUN_CONDITION_INFO_SAVE
 {
 	PBMSG_HEAD2 h;
-	char Name[11];
+	char Name[MAX_IDSTRING + 1];
 	_stMuunConditionInfoList MuunConditionInfoList[2];
 };
 /* 1075 */
 struct _tagSDHP_REQ_MUUN_CONDITION_INFO_LOAD
 {
 	PBMSG_HEAD2 h;
-	char Name[11];
+	char Name[MAX_IDSTRING + 1];
 	short aIndex;
 };
 
@@ -132,7 +132,7 @@ struct _tagSDHP_REQ_MUUN_CONDITION_INFO_LOAD
 struct _tagSDHP_REQ_MUUN_CONDITION_INFO_DEL
 {
 	PBMSG_HEAD2 h;
-	char Name[11];
+	char Name[MAX_IDSTRING + 1];
 };
 
 class CMuunSystemDBSet : public CDBConBase
@@ -146,7 +146,7 @@ public:
 	int LoadMuunInvenItem(char *Name, BYTE *ItemBuf, char *AccountId, int *SubEquip, int *DbVersion); // idb
 	__int64 SaveMuunInvenItem(char *Name, BYTE *ItemBuf, char *AccountId);
 	BOOL MuunInvenSubEquipOpen(char *AccountId, char *Name); // idb
-	bool SelectMuunPeriodInfo(char *szName, _stMuunPeriodInfoList *MuunPeriodInfoList, BYTE *btListCnt); // idb
+	BOOL SelectMuunPeriodInfo(char *szName, _stMuunPeriodInfoList *MuunPeriodInfoList, BYTE *btListCnt); // idb
 	BOOL InsertMuunPeriodInfo(char *szName, unsigned __int16 wItemType, unsigned int dwSerial, unsigned int dwItemDur, long lExpireDate); // idb
 	BOOL UpdateMuunPeriodInfo(char *szName, unsigned __int16 wItemType, DWORD dwSerial, BYTE btUsedInfo); // idb
 	BOOL LoadMuunConditionInfo(char *szName, _stMuunConditionInfoList *MuunConditionInfoList); // idb

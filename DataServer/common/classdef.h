@@ -15,6 +15,7 @@
 //----------------------------------------------------------------------------
 // 종족별 기본값
 //----------------------------------------------------------------------------
+
 typedef struct
 {
 	int 	Experience;
@@ -30,7 +31,7 @@ typedef struct
 	float 	MaxMana;
 	float   VitalityToLife;
 	float 	EnergyToMana;
-	CItem	Equipment[MAX_EQUIPMENT + 2];
+	CItem	Equipment[MAX_EQUIPMENT + EXTRA_CREATE_ITEMS];
 	WORD	Leadership;		// 통솔 항목 추가
 } DEFAULTCLASSTYPE, *LPDEFAULTCLASSTYPE;
 
@@ -39,7 +40,7 @@ class classdef
 public:
 	DEFAULTCLASSTYPE	DefClass[MAX_CLASSTYPE];
 	BOOL				m_BabubBanJiCreate;
-	CItem				JumpingEquipment[32][204];//s12
+	CItem				JumpingEquipment[MAX_EVENTINVENTORY][MAX_MAININVENTORY];//s12
 public:
 	classdef();
 	virtual ~classdef();

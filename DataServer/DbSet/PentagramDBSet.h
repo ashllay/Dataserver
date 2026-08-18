@@ -9,7 +9,9 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+//#include "..\\Sprodef.h"
 #include "DBConBase.h"
+#include "Include/ItemDef.h"
 
 #define MAX_PENTAGRAMJEWEL_INFO 250
 
@@ -58,8 +60,29 @@ struct _tagPMSG_REQ_JEWEL_UPGRADE_INFO_INSERT_DS
 	short iSuccess;
 };
 
+#pragma pack (1)
 struct PENTAGRAMJEWEL_INFO
 {
+	void Clear()
+	{
+		btJewelPos = -1;
+		btJewelIndex = -1;
+		btMainAttribute = -1;
+		btItemType = -1;
+		wItemIndex = MAX_ITEM_INDEX;
+		btLevel = 0;
+		btRank1OptionNum = -1;
+		btRank1Level = -1;
+		btRank2OptionNum = -1;
+		btRank2Level = -1;
+		btRank3OptionNum = -1;
+		btRank3Level = -1;
+		btRank4OptionNum = -1;
+		btRank4Level = -1;
+		btRank5OptionNum = -1;
+		btRank5Level = -1;
+	}
+
 	BYTE btJewelPos;
 	BYTE btJewelIndex;
 	BYTE btMainAttribute;
@@ -76,9 +99,10 @@ struct PENTAGRAMJEWEL_INFO
 	BYTE btRank4Level;
 	BYTE btRank5OptionNum;
 	BYTE btRank5Level;
-};
+}; typedef PENTAGRAMJEWEL_INFO* LPPENTAGRAMJEWEL_INFO;
+#pragma pack ()
 
-struct __declspec(align(4)) PMSG_PENTAGRAMJEWEL_INFO
+struct PMSG_PENTAGRAMJEWEL_INFO
 {
 	PWMSG_HEAD h;
 	BYTE btJewelCnt;
@@ -86,8 +110,7 @@ struct __declspec(align(4)) PMSG_PENTAGRAMJEWEL_INFO
 	int iUserGuid;
 	char AccountId[MAX_IDSTRING + 1];
 	char szName[MAX_IDSTRING + 1];
-	PENTAGRAMJEWEL_INFO PentaGramInfo[MAX_PENTAGRAMJEWEL_INFO];
-};
+}; typedef PMSG_PENTAGRAMJEWEL_INFO* LPPMSG_PENTAGRAMJEWEL_INFO;
 
 struct PMSG_ANS_PENTAGRAMJEWEL
 {
@@ -110,7 +133,6 @@ struct PMSG_DEL_PENTAGRAMJEWEL
 class CPentagramDBSet : public CDBConBase
 {
 public:
-
 	CPentagramDBSet();
 	virtual ~CPentagramDBSet();
 
@@ -118,7 +140,7 @@ public:
 	int DelPentagramJewel(PMSG_DEL_PENTAGRAMJEWEL* lpMsg);
 	int InsertPentagramJewel(PMSG_INSERT_PENTAGRAMJEWEL* lpMsg);
 	int SetPentagramJewel(PMSG_PENTAGRAMJEWEL_INFO* src);
-	int GetPentagramJewel(int UserGuid, char* Id, char* Char, PENTAGRAMJEWEL_INFO PentaGramInfo[250], PMSG_ANS_PENTAGRAMJEWEL* lpMsg, int JewelPos);
+	int GetPentagramJewel(int UserGuid, char* Id, char* Char, PENTAGRAMJEWEL_INFO* pPentagramJewelInfo, PMSG_ANS_PENTAGRAMJEWEL* lpMsg, int JewelPos);
 };
 
 class CPentagramLogDBSet : public CDBConBase

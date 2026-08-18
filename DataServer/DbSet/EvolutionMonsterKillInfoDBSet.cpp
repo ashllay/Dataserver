@@ -67,7 +67,6 @@ int CMonsterKillInfoDbSet::DSDB_SelectMonsterKillInfo(char *szAccountID, char *s
 	return result;
 }
 
-//----- (0043AFC0) --------------------------------------------------------
 int CMonsterKillInfoDbSet::DSDB_UpdateMonsterKillInfo(_tagSDHP_REQ_EVENT_MONSTER_KILL_INFO_SAVE *pMsgRecv)
 {
 	int result; 

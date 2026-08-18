@@ -25,13 +25,13 @@ typedef struct
 	BYTE MoveCnt;
 }AccountCharacterInfo, * LPAccountCharacterInfo;
 
-struct SDHP_ANS_SETACCOUNTINFO
-{
-	PBMSG_HEAD h;
-	char AccountId[MAX_IDSTRING + 1];
-	short Number;
-	BYTE Result;
-};
+//struct SDHP_ANS_SETACCOUNTINFO
+//{
+//	PBMSG_HEAD h;
+//	char AccountId[MAX_IDSTRING + 1];
+//	short Number;
+//	BYTE Result;
+//};
 
 struct SDHP_ANS_SET_EXTENDEDINVEN_COUNT
 {

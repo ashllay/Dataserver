@@ -93,10 +93,9 @@ BOOL CPetDBSet::CreatePetItemInfo(DWORD serial, int Level, __int64 Exp)
 BOOL CPetDBSet::UBFCopyPetInfo(unsigned int number, unsigned __int16 ServerCode)
 {
 	int result;
-	int iResult;
+	int iResult = 0;
 	CString qSql;
 
-	iResult = 0;
 	qSql.Format("WZ_UnityBattleFieldPetInfoCopy_r %u, %d",
 		number,
 		ServerCode);
@@ -114,57 +113,45 @@ BOOL CPetDBSet::UBFCopyPetInfo(unsigned int number, unsigned __int16 ServerCode)
 	return result;
 }
 
-//----- (00448F60) --------------------------------------------------------
-BOOL CPetDBSet::LoadPetInfoForUBF(unsigned int number, int* Level, INT64* Exp, unsigned __int16 SeverCode)
-{
-	int result;
-	INT64* lExp;
-	__int16 sqlReturn;
-	CString qSql;
-	bool v7;
 
-	qSql.Format("EXEC WZ_UnityBattleFieldPetInfoLoad_r %u, %d",
-		number,
-		SeverCode);
-	if (this->m_DBQuery.Exec(qSql))
-	{
-		sqlReturn = this->m_DBQuery.Fetch();
-		if (sqlReturn != 100 && sqlReturn != -1)
-		{
-			*Level = this->m_DBQuery.GetInt("Pet_Level");
-			*Exp = this->m_DBQuery.GetInt64("Pet_Exp");
-			this->m_DBQuery.Clear();
-			if (*Level < 0)
-				*Level = 1;
-			lExp = Exp;
-			if (*(Exp + 1) <= 0)
-			{
-				if (*(Exp + 1) < 0)
-					*Exp = 0i64;
-				else
-					v7 = *lExp == 0;
-			}
-			result = 1;
-		}
-		else
-		{
-			LogAddTD("Error-L3 [CPetDBSet][WZ_UnityBattleFieldPetInfoLoad_r] PetSerial:%d Return %d,%s,%d ",
-				number, sqlReturn, __FILE__, __LINE__);
-			this->m_DBQuery.Clear();
-			result = 0;
-		}
-	}
-	else
+BOOL CPetDBSet::LoadPetInfoForUBF(unsigned int number, int* Level, INT64* Exp, unsigned short ServerCode)
+{
+	CString qSql;
+	qSql.Format("EXEC WZ_UnityBattleFieldPetInfoLoad_r %u, %d", number, ServerCode);
+
+	if (!this->m_DBQuery.Exec(qSql))
 	{
 		LogAddTD("Error-L3 [PetDBSet][WZ_UnityBattleFieldPetInfoLoad_r] PetSerial:%d", number);
 		this->m_DBQuery.Clear();
-		result = 0;
+		return FALSE;
 	}
-	return result;
-}
-// 5CDFD4: using guessed type int `CPetDBSet::LoadPetInfoForUBF'::`2'::__LINE__Var;
 
-//----- (004491A0) --------------------------------------------------------
+	int sqlReturn = this->m_DBQuery.Fetch();
+
+	if (sqlReturn == SQL_NO_DATA || sqlReturn == SQL_NULL_DATA)
+	{
+		LogAddTD("Error-L3 [CPetDBSet][WZ_UnityBattleFieldPetInfoLoad_r] PetSerial:%d Return %d,%s,%d",
+			number, sqlReturn, __FILE__, __LINE__);
+		this->m_DBQuery.Clear();
+		return FALSE;
+	}
+
+	*Level = this->m_DBQuery.GetInt("Pet_Level");
+	*Exp = this->m_DBQuery.GetInt64("Pet_Exp");
+
+	this->m_DBQuery.Clear();
+
+	// Sanity checks
+	if (*Level < 0)
+		*Level = 1;
+
+	if (*Exp < 0)
+		*Exp = 0;
+
+	return TRUE;
+}
+
+
 BOOL CPetDBSet::SavePetInfoForUBF(unsigned int number, int Level, INT64 Exp, unsigned __int16 SeverCode)
 {
 	int result;

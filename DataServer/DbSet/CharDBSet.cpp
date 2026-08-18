@@ -109,24 +109,28 @@ int CCharDBSet::CreateCharacter(CString accountId, CString Name, BYTE Class)
 
 	qSql.Format("WZ_CreateCharacter '%s', '%s', '%d'", accountId, Name, Class);
 
-	if(m_DBQuery.Exec(qSql) == FALSE)
+	if (m_DBQuery.Exec(qSql))
 	{
+		if (m_DBQuery.Fetch() != SQL_NO_DATA)
+		{
+			result = m_DBQuery.GetInt(1);
+		}
+
 		m_DBQuery.Clear();
+
+		// Season 12 Jumping Server support
 		if (gbIsJumpingServer)
 		{
 			this->CreateCharacterMoneyUpdate(Name);
 		}
+
 		return result;
 	}
-
-	if(m_DBQuery.Fetch() != SQL_NO_DATA)
+	else
 	{
-		result = m_DBQuery.GetInt(1);
+		m_DBQuery.Clear();
+		return result;
 	}
-
-	m_DBQuery.Clear();
-
-	return result;
 }
 
 __int64 CCharDBSet::DefaultCharacterCreate(BYTE classskin)
@@ -165,7 +169,7 @@ __int64 CCharDBSet::DefaultCharacterCreate(BYTE classskin)
 	tCharInfo.PkTime = 0;
 
 #ifdef PERSONAL_SHOP_20040113
-	for (n = 0; n < MAX_INVENTORY_EXTEND; n++)
+	for (n = 0; n < MAX_INVENTORY; n++)
 	{
 		memset(&tCharInfo.dbInventory[MAX_ITEMDBBYTE * n], 0xFF, MAX_ITEMDBBYTE);
 	}
@@ -198,7 +202,7 @@ __int64 CCharDBSet::DefaultCharacterCreate(BYTE classskin)
 		tCharInfo.dbMagicList[0] = AT_SKILL_SPEAR;
 	}
 
-	ItemByteConvert16(tCharInfo.dbInventory, DCInfo.DefClass[defclass].Equipment, MAX_EQUIPMENT+2);
+	ItemByteConvert16(tCharInfo.dbInventory, DCInfo.DefClass[defclass].Equipment, MAX_EQUIPMENT+EXTRA_CREATE_ITEMS);
 
 	this->DefaultCreateCharacterInsert(&tCharInfo);
 	return TRUE;
@@ -287,12 +291,9 @@ BYTE CCharDBSet::CurCharNameSave(char* Name)
 
 BYTE CCharDBSet::SaveCharacter(char* Name, LPCharacterInfo_Struct lpObj)
 {
-	int sresult;
 	char chBuffer[512];
-	char result;
 	CString qSql;
 
-	result = 1;
 	strcpy(chBuffer, "UPDATE Character SET cLevel=%d, Class=%d, LevelUpPoint=%d, Experience=%d, Strength=%d, Dexterity=%d, Vitality=%d, En"
 		"ergy=%d, Money=%d, Life=%f, MaxLife=%f, Mana=%f, MaxMana=%f, MapNumber=%d, MapPosX=%d, MapPosY=%d, MapDir=%d, PkCount=%d, ");
 	memset(&chBuffer[239], 0, 0x111u);
@@ -330,24 +331,19 @@ BYTE CCharDBSet::SaveCharacter(char* Name, LPCharacterInfo_Struct lpObj)
 		lpObj->ChatLitmitTime,
 		lpObj->FruitPoint,
 		Name);
-	if (this->m_DBQuery.Exec(qSql))
-	{
-		qSql.Format("WZ_SetSaveItem '%s', '%s', ?", lpObj->AccountID, Name);
-		this->m_DBQuery.WriteBlob(qSql, lpObj->dbInventory, 3792);
-		qSql.Format("UPDATE Character SET MagicList=? where Name='%s'", Name);
-		this->m_DBQuery.WriteBlob(qSql, lpObj->dbMagicList, 450);
-		qSql.Format("UPDATE Character SET Quest=? where Name='%s'", Name);
+	if (!this->m_DBQuery.Exec(qSql))
+		return false;
 
-		this->m_DBQuery.WriteBlob(qSql, lpObj->dbQuest, 50);
-		sresult = 1;
-	}
-	else
-	{
-		sresult = 0;
-	}
-	return sresult;
+	qSql.Format("WZ_SetSaveItem '%s', '%s', ?", lpObj->AccountID, Name);
+	this->m_DBQuery.WriteBlob(qSql, lpObj->dbInventory, MAX_DBINVENTORY);
 
-	return 0x01;
+	qSql.Format("UPDATE Character SET MagicList=? where Name='%s'", Name);
+	this->m_DBQuery.WriteBlob(qSql, lpObj->dbMagicList, MAX_DBMAGIC);
+
+	qSql.Format("UPDATE Character SET Quest=? where Name='%s'", Name);
+	this->m_DBQuery.WriteBlob(qSql, lpObj->dbQuest, MAX_DBQUEST);
+
+	return true;
 }
 //#define OLD_GETCHAR
 #ifdef OLD_GETCHAR
@@ -592,7 +588,7 @@ int CCharDBSet::GetCharacter(char *szAccountID, char *Name, CharacterInfo_Struct
 
 	if (strcmp(lpObj->AccountID, szAccountID) != 0)
 	{
-		LogAddC(LOGC_RED, "error-L1 :Ä³¸¯ÅÍÀÇ °èÁ¤°ú ¿äÃ»ÇÑ °èÁ¤ÀÌ ¸ÂÁö¾Ê´Ù.%s %s", lpObj->AccountID, szAccountID);
+		LogAddC(LOGC_RED, "error-L1 :캐릭터의 계정과 요청한 계정이 맞지않다.%s %s", lpObj->AccountID, szAccountID);
 		this->m_DBQuery.Clear();
 		return 0;
 	}
@@ -641,7 +637,7 @@ int CCharDBSet::GetCharacter(char *szAccountID, char *Name, CharacterInfo_Struct
 	else
 	{
 		lpObj->FruitPoint = 0;
-		LogAddC(LOGC_RED, "[Fruit System] [%s][%s] Fruit ÄÃ·³ %d -> 0 À¸·Î ¼öÁ¤ ", lpObj->AccountID, Name, iFruitPoint);
+		LogAddC(LOGC_RED, "[Fruit System] [%s][%s] Fruit 컬럼 %d -> 0 으로 수정 ", lpObj->AccountID, Name, iFruitPoint);
 	}
 	lpObj->btExtendedInvenCount = this->m_DBQuery.GetInt("ExtendedInvenCount");
 	this->m_DBQuery.Clear();
@@ -662,7 +658,8 @@ int CCharDBSet::GetCharacter(char *szAccountID, char *Name, CharacterInfo_Struct
 
 	qSql.Format("WZ_GetLoadInventory '%s', '%s'", szAccountID, Name);
 
-	int nRet = this->m_DBQuery.ReadBlob(qSql, lpObj->dbInventory);
+	int nRet;
+	nRet = this->m_DBQuery.ReadBlob(qSql, lpObj->dbInventory);
 	if (nRet)
 	{
 		if (nRet == -1)
@@ -763,7 +760,6 @@ BOOL CCharDBSet::LoadMacroInfo(char* szAccountID, char* Name, BYTE* lpMacroInfo)
 			lpMacroInfo[i] = -1;
 		}
 	}
-
 	return TRUE;
 }
 
@@ -930,14 +926,11 @@ void CCharDBSet::RuudToken_Update(char *AccountID, char *Name, unsigned int dwRu
 	szCahrName[MAX_IDSTRING] = 0;
 	memcpy(szCahrName, Name, MAX_IDSTRING);
 
-	if (strlen(szCahrName) && (strlen(szCahrName) <= 0xA) &&
-		(strlen(szId)) && (strlen(szId) <= 0xA))
+	if (strlen(szCahrName) && (strlen(szCahrName) <= MAX_IDSTRING) &&
+		(strlen(szId)) && (strlen(szId) <= MAX_IDSTRING))
 	{
-		
-		sql.Format("WZ_RuudTokenUpdate '%s','%s', %d",
-			szId,
-			szCahrName,
-			dwRuudCnt);
+		sql.Format("WZ_RuudTokenUpdate '%s','%s', %d", szId, szCahrName, dwRuudCnt);
+
 		if (m_DBQuery.Exec(sql))
 		{
 			sqlReturn = m_DBQuery.Fetch();
@@ -967,7 +960,7 @@ void CCharDBSet::RuudToken_Update(char *AccountID, char *Name, unsigned int dwRu
 	}
 	else
 	{
-		LogAddC(2,"%s] 로드 에러 %s %d",szCahrName,__FILE__, __LINE__);
+		LogAddC(LOGC_RED,"%s] 로드 에러 %s %d",szCahrName,__FILE__, __LINE__);
 	}
 }
 
@@ -1027,7 +1020,7 @@ void CCharDBSet::SaveSnsInfo(char *szAccountID, char *Name, BYTE *lpSnsInfo)
 	m_DBQuery.WriteBlob(qSql, lpSnsInfo, 255);
 }
 
-//----- (00437040) --------------------------------------------------------
+
 void CCharDBSet::SaveUserSetting(char *szAccountID, BYTE *lpSaveData)
 {
 	CString qSql;
@@ -1036,7 +1029,7 @@ void CCharDBSet::SaveUserSetting(char *szAccountID, BYTE *lpSaveData)
 	m_DBQuery.WriteBlob(qSql, lpSaveData, 255);
 }
 
-//----- (00437120) --------------------------------------------------------
+
 int CCharDBSet::LoadUserSetting(char *szAccountID, BYTE *lpSaveData)
 {
 	int result;
@@ -1177,13 +1170,13 @@ void CCharDBSet::RuudToken_LoadCount(char *AccountID, char *Name, int *nRuudCnt)
 {
 	__int16 sqlReturn;
 	CString qSql;
-	char szCahrName[11];
+	char szCahrName[MAX_IDSTRING+1];
 	char szId[MAX_IDSTRING + 1];
 
-	szId[10] = 0;
-	memcpy(szId, AccountID, 0xAu);
-	szCahrName[10] = 0;
-	memcpy(szCahrName, Name, 0xAu);
+	szId[MAX_IDSTRING] = 0;
+	memcpy(szId, AccountID, MAX_IDSTRING);
+	szCahrName[MAX_IDSTRING] = 0;
+	memcpy(szCahrName, Name, MAX_IDSTRING);
 
 	if (strlen(szCahrName) && (strlen(szCahrName) <= 0xA) && (strlen(szId)) && (strlen(szId) <= 0xA))
 	{
@@ -1214,17 +1207,16 @@ void CCharDBSet::RuudToken_LoadCount(char *AccountID, char *Name, int *nRuudCnt)
 	}
 	else
 	{
-		LogAddC(2,"%s",szCahrName, __FILE__, __LINE__);
+		LogAddC(LOGC_RED,"%s",szCahrName, __FILE__, __LINE__);
 	}
 }
 
 
 void CCharDBSet::RewardJumpingItem(char *Name, BYTE *JumpingInventoryBuf)
 {
-
-	CString qSql; // [esp+D4h] [ebp-20h]
+	CString qSql;
 	qSql.Format("UPDATE Character SET Inventory=? where Name='%s'",Name);
-	this->m_DBQuery.WriteBlob(qSql, JumpingInventoryBuf, 3776);
+	this->m_DBQuery.WriteBlob(qSql, JumpingInventoryBuf, MAX_DBINVENTORY - 16);
 	this->m_DBQuery.Clear();
 }
 

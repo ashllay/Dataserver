@@ -12,6 +12,6 @@ public:
 	virtual ~CPCBangRenewalDBSet();
 
 	int Connect();
-	int DSDB_GetPCBangPlayTimeInfo(char *szAccountID, char *btCompleteGrade, char *btRecvGrade, unsigned int *dwPCBangPlayTime); // idb
-	int DSDB_SetPCBangPlayTimeInfo(char *szAccountID, char btCompleteGrade, char btRecvGrade, unsigned int dwPCBangPlayTime); // idb
+	int DSDB_GetPCBangPlayTimeInfo(char *szAccountID, char *btCompleteGrade, char *btRecvGrade, unsigned int *dwPCBangPlayTime);
+	int DSDB_SetPCBangPlayTimeInfo(char *szAccountID, char btCompleteGrade, char btRecvGrade, unsigned int dwPCBangPlayTime);
 };

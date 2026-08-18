@@ -34,7 +34,7 @@ void classdef::Init()
 	SetCharacter(CLASS_MAGUMSA, 26, 26, 26, 26, 110.0, 60.0, 1.0, 1.0, 2.0, 2.0, 0);
 	SetCharacter(CLASS_DARKLORD, 26, 20, 20, 15, 90.0, 40.0, 1.5, 1.0, 2.0, 1.5, 25);
 	SetCharacter(CLASS_SUMMONER, 21, 21, 18, 23, 70.0, 40.0, 1.0, 1.5, 2.0, 1.5, 0);
-	SetCharacter(CLASS_MONK, 32, 27, 25, 20, 100.0, 40.0, 1.3, 1.0, 2.0, 1.3, 0);
+	SetCharacter(CLASS_MONK, 32, 27, 25, 20, 100.0, 40.0, 1.3f, 1.0, 2.0, 1.3f, 0);
 	SetCharacter(CLASS_LANCER, 30, 30, 25, 24, 110.0, 40.0, 2.0, 1.0, 2.0, 1.0, 0);
 }
 
@@ -73,32 +73,32 @@ void classdef::SetEquipment(int Class)
 
 	def_type = 0;
 	right_type = 0;
-	for (n = 0; n < 14; ++n)
+	for (n = 0; n < MAX_EQUIPMENT+2; ++n)
 		DefClass[Class].Equipment[n].Clear();
 	switch (Class)
 	{
-	case 1:
+	case CLASS_KNIGHT:
 		def_type = ItemGetNumberMake(1, 0);
 		break;
-	case 2:
+	case CLASS_ELF:
 		def_type = ItemGetNumberMake(4, 15);
 		right_type = ItemGetNumberMake(4, 0);
 		break;
-	case 3:
+	case CLASS_MAGUMSA:
 		def_type = ItemGetNumberMake(6, 0);
 		right_type = ItemGetNumberMake(0, 1);
 		break;
-	case 4:
+	case CLASS_DARKLORD:
 		def_type = ItemGetNumberMake(6, 0);
 		right_type = ItemGetNumberMake(0, 1);
 		break;
-	case 5:
+	case CLASS_SUMMONER:
 		def_type = ItemGetNumberMake(1, 0);
 		break;
-	case 6:
+	case CLASS_MONK:
 		def_type = ItemGetNumberMake(1, 0);
 		break;
-	case 7:
+	case CLASS_LANCER:
 		def_type = ItemGetNumberMake(6, 0);
 		right_type = ItemGetNumberMake(1, 0);
 		break;
@@ -107,37 +107,30 @@ void classdef::SetEquipment(int Class)
 	}
 	if (Class)
 	{
-		if (Class == 4)
+		if (Class == CLASS_DARKLORD)
 		{
 			this->DefClass[Class].Equipment[0].m_Level = 0;
 			this->DefClass[Class].Equipment[1].m_Level = 0;
 			this->DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].Convert(right_type, 0, 0, 0, 0, 0, 3);
 			this->DefClass[Class].Equipment[1].Convert(def_type, 0, 0, 0, 0, 0, 3);
-
-						//DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].Convert(right_type, 0, 0, 0, 0, 0, 3);
-						//DefClass[Class].Equipment[EQUIPMENT_WEAPON_LEFT].Convert(def_type, 0, 0, 0, 0, 0, 3);
 		}
-		else if (Class != 2 && Class != 3)
+		else if (Class != CLASS_ELF && Class != CLASS_MAGUMSA)
 		{
-			if (Class == 5)
+			if (Class == CLASS_SUMMONER)
 			{
 				this->DefClass[Class].Equipment[0].m_Level = 0;
-				//this->DefClass[5].Equipment, def_type, 0, 0, 0, 0, 0, 3);
 				DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].Convert(def_type, 0, 0, 0, 0, 0, 3);
 			}
-			else if (Class == 7)
+			else if (Class == CLASS_LANCER)
 			{
 				this->DefClass[Class].Equipment[0].m_Level = 0;
 				this->DefClass[Class].Equipment[1].m_Level = 0;
-				//this->DefClass[7].Equipment, right_type, 0, 0, 0, 0, 0, 3);
 				DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].Convert(right_type, 0, 0, 0, 0, 0, 3);
-				//this->DefClass[7].Equipment[1], def_type, 0, 0, 0, 0, 0, 3);
 				DefClass[Class].Equipment[EQUIPMENT_WEAPON_LEFT].Convert(def_type, 0, 0, 0, 0, 0, 3);
 			}
 			else
 			{
 				this->DefClass[Class].Equipment[0].m_Level = 0;
-				//this->DefClass[Class].Equipment, def_type, 0, 0, 0, 0, 0, 3);
 				DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].Convert(def_type, 0, 0, 0, 0, 0, 3);
 			}
 		}
@@ -145,33 +138,33 @@ void classdef::SetEquipment(int Class)
 		{
 			this->DefClass[Class].Equipment[0].m_Level = 0;
 			this->DefClass[Class].Equipment[1].m_Level = 0;
-			//this->DefClass[Class].Equipment, right_type, 0, 0, 0, 0, 0, 3);
-			//&this->DefClass[Class].Equipment[1], def_type, 0, 0, 0, 0, 0, 3);
 			DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].Convert(right_type, 0, 0, 0, 0, 0, 3);
 			DefClass[Class].Equipment[EQUIPMENT_WEAPON_LEFT].Convert(def_type, 0, 0, 0, 0, 0, 3);
 		}
 	}
-	if (this->m_BabubBanJiCreate == 1)
+	if (this->m_BabubBanJiCreate == true)
 	{
 		def_type = ItemGetNumberMake(13, 20);
-		this->DefClass[Class].Equipment[12].m_Level = 1;
-		this->DefClass[Class].Equipment[12].Convert(def_type, 0, 0, 0, 0, 0, 3);
+		this->DefClass[Class].Equipment[MAX_EQUIPMENT].m_Level = 1;
+		this->DefClass[Class].Equipment[MAX_EQUIPMENT].Convert(def_type, 0, 0, 0, 0, 0, 3);
 		def_type = ItemGetNumberMake(13, 20);
-		this->DefClass[Class].Equipment[13].m_Level = 2;
-		this->DefClass[Class].Equipment[13].Convert(def_type, 0, 0, 0, 0, 0, 3);
+		this->DefClass[Class].Equipment[MAX_EQUIPMENT+1].m_Level = 2;
+		this->DefClass[Class].Equipment[MAX_EQUIPMENT+1].Convert(def_type, 0, 0, 0, 0, 0, 3);
 	}
-	if (this->m_BabubBanJiCreate)
+	if (this->m_BabubBanJiCreate != FALSE)
 	{
 		def_type = ItemGetNumberMake(14, 286);
-		this->DefClass[Class].Equipment[14].m_Level = 0;
-		this->DefClass[Class].Equipment[14].Convert(def_type, 0, 0, 0, 0, 0, 3);
+		this->DefClass[Class].Equipment[MAX_EQUIPMENT+2].m_Level = 0;
+		this->DefClass[Class].Equipment[MAX_EQUIPMENT+2].Convert(def_type, 0, 0, 0, 0, 0, 3);
 	}
 	else
 	{
 		def_type = ItemGetNumberMake(14, 286);
-		this->DefClass[Class].Equipment[12].m_Level = 0;
-		this->DefClass[Class].Equipment[12].Convert(def_type, 0, 0, 0, 0, 0, 3);
+		this->DefClass[Class].Equipment[MAX_EQUIPMENT].m_Level = 0;
+		this->DefClass[Class].Equipment[MAX_EQUIPMENT].Convert(def_type, 0, 0, 0, 0, 0, 3);
 	}
+	sizeof(DefClass[Class].Equipment);
+
 }
 //void classdef::SetEquipment(int Class)
 //{
@@ -179,7 +172,7 @@ void classdef::SetEquipment(int Class)
 //	int right_type = 0;
 //	int n;
 //
-//	for (n = 0; n<MAX_EQUIPMENT + 1; n++)
+//	for (n = 0; n<MAX_EQUIPMENT + 2; n++)
 //		DefClass[Class].Equipment[n].Clear();
 //
 //	// 종족에 따라 기본 무기를 세팅한다.
@@ -189,10 +182,9 @@ void classdef::SetEquipment(int Class)
 //		def_type = ItemGetNumberMake(1, 0);
 //		break;
 //	case CLASS_ELF: //요정 (활과 화살)
-//		def_type = ItemGetNumberMake(4, 0);
-//		right_type = ItemGetNumberMake(4, 15);
+//		def_type = ItemGetNumberMake(4, 15);
+//		right_type = ItemGetNumberMake(4, 0);
 //		break;
-//
 //#ifdef DARKLORD_WORK
 //	case CLASS_DARKLORD: //다크로드 (원형방패/짧은검)
 //		def_type = ItemGetNumberMake(6, 0);
@@ -200,7 +192,6 @@ void classdef::SetEquipment(int Class)
 //		break;
 //#endif
 //	case CLASS_MAGUMSA: //마검사 (원형방패/짧은검)
-//
 //		def_type = ItemGetNumberMake(6, 0);
 //		right_type = ItemGetNumberMake(0, 1);
 //		break;
@@ -244,7 +235,14 @@ void classdef::SetEquipment(int Class)
 //				DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].m_Level = 0;
 //				DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].Convert(def_type, 0, 0, 0, 0, 0, 3);
 //			}
-//#endif		
+//#endif
+//			else if (Class == CLASS_LANCER)
+//			{
+//				DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].m_Level = 0;
+//				DefClass[Class].Equipment[EQUIPMENT_WEAPON_LEFT].m_Level = 0;
+//				DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].Convert(right_type, 0, 0, 0, 0, 0, 3);
+//				DefClass[Class].Equipment[EQUIPMENT_WEAPON_LEFT].Convert(def_type, 0, 0, 0, 0, 0, 3);
+//			}
 //			else
 //			{
 //				DefClass[Class].Equipment[EQUIPMENT_WEAPON_RIGHT].m_Level = 0;
@@ -252,7 +250,7 @@ void classdef::SetEquipment(int Class)
 //			}
 //	}
 //
-//	if (m_BabubBanJiCreate == 1)
+//	if (m_BabubBanJiCreate == TRUE)
 //	{
 //		// 이벤트로 용사의 반지를 추가해준다.
 //		def_type = ItemGetNumberMake(13, 20);
@@ -263,6 +261,20 @@ void classdef::SetEquipment(int Class)
 //		def_type = ItemGetNumberMake(13, 20);
 //		DefClass[Class].Equipment[MAX_EQUIPMENT + 1].m_Level = 2;
 //		DefClass[Class].Equipment[MAX_EQUIPMENT + 1].Convert(def_type, 0, 0, 0, 0, 0, 3);
+//	}
+//
+//	if (m_BabubBanJiCreate != FALSE)
+//	{
+//		def_type = ItemGetNumberMake(14, 286);
+//		DefClass[Class].Equipment[MAX_EQUIPMENT+2].m_Level = 0;
+//		DefClass[Class].Equipment[MAX_EQUIPMENT+2].Convert(def_type, 0, 0, 0, 0, 0, 3);
+//	}
+//
+//	else
+//	{
+//		def_type = ItemGetNumberMake(14, 286);
+//		DefClass[Class].Equipment[MAX_EQUIPMENT].m_Level = 0;
+//		DefClass[Class].Equipment[MAX_EQUIPMENT].Convert(def_type, 0, 0, 0, 0, 0, 3);
 //	}
 //}
 
@@ -289,63 +301,17 @@ char classdef::GetCharacterClassByDBClass(char DbClass)
 
 void classdef::SetJumpingEquipment(int nClass)
 {
-	float v2; // STF0_4
-	float v3; // STF0_4
-	float v4; // STF0_4
-	float v5; // STF0_4
-	float v6; // STF0_4
-	float v7; // STF0_4
-	float v8; // STF0_4
-	float v9; // STF0_4
-	float v10; // STF0_4
-	float v11; // STF0_4
-	float v12; // STF0_4
-	float v13; // STF0_4
-	float v14; // STF0_4
-	float v15; // STF0_4
-	float v16; // STF0_4
-	float v17; // STF0_4
-	float v18; // STF0_4
-	float v19; // STF0_4
-	float v20; // STF0_4
-	float v21; // STF0_4
-	float v22; // STF0_4
-	float v23; // STF0_4
-	float v24; // STF0_4
-	float v25; // STF0_4
-	float v26; // STF0_4
-	float v27; // STF0_4
-	float v28; // STF0_4
-	float v29; // STF0_4
-	float v30; // STF0_4
-	float v31; // STF0_4
-	float v32; // STF0_4
-	float v33; // STF0_4
+	int Weapon_type = 0;
+	int SubItem_type = 0;
+	int Helm_Type = 0;
+	int Armor_Type = 0;
+	int Pants_Type = 0;
+	int Gloves_Type = 0;
+	int Boots_Type = 0;
+	int Wings_Type = 0;
+	int Acce_Type = ItemGetNumberMake(13, 408);
+	int Common_Type = ItemGetNumberMake(14, 286);
 
-	float Dur; // [esp+D4h] [ebp-A4h]
-	int n; // [esp+E0h] [ebp-98h]
-	int ItemPerClass; // [esp+ECh] [ebp-8Ch]
-	int Common_Type; // [esp+F8h] [ebp-80h]
-	int Acce_Type; // [esp+104h] [ebp-74h]
-	int Wings_Type; // [esp+110h] [ebp-68h]
-	int Boots_Type; // [esp+11Ch] [ebp-5Ch]
-	int Gloves_Type; // [esp+128h] [ebp-50h]
-	int Pants_Type; // [esp+134h] [ebp-44h]
-	int Armor_Type; // [esp+140h] [ebp-38h]
-	int Helm_Type; // [esp+14Ch] [ebp-2Ch]
-	int SubItem_type; // [esp+158h] [ebp-20h]
-	int Weapon_type; // [esp+164h] [ebp-14h]
-
-	Weapon_type = 0;
-	SubItem_type = 0;
-	Helm_Type = 0;
-	Armor_Type = 0;
-	Pants_Type = 0;
-	Gloves_Type = 0;
-	Boots_Type = 0;
-	Wings_Type = 0;
-	Acce_Type = ItemGetNumberMake(13, 408);
-	Common_Type = ItemGetNumberMake(14, 286);
 	switch (nClass)
 	{
 	case 0:
@@ -430,8 +396,9 @@ void classdef::SetJumpingEquipment(int nClass)
 		break;
 
 	}
-	ItemPerClass = 4 * nClass;
-	for (n = 0; n < 204; ++n)
+
+	int ItemPerClass = 4 * nClass;
+	for (int n = 0; n < MAX_MAININVENTORY; ++n)
 	{
 		JumpingEquipment[4 * nClass][n].Clear();
 		JumpingEquipment[ItemPerClass + 1][n].Clear();
@@ -440,40 +407,39 @@ void classdef::SetJumpingEquipment(int nClass)
 	}
 	if (Weapon_type)
 	{
-		v2 = ItemGetDurability(Weapon_type, 9, 0, 0);
+
 		this->JumpingEquipment[4 * nClass][12].Convert(Weapon_type, 1, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[4 * nClass][12].m_Level = 9;
-		this->JumpingEquipment[4 * nClass][12].m_Durability = v2;
-		v3 = ItemGetDurability(Weapon_type, 11, 0, 0);
+		this->JumpingEquipment[4 * nClass][12].m_Durability = ItemGetDurability(Weapon_type, 9, 0, 0);
+
 		this->JumpingEquipment[ItemPerClass + 1][12].Convert(Weapon_type, 1, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 1][12].m_Level = 11;
-		this->JumpingEquipment[ItemPerClass + 1][12].m_Durability = v3;
-		v4 = ItemGetDurability(Weapon_type, 7, 0, 0);
+		this->JumpingEquipment[ItemPerClass + 1][12].m_Durability = ItemGetDurability(Weapon_type, 11, 0, 0);
+
 		this->JumpingEquipment[ItemPerClass + 2][12].Convert(Weapon_type, 1, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 2][12].m_Level = 7;
-		this->JumpingEquipment[ItemPerClass + 2][12].m_Durability = v4;
-		v5 = ItemGetDurability(Weapon_type, 13, 1, 0);
+		this->JumpingEquipment[ItemPerClass + 2][12].m_Durability = ItemGetDurability(Weapon_type, 7, 0, 0);
+
 		this->JumpingEquipment[ItemPerClass + 3][12].Convert(Weapon_type, 1, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 3][12].m_NewOption = 8;
 		this->JumpingEquipment[ItemPerClass + 3][12].m_Level = 13;
-		this->JumpingEquipment[ItemPerClass + 3][12].m_Durability = v5;
+		this->JumpingEquipment[ItemPerClass + 3][12].m_Durability = ItemGetDurability(Weapon_type, 13, 1, 0);
 	}
 
 	if (SubItem_type)
 	{
-		v6 = ItemGetDurability(SubItem_type, 9, 0, 0);
 		this->JumpingEquipment[4 * nClass][14].Convert(SubItem_type, 1, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[4 * nClass][14].m_Level = 9;
-		this->JumpingEquipment[4 * nClass][14].m_Durability = v6;
-		v7 = ItemGetDurability(SubItem_type, 11, 0, 0);
+		this->JumpingEquipment[4 * nClass][14].m_Durability = ItemGetDurability(SubItem_type, 9, 0, 0);
+		
 		this->JumpingEquipment[ItemPerClass + 1][14].Convert(SubItem_type, 1, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 1][14].m_Level = 11;
-		this->JumpingEquipment[ItemPerClass + 1][14].m_Durability = v7;
-		v8 = ItemGetDurability(SubItem_type, 7, 0, 0);
+		this->JumpingEquipment[ItemPerClass + 1][14].m_Durability = ItemGetDurability(SubItem_type, 11, 0, 0);
+		
 		this->JumpingEquipment[ItemPerClass + 2][14].Convert(SubItem_type, 1, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 2][14].m_Level = 7;
-		this->JumpingEquipment[ItemPerClass + 2][14].m_Durability = v8;
-		Dur = ItemGetDurability(SubItem_type, 13, 1, 0);
+		this->JumpingEquipment[ItemPerClass + 2][14].m_Durability = ItemGetDurability(SubItem_type, 7, 0, 0);
+
 		this->JumpingEquipment[ItemPerClass + 3][14].Convert(SubItem_type, 1, 1, 3, 0, 0, 3);
 		switch (nClass)
 		{
@@ -494,43 +460,43 @@ void classdef::SetJumpingEquipment(int nClass)
 			break;
 		}
 		this->JumpingEquipment[ItemPerClass + 3][14].m_Level = 13;
-		this->JumpingEquipment[ItemPerClass + 3][14].m_Durability = Dur;
+		this->JumpingEquipment[ItemPerClass + 3][14].m_Durability = ItemGetDurability(SubItem_type, 13, 1, 0);
 	}
 
 	if (Wings_Type)
 	{
-		v9 = ItemGetDurability(Wings_Type, 9, 0, 0);
+		
 		this->JumpingEquipment[4 * nClass][16].Convert(Wings_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[4 * nClass][16].m_Level = 9;
-		this->JumpingEquipment[4 * nClass][16].m_Durability = v9;
-		v10 = ItemGetDurability(Wings_Type, 11, 0, 0);
+		this->JumpingEquipment[4 * nClass][16].m_Durability = ItemGetDurability(Wings_Type, 9, 0, 0);
+		
 		this->JumpingEquipment[ItemPerClass + 1][16].Convert(Wings_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 1][16].m_Level = 11;
-		this->JumpingEquipment[ItemPerClass + 1][16].m_Durability = v10;
-		v11 = ItemGetDurability(Wings_Type, 7, 0, 0);
+		this->JumpingEquipment[ItemPerClass + 1][16].m_Durability = ItemGetDurability(Wings_Type, 11, 0, 0);
+		
 		this->JumpingEquipment[ItemPerClass + 2][16].Convert(Wings_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 2][16].m_Level = 7;
-		this->JumpingEquipment[ItemPerClass + 2][16].m_Durability = v11;
-		v12 = ItemGetDurability(Wings_Type, 13, 0, 0);
+		this->JumpingEquipment[ItemPerClass + 2][16].m_Durability = ItemGetDurability(Wings_Type, 7, 0, 0);
+		
 		this->JumpingEquipment[ItemPerClass + 3][16].Convert(Wings_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 3][16].m_Level = 13;
-		this->JumpingEquipment[ItemPerClass + 3][16].m_Durability = v12;
+		this->JumpingEquipment[ItemPerClass + 3][16].m_Durability = ItemGetDurability(Wings_Type, 13, 0, 0);
 	}
 	if (Acce_Type)
 	{
-		v13 = ItemGetDurability(Acce_Type, 0, 1, 0);
+		
 		this->JumpingEquipment[4 * nClass][40].Convert(Acce_Type, 0, 0, 0, 0, 0, 3);
 		this->JumpingEquipment[4 * nClass][40].m_NewOption = 1;
-		this->JumpingEquipment[4 * nClass][40].m_NewOption |= 2u;
-		this->JumpingEquipment[4 * nClass][40].m_Durability = v13;
+		this->JumpingEquipment[4 * nClass][40].m_NewOption |= 2;
+		this->JumpingEquipment[4 * nClass][40].m_Durability = ItemGetDurability(Acce_Type, 0, 1, 0);
 		this->JumpingEquipment[ItemPerClass + 1][40].Convert(Acce_Type, 0, 0, 0, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 1][40].m_NewOption = 1;
-		this->JumpingEquipment[ItemPerClass + 1][40].m_NewOption |= 2u;
-		this->JumpingEquipment[ItemPerClass + 1][40].m_Durability = v13;
+		this->JumpingEquipment[ItemPerClass + 1][40].m_NewOption |= 2;
+		this->JumpingEquipment[ItemPerClass + 1][40].m_Durability = ItemGetDurability(Acce_Type, 0, 1, 0);
 		this->JumpingEquipment[ItemPerClass + 3][40].Convert(Acce_Type, 0, 0, 0, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 3][40].m_NewOption = 1;
-		this->JumpingEquipment[ItemPerClass + 3][40].m_NewOption |= 2u;
-		this->JumpingEquipment[ItemPerClass + 3][40].m_Durability = v13;
+		this->JumpingEquipment[ItemPerClass + 3][40].m_NewOption |= 2;
+		this->JumpingEquipment[ItemPerClass + 3][40].m_Durability = ItemGetDurability(Acce_Type, 0, 1, 0);
 	}
 	if (Common_Type)
 	{
@@ -546,119 +512,119 @@ void classdef::SetJumpingEquipment(int nClass)
 
 	if (Armor_Type)
 	{
-		v14 = ItemGetDurability(Armor_Type, 9, 0, 1);
+		
 		this->JumpingEquipment[4 * nClass][44].Convert(Armor_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[4 * nClass][44].m_Level = 9;
 		this->JumpingEquipment[4 * nClass][44].m_SetOption = 5;
-		this->JumpingEquipment[4 * nClass][44].m_Durability = v14;
-		v15 = ItemGetDurability(Armor_Type, 11, 0, 1);
+		this->JumpingEquipment[4 * nClass][44].m_Durability = ItemGetDurability(Armor_Type, 9, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 1][44].Convert(Armor_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 1][44].m_Level = 11;
 		this->JumpingEquipment[ItemPerClass + 1][44].m_SetOption = 6;
-		this->JumpingEquipment[ItemPerClass + 1][44].m_Durability = v15;
-		v16 = ItemGetDurability(Armor_Type, 7, 0, 1);
+		this->JumpingEquipment[ItemPerClass + 1][44].m_Durability = ItemGetDurability(Armor_Type, 11, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 2][44].Convert(Armor_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 2][44].m_Level = 7;
 		this->JumpingEquipment[ItemPerClass + 2][44].m_SetOption = 5;
-		this->JumpingEquipment[ItemPerClass + 2][44].m_Durability = v16;
-		v17 = ItemGetDurability(Armor_Type, 13, 0, 1);
+		this->JumpingEquipment[ItemPerClass + 2][44].m_Durability = ItemGetDurability(Armor_Type, 7, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 3][44].Convert(Armor_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 3][44].m_Level = 13;
 		this->JumpingEquipment[ItemPerClass + 3][44].m_SetOption = 6;
-		this->JumpingEquipment[ItemPerClass + 3][44].m_Durability = v17;
+		this->JumpingEquipment[ItemPerClass + 3][44].m_Durability = ItemGetDurability(Armor_Type, 13, 0, 1);
 	}
 	if (Helm_Type)
 	{
-		v18 = ItemGetDurability(Helm_Type, 9, 0, 1);
+		
 		this->JumpingEquipment[4 * nClass][46].Convert(Helm_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[4 * nClass][46].m_Level = 9;
 		this->JumpingEquipment[4 * nClass][46].m_SetOption = 5;
-		this->JumpingEquipment[4 * nClass][46].m_Durability = v18;
-		v19 = ItemGetDurability(Helm_Type, 11, 0, 1);
+		this->JumpingEquipment[4 * nClass][46].m_Durability = ItemGetDurability(Helm_Type, 9, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 1][46].Convert(Helm_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 1][46].m_Level = 11;
 		this->JumpingEquipment[ItemPerClass + 1][46].m_SetOption = 6;
-		this->JumpingEquipment[ItemPerClass + 1][46].m_Durability = v19;
-		v20 = ItemGetDurability(Helm_Type, 7, 0, 1);
+		this->JumpingEquipment[ItemPerClass + 1][46].m_Durability = ItemGetDurability(Helm_Type, 11, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 2][46].Convert(Helm_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 2][46].m_Level = 7;
 		this->JumpingEquipment[ItemPerClass + 2][46].m_SetOption = 5;
-		this->JumpingEquipment[ItemPerClass + 2][46].m_Durability = v20;
-		v21 = ItemGetDurability(Helm_Type, 13, 0, 1);
+		this->JumpingEquipment[ItemPerClass + 2][46].m_Durability = ItemGetDurability(Helm_Type, 7, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 3][46].Convert(Helm_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 3][46].m_Level = 13;
 		this->JumpingEquipment[ItemPerClass + 3][46].m_SetOption = 6;
-		this->JumpingEquipment[ItemPerClass + 3][46].m_Durability = v21;
+		this->JumpingEquipment[ItemPerClass + 3][46].m_Durability = ItemGetDurability(Helm_Type, 13, 0, 1);
 	}
 	if (Pants_Type)
 	{
-		v22 = ItemGetDurability(Pants_Type, 9, 0, 1);
+		
 		this->JumpingEquipment[4 * nClass][48].Convert(Pants_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[4 * nClass][48].m_Level = 9;
 		this->JumpingEquipment[4 * nClass][48].m_SetOption = 5;
-		this->JumpingEquipment[4 * nClass][48].m_Durability = v22;
-		v23 = ItemGetDurability(Pants_Type, 11, 0, 1);
+		this->JumpingEquipment[4 * nClass][48].m_Durability = ItemGetDurability(Pants_Type, 9, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 1][48].Convert(Pants_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 1][48].m_Level = 11;
 		this->JumpingEquipment[ItemPerClass + 1][48].m_SetOption = 6;
-		this->JumpingEquipment[ItemPerClass + 1][48].m_Durability = v23;
-		v24 = ItemGetDurability(Pants_Type, 7, 0, 1);
+		this->JumpingEquipment[ItemPerClass + 1][48].m_Durability = ItemGetDurability(Pants_Type, 11, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 2][48].Convert(Pants_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 2][48].m_Level = 7;
 		this->JumpingEquipment[ItemPerClass + 2][48].m_SetOption = 5;
-		this->JumpingEquipment[ItemPerClass + 2][48].m_Durability = v24;
-		v25 = ItemGetDurability(Pants_Type, 13, 0, 1);
+		this->JumpingEquipment[ItemPerClass + 2][48].m_Durability = ItemGetDurability(Pants_Type, 7, 0, 1);
+
 		this->JumpingEquipment[ItemPerClass + 3][48].Convert(Pants_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 3][48].m_Level = 13;
 		this->JumpingEquipment[ItemPerClass + 3][48].m_SetOption = 6;
-		this->JumpingEquipment[ItemPerClass + 3][48].m_Durability = v25;
+		this->JumpingEquipment[ItemPerClass + 3][48].m_Durability = ItemGetDurability(Pants_Type, 13, 0, 1);
 	}
 	if (Gloves_Type)
 	{
-		v26 = ItemGetDurability(Gloves_Type, 9, 0, 1);
+		
 		this->JumpingEquipment[4 * nClass][62].Convert(Gloves_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[4 * nClass][62].m_Level = 9;
 		this->JumpingEquipment[4 * nClass][62].m_SetOption = 5;
-		this->JumpingEquipment[4 * nClass][62].m_Durability = v26;
-		v27 = ItemGetDurability(Gloves_Type, 11, 0, 1);
+		this->JumpingEquipment[4 * nClass][62].m_Durability = ItemGetDurability(Gloves_Type, 9, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 1][62].Convert(Gloves_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 1][62].m_Level = 11;
 		this->JumpingEquipment[ItemPerClass + 1][62].m_SetOption = 6;
-		this->JumpingEquipment[ItemPerClass + 1][62].m_Durability = v27;
-		v28 = ItemGetDurability(Gloves_Type, 7, 0, 1);
+		this->JumpingEquipment[ItemPerClass + 1][62].m_Durability = ItemGetDurability(Gloves_Type, 11, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 2][62].Convert(Gloves_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 2][62].m_Level = 7;
 		this->JumpingEquipment[ItemPerClass + 2][62].m_SetOption = 5;
-		this->JumpingEquipment[ItemPerClass + 2][62].m_Durability = v28;
-		v29 = ItemGetDurability(Gloves_Type, 13, 0, 1);
+		this->JumpingEquipment[ItemPerClass + 2][62].m_Durability = ItemGetDurability(Gloves_Type, 7, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 3][62].Convert(Gloves_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 3][62].m_Level = 13;
 		this->JumpingEquipment[ItemPerClass + 3][62].m_SetOption = 6;
-		this->JumpingEquipment[ItemPerClass + 3][62].m_Durability = v29;
+		this->JumpingEquipment[ItemPerClass + 3][62].m_Durability = ItemGetDurability(Gloves_Type, 13, 0, 1);
 	}
 
 	if (Boots_Type)
 	{
-		v30 = ItemGetDurability(Boots_Type, 9, 0, 1);
+		
 		this->JumpingEquipment[4 * nClass][64].Convert(Boots_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[4 * nClass][64].m_Level = 9;
 		this->JumpingEquipment[4 * nClass][64].m_SetOption = 5;
-		this->JumpingEquipment[4 * nClass][64].m_Durability = v30;
-		v31 = ItemGetDurability(Boots_Type, 11, 0, 1);
+		this->JumpingEquipment[4 * nClass][64].m_Durability = ItemGetDurability(Boots_Type, 9, 0, 1);
+		
 		this->JumpingEquipment[ItemPerClass + 1][64].Convert(Boots_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 1][64].m_Level = 11;
 		this->JumpingEquipment[ItemPerClass + 1][64].m_SetOption = 6;
-		this->JumpingEquipment[ItemPerClass + 1][64].m_Durability = v31;
-		v32 = ItemGetDurability(Boots_Type, 7, 0, 1);
+		this->JumpingEquipment[ItemPerClass + 1][64].m_Durability = ItemGetDurability(Boots_Type, 11, 0, 1);
+		 
 		this->JumpingEquipment[ItemPerClass + 2][64].Convert(Boots_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 2][64].m_Level = 7;
 		this->JumpingEquipment[ItemPerClass + 2][64].m_SetOption = 5;
-		this->JumpingEquipment[ItemPerClass + 2][64].m_Durability = v32;
-		v33 = ItemGetDurability(Boots_Type, 13, 0, 1);
+		this->JumpingEquipment[ItemPerClass + 2][64].m_Durability = ItemGetDurability(Boots_Type, 7, 0, 1);
+		 
 		this->JumpingEquipment[ItemPerClass + 3][64].Convert(Boots_Type, 0, 1, 3, 0, 0, 3);
 		this->JumpingEquipment[ItemPerClass + 3][64].m_Level = 13;
 		this->JumpingEquipment[ItemPerClass + 3][64].m_SetOption = 6;
-		this->JumpingEquipment[ItemPerClass + 3][64].m_Durability = v33;
+		this->JumpingEquipment[ItemPerClass + 3][64].m_Durability = ItemGetDurability(Boots_Type, 13, 0, 1);
 	}
 }
 //void classdef::SetJumpingEquipment(int nClass)
@@ -1028,4 +994,7 @@ int classdef::GetDefPoint(int char_class)
 void classdef::SetMabubBanjiOption(BOOL flag)
 {
 	m_BabubBanJiCreate = flag;
+#ifdef DEBUG
+	LogAddC(LOGC_GREEN, "m_BabubBanJiCreate state %d", m_BabubBanJiCreate);
+#endif
 }

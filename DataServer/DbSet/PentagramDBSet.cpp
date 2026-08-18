@@ -35,17 +35,17 @@ int CPentagramDBSet::DelPentagramJewel(PMSG_DEL_PENTAGRAMJEWEL* lpRecv)
 	int JewelIndex;
 	int JewelPos;
 	int UserGuid;
-	char CharName[11] = { 0 };
-	char AccountId[11] = { 0 };
+	char CharName[MAX_IDSTRING+1] = { 0 };
+	char AccountId[MAX_IDSTRING + 1] = { 0 };
 
 	CString qSql;
 
-	memcpy(&AccountId, lpRecv->szName, 0xAu);
-	if (strlen(AccountId) > 0 && strlen(AccountId) <= 0xA)
+	memcpy(&AccountId, lpRecv->szName, MAX_IDSTRING);
+	if (strlen(AccountId) > 0 && strlen(AccountId) <= MAX_IDSTRING)
 	{
 
-		memcpy(&CharName, lpRecv->szName, 0xAu);
-		if (strlen(CharName) > 0 && strlen(CharName) <= 0xA)
+		memcpy(&CharName, lpRecv->szName, MAX_IDSTRING);
+		if (strlen(CharName) > 0 && strlen(CharName) <= MAX_IDSTRING)
 		{
 			UserGuid = lpRecv->iUserGuid;
 			JewelPos = lpRecv->btJewelPos;
@@ -57,7 +57,7 @@ int CPentagramDBSet::DelPentagramJewel(PMSG_DEL_PENTAGRAMJEWEL* lpRecv)
 				bool bReConnect = false;
 				m_DBQuery.PrintDiag(bReConnect);
 
-				LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				m_DBQuery.Clear();
 				return 1;
 			}
@@ -66,34 +66,34 @@ int CPentagramDBSet::DelPentagramJewel(PMSG_DEL_PENTAGRAMJEWEL* lpRecv)
 		}
 		else
 		{
-			LogAddC(2, "%s] +Þ-ª +íÀ» %s %d", &CharName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] 삭제 에러 %s %d", &CharName, __FILE__, __LINE__);
 			return 1;
 		}
 	}
 	else
 	{
-		LogAddC(2, "%s] +Þ-ª +íÀ» %s %d", &AccountId, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 삭제 에러 %s %d", &AccountId, __FILE__, __LINE__);
 		return 1;
 	}
 	return 0;
 }
 
 
-int CPentagramDBSet::GetPentagramJewel(int UserGuid, char* Id, char* Char, PENTAGRAMJEWEL_INFO PentaGramInfo[250], PMSG_ANS_PENTAGRAMJEWEL* lpMsg, int JewelPos)
+int CPentagramDBSet::GetPentagramJewel(int UserGuid, char* Id, char* Char, PENTAGRAMJEWEL_INFO* pPentagramJewelInfo, PMSG_ANS_PENTAGRAMJEWEL* lpMsg, int JewelPos)
 {
 	int result;
-	char CharName[11] = { 0 };
-	char AccountId[11] = { 0 };
+	char CharName[MAX_IDSTRING+1] = { 0 };
+	char AccountId[MAX_IDSTRING+1] = { 0 };
 
 	CString qSql;
 	int iReturnCode = 0;
 	int iItemCount = 0;
 
-	memcpy(&AccountId, Id, 0xAu);
-	if (strlen(AccountId) && strlen(AccountId) <= 0xA)
+	memcpy(&AccountId, Id, MAX_IDSTRING);
+	if (strlen(AccountId) && strlen(AccountId) <= MAX_IDSTRING)
 	{
-		memcpy(&CharName, Char, 0xAu);
-		if (strlen(CharName) && strlen(CharName) <= 0xA)
+		memcpy(&CharName, Char, MAX_IDSTRING);
+		if (strlen(CharName) && strlen(CharName) <= MAX_IDSTRING)
 		{
 			qSql.Format("WZ_PentagramInfoSelect %d, '%s', '%s', %d", UserGuid, AccountId, CharName, JewelPos);
 
@@ -110,25 +110,25 @@ int CPentagramDBSet::GetPentagramJewel(int UserGuid, char* Id, char* Char, PENTA
 						break;
 					}
 
-					PentaGramInfo[iItemCount].btJewelPos = JewelPos;
-					PentaGramInfo[iItemCount].btJewelIndex = m_DBQuery.GetInt("JewelIndex");
-					PentaGramInfo[iItemCount].btItemType = m_DBQuery.GetInt("ItemType");
-					PentaGramInfo[iItemCount].wItemIndex = m_DBQuery.GetInt("ItemIndex");
-					PentaGramInfo[iItemCount].btMainAttribute = m_DBQuery.GetInt("MainAttribute");
-					PentaGramInfo[iItemCount].btLevel = m_DBQuery.GetInt("JewelLevel");
-					PentaGramInfo[iItemCount].btRank1OptionNum = m_DBQuery.GetInt("Rank1");
-					PentaGramInfo[iItemCount].btRank1Level = m_DBQuery.GetInt("Rank1Level");
-					PentaGramInfo[iItemCount].btRank2OptionNum = m_DBQuery.GetInt("Rank2");
-					PentaGramInfo[iItemCount].btRank2Level = m_DBQuery.GetInt("Rank2Level");
-					PentaGramInfo[iItemCount].btRank3OptionNum = m_DBQuery.GetInt("Rank3");
-					PentaGramInfo[iItemCount].btRank3Level = m_DBQuery.GetInt("Rank3Level");
-					PentaGramInfo[iItemCount].btRank4OptionNum = m_DBQuery.GetInt("Rank4");
-					PentaGramInfo[iItemCount].btRank4Level = m_DBQuery.GetInt("Rank4Level");
-					PentaGramInfo[iItemCount].btRank5OptionNum = m_DBQuery.GetInt("Rank5");
-					PentaGramInfo[iItemCount].btRank5Level = m_DBQuery.GetInt("Rank5Level");
+					pPentagramJewelInfo[iItemCount].btJewelPos = JewelPos;
+					pPentagramJewelInfo[iItemCount].btJewelIndex = m_DBQuery.GetInt("JewelIndex");
+					pPentagramJewelInfo[iItemCount].btItemType = m_DBQuery.GetInt("ItemType");
+					pPentagramJewelInfo[iItemCount].wItemIndex = m_DBQuery.GetInt("ItemIndex");
+					pPentagramJewelInfo[iItemCount].btMainAttribute = m_DBQuery.GetInt("MainAttribute");
+					pPentagramJewelInfo[iItemCount].btLevel = m_DBQuery.GetInt("JewelLevel");
+					pPentagramJewelInfo[iItemCount].btRank1OptionNum = m_DBQuery.GetInt("Rank1");
+					pPentagramJewelInfo[iItemCount].btRank1Level = m_DBQuery.GetInt("Rank1Level");
+					pPentagramJewelInfo[iItemCount].btRank2OptionNum = m_DBQuery.GetInt("Rank2");
+					pPentagramJewelInfo[iItemCount].btRank2Level = m_DBQuery.GetInt("Rank2Level");
+					pPentagramJewelInfo[iItemCount].btRank3OptionNum = m_DBQuery.GetInt("Rank3");
+					pPentagramJewelInfo[iItemCount].btRank3Level = m_DBQuery.GetInt("Rank3Level");
+					pPentagramJewelInfo[iItemCount].btRank4OptionNum = m_DBQuery.GetInt("Rank4");
+					pPentagramJewelInfo[iItemCount].btRank4Level = m_DBQuery.GetInt("Rank4Level");
+					pPentagramJewelInfo[iItemCount].btRank5OptionNum = m_DBQuery.GetInt("Rank5");
+					pPentagramJewelInfo[iItemCount].btRank5Level = m_DBQuery.GetInt("Rank5Level");
 					iItemCount++;
 
-					if (iItemCount >= 250)
+					if (iItemCount >= MAX_PENTAGRAMJEWEL_INFO)
 					{
 						break;
 					}
@@ -145,7 +145,7 @@ int CPentagramDBSet::GetPentagramJewel(int UserGuid, char* Id, char* Char, PENTA
 			{
 				bool bReConnect = false;
 				m_DBQuery.PrintDiag(bReConnect);
-				LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				m_DBQuery.Clear();
 
 				result = 1;
@@ -153,13 +153,13 @@ int CPentagramDBSet::GetPentagramJewel(int UserGuid, char* Id, char* Char, PENTA
 		}
 		else
 		{
-			LogAddC(2, "%s] 로드 에러 %s %d", &CharName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", &CharName, __FILE__, __LINE__);
 			result = 1;
 		}
 	}
 	else
 	{
-		LogAddC(2, "%s] 로드 에러 %s %d", &AccountId, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] 로드 에러 %s %d", &AccountId, __FILE__, __LINE__);
 		result = 1;
 	}
 	return result;
@@ -198,9 +198,6 @@ int CPentagramDBSet::InsertPentagramJewel(PMSG_INSERT_PENTAGRAMJEWEL *lpMsg)
 		memcpy(&CharName, lpMsg->szName, 0xAu);
 		if (strlen(CharName) && strlen(CharName) <= 0xA)
 		{
-
-
-
 			qSql.Format(
 				"WZ_PentagramInfoUpdate %d, '%s', '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
 				UserGuid,
@@ -229,7 +226,7 @@ int CPentagramDBSet::InsertPentagramJewel(PMSG_INSERT_PENTAGRAMJEWEL *lpMsg)
 			{
 				bool bReConnect = false;
 				m_DBQuery.PrintDiag(bReConnect);
-				LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				m_DBQuery.Clear();
 				return 1;
 			}
@@ -238,13 +235,13 @@ int CPentagramDBSet::InsertPentagramJewel(PMSG_INSERT_PENTAGRAMJEWEL *lpMsg)
 		}
 		else
 		{
-			LogAddC(2, "%s] +Þ-ª +íÀ» %s %d", &CharName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] +Þ-ª +íÀ» %s %d", &CharName, __FILE__, __LINE__);
 			return 1;
 		}
 	}
 	else
 	{
-		LogAddC(2, "%s] +Þ-ª +íÀ» %s %d", &AccountID, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] +Þ-ª +íÀ» %s %d", &AccountID, __FILE__, __LINE__);
 		return 1;
 	}
 }
@@ -252,21 +249,18 @@ int CPentagramDBSet::InsertPentagramJewel(PMSG_INSERT_PENTAGRAMJEWEL *lpMsg)
 
 int CPentagramDBSet::InsertPentagramJewel(PMSG_INSERT_PENTAGRAMJEWEL* lpMsg)
 {
-	char CharName[11] = { 0 };
-	char AccountID[11] = { 0 };
+	char CharName[MAX_IDSTRING + 1] = { 0 };
+	char AccountID[MAX_IDSTRING + 1] = { 0 };
 
 	CString qSql;
 
-	memcpy(AccountID, lpMsg->AccountId, 0xAu);
-	if (strlen(AccountID) && strlen(AccountID) <= 0xA)
+	memcpy(AccountID, lpMsg->AccountId, MAX_IDSTRING);
+	if (strlen(AccountID) && strlen(AccountID) <= MAX_IDSTRING)
 	{
 
-		memcpy(&CharName, lpMsg->szName, 0xAu);
-		if (strlen(CharName) && strlen(CharName) <= 0xA)
+		memcpy(&CharName, lpMsg->szName, MAX_IDSTRING);
+		if (strlen(CharName) && strlen(CharName) <= MAX_IDSTRING)
 		{
-
-
-
 			qSql.Format(
 				"WZ_PentagramInfoUpdate %d, '%s', '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
 				lpMsg->iUserGuid,
@@ -290,12 +284,11 @@ int CPentagramDBSet::InsertPentagramJewel(PMSG_INSERT_PENTAGRAMJEWEL* lpMsg)
 				lpMsg->btRank5Level
 			);
 
-
 			if (!m_DBQuery.Exec(qSql))
 			{
 				bool bReConnect = false;
 				m_DBQuery.PrintDiag(bReConnect);
-				LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				m_DBQuery.Clear();
 				return 1;
 			}
@@ -304,98 +297,95 @@ int CPentagramDBSet::InsertPentagramJewel(PMSG_INSERT_PENTAGRAMJEWEL* lpMsg)
 		}
 		else
 		{
-			LogAddC(2, "%s] +Þ-ª +íÀ» %s %d", &CharName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] Insert 에러 %s %d", &CharName, __FILE__, __LINE__);
 			return 1;
 		}
 	}
 	else
 	{
-		LogAddC(2, "%s] +Þ-ª +íÀ» %s %d", &AccountID, __FILE__, __LINE__);
+		LogAddC(LOGC_RED, "%s] Insert 에러 %s %d", &AccountID, __FILE__, __LINE__);
 		return 1;
 	}
 }
 
-int CPentagramDBSet::SetPentagramJewel(PMSG_PENTAGRAMJEWEL_INFO* src)
+int CPentagramDBSet::SetPentagramJewel(PMSG_PENTAGRAMJEWEL_INFO* lpRecv)
 {
-	int iItemCount;
+	char AccountID[MAX_IDSTRING + 1] = { 0 };
+	char CharName[MAX_IDSTRING + 1] = { 0 };
 
+	memcpy(AccountID, lpRecv->AccountId, MAX_IDSTRING);
+	memcpy(CharName, lpRecv->szName, MAX_IDSTRING);
 
-	char CharName[11] = { 0 };
-	char AccountID[11] = { 0 };
+	if (strlen(AccountID) == 0 || strlen(AccountID) > MAX_IDSTRING)
+	{
+		LogAddC(LOGC_RED,"%s] Account Error %s %d",AccountID,__FILE__,__LINE__);
+		return 1;
+	}
+
+	if (strlen(CharName) == 0 || strlen(CharName) > MAX_IDSTRING)
+	{
+		LogAddC(LOGC_RED,"%s] Character Error %s %d",CharName,__FILE__,__LINE__);
+		return 1;
+	}
+
+	int iUserGuid = lpRecv->iUserGuid;
+	int btJewelCnt = lpRecv->btJewelCnt;
+	int btJewelPos = lpRecv->btJewelPos;
+
+	if (btJewelCnt < 0 || btJewelCnt > MAX_PENTAGRAMJEWEL_INFO-1)
+	{
+		LogAddC(LOGC_RED,"%s] Invalid Jewel Count %s %d",AccountID,__FILE__,__LINE__);
+
+		return 1;
+	}
+
+	// EXACTLY LIKE ORIGINAL BINARY
+	PENTAGRAMJEWEL_INFO* lpInfo = (PENTAGRAMJEWEL_INFO*)((BYTE*)lpRecv + sizeof(PMSG_PENTAGRAMJEWEL_INFO));
 
 	CString qSql;
 
-	memcpy(AccountID, src->AccountId, 0xAu);
-	if (strlen(AccountID) && strlen(AccountID) <= 0xA)
+	for (int i = 0; i < btJewelCnt; i++)
 	{
+		PENTAGRAMJEWEL_INFO* lpJewel = &lpInfo[i];
 
-		memcpy(&CharName, src->szName, 0xAu);
-		if (strlen(CharName) && strlen(CharName) <= 0xA)
+		qSql.Format(
+			"WZ_PentagramInfoUpdate %d, '%s', '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
+			iUserGuid,
+			AccountID,
+			CharName,
+			lpJewel->btJewelPos,
+			lpJewel->btJewelIndex,
+			lpJewel->btItemType,
+			lpJewel->wItemIndex,
+			lpJewel->btMainAttribute,
+			lpJewel->btLevel,
+			lpJewel->btRank1OptionNum,
+			lpJewel->btRank1Level,
+			lpJewel->btRank2OptionNum,
+			lpJewel->btRank2Level,
+			lpJewel->btRank3OptionNum,
+			lpJewel->btRank3Level,
+			lpJewel->btRank4OptionNum,
+			lpJewel->btRank4Level,
+			lpJewel->btRank5OptionNum,
+			lpJewel->btRank5Level
+		);
+
+		//LogAddTD("%s", qSql);
+
+		if (!m_DBQuery.Exec(qSql))
 		{
-
-			iItemCount = src->btJewelCnt;
-			if (iItemCount >= 0 && iItemCount <= 249)
-			{
-
-				for (int i = 0; i < iItemCount; ++i)
-				{
-
-					qSql.Format(
-						"WZ_PentagramInfoUpdate %d, '%s', '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
-						src->iUserGuid,
-						AccountID,
-						CharName,
-						src->btJewelPos,
-						src->PentaGramInfo[i].btJewelIndex,
-						src->PentaGramInfo[i].btItemType,
-						src->PentaGramInfo[i].wItemIndex,
-						src->PentaGramInfo[i].btMainAttribute,
-						src->PentaGramInfo[i].btLevel,
-						src->PentaGramInfo[i].btRank1OptionNum,
-						src->PentaGramInfo[i].btRank1Level,
-						src->PentaGramInfo[i].btRank2OptionNum,
-						src->PentaGramInfo[i].btRank2Level,
-						src->PentaGramInfo[i].btRank3OptionNum,
-						src->PentaGramInfo[i].btRank3Level,
-						src->PentaGramInfo[i].btRank4OptionNum,
-						src->PentaGramInfo[i].btRank4Level,
-						src->PentaGramInfo[i].btRank5OptionNum,
-						src->PentaGramInfo[i].btRank5Level
-					);
-
-					if (!m_DBQuery.Exec(qSql))
-					{
-						bool bReConnect = false;
-						m_DBQuery.PrintDiag(bReConnect);
-						LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
-						m_DBQuery.Clear();
-						return 1;
-						break;
-					}
-					m_DBQuery.Clear();
-				}
-				return 1;
-			}
-			else
-			{
-				LogAddC(2, "%s] +·+Õ +íÀ»(+Ë+¦¦©+« ¦¦+÷) %s %d", AccountID, __FILE__, __LINE__);
-				return 1;
-			}
-		}
-		else
-		{
-			LogAddC(2, "%s] +·+Õ +íÀ» %s %d", CharName, __FILE__, __LINE__);
+			bool bReconnect = false;
+			m_DBQuery.PrintDiag(bReconnect);
+			LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d" ,__FILE__, __LINE__);
+			m_DBQuery.Clear();
 			return 1;
 		}
-	}
-	else
-	{
-		LogAddC(2, "%s] +·+Õ +íÀ» %s %d", AccountID, __FILE__, __LINE__);
-		return 1;
-	}
-	return 1;
-}
 
+		m_DBQuery.Clear();
+	}
+	return 0;
+}
 
 CPentagramLogDBSet::CPentagramLogDBSet()
 {
@@ -424,18 +414,18 @@ int CPentagramLogDBSet::InsertJewelUpgradeInfo(_tagPMSG_REQ_JEWEL_UPGRADE_INFO_I
 	int iUpgradeType;
 	int iJewelIndex;
 	int iJewelType;
-	char szName[11];
-	char szId[11];
+	char szName[MAX_IDSTRING + 1];
+	char szId[MAX_IDSTRING + 1];
 
-	szId[10] = 0;
-	memcpy(szId, lpMsg->AccountID, 0xAu);
+	szId[MAX_IDSTRING] = 0;
+	memcpy(szId, lpMsg->AccountID, MAX_IDSTRING);
 
-	if (strlen(szId) && (strlen(szId) <= 0xA))
+	if (strlen(szId) && (strlen(szId) <= MAX_IDSTRING))
 	{
-		szName[10] = 0;
-		memcpy(szName, lpMsg->Name, 0xAu);
+		szName[MAX_IDSTRING] = 0;
+		memcpy(szName, lpMsg->Name, MAX_IDSTRING);
 
-		if (strlen(szName) && (strlen(szName) <= 0xA))
+		if (strlen(szName) && (strlen(szName) <= MAX_IDSTRING))
 		{
 			iJewelType = lpMsg->iJewelType;
 			iJewelIndex = lpMsg->iJewelIndex;
@@ -447,7 +437,7 @@ int CPentagramLogDBSet::InsertJewelUpgradeInfo(_tagPMSG_REQ_JEWEL_UPGRADE_INFO_I
 				szId, szName, iJewelType, iJewelIndex, iUpgradeType, iSuccess);
 			if (!this->m_DBQuery.Exec(szQuery))
 			{
-				LogAddC(2, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
+				LogAddC(LOGC_RED, "Error m_DBQuery.Exec %s %d", __FILE__, __LINE__);
 				this->m_DBQuery.Clear();
 				iReturnValue = 1;
 			}
@@ -456,12 +446,10 @@ int CPentagramLogDBSet::InsertJewelUpgradeInfo(_tagPMSG_REQ_JEWEL_UPGRADE_INFO_I
 		}
 		else
 		{
-			//LogAddC(2, "%s] Insert ߡׯ %s %d", szName, __FILE__, __LINE__);
-			LogAddC(2, "%s] Insert %s %d", szName, __FILE__, __LINE__);
+			LogAddC(LOGC_RED, "%s] Insert 에러 %s %d", szName, __FILE__, __LINE__);
 			return 1;
 		}
 	}
-	//LogAddC(2, "%s] Insert ߡׯ %s %d", szId, __FILE__, __LINE__);
-	LogAddC(2, "%s] Insert %s %d", szId, __FILE__, __LINE__);
+	LogAddC(LOGC_RED, "%s] Insert 에러 %s %d", szId, __FILE__, __LINE__);
 	return 1;
 }
